@@ -26,7 +26,13 @@ export type ElexonInsightsPNDataRecord = {
     bmUnit: string;
 }
 
-export type ElexonInsightsPNAllParams = ElexonSettlementDateOrPeriodParams 
+export type ElexonInsightsPNParams = ElexonSettlementDateOrPeriodParams & {
+    bmUnits?: string[];
+} 
+
+export type ElexonSightsPNUnitsParams = ElexonInsightsPNParams & {
+    bmUnits: string[];
+}
 
 export type ElexonInsightsPnResponseRaw = {
     data: ElexonInsightsPNDataRecord[];
@@ -38,6 +44,8 @@ export type LevelDict = Record<DateString, number>
 export type LevelPair = {time: string, level: number}
 export type BmUnitValues = Record<BmUnitId, number>
 export type BmUnitLevelPairs = Record<BmUnitId, LevelPair[]>
+
+export type ElexonInsightsAcceptancesParams = ElexonSightsPNUnitsParams
 
 export type ElexonInsightsPnResponseParsed = BmUnitLevelPairs
 

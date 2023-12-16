@@ -46,6 +46,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon testID='categories-tab-icon' name="pie-chart" color={color} />,
         }}
       />
+            <Tabs.Screen
+        name="maps"
+        options={{
+          title: 'Map',
+          tabBarIcon: ({ color }) => <TabBarIcon testID='map-tab-icon' name="map" color={color} />,
+        }}
+      />
       <Tabs.Screen
         name="unit-group"
         options={{

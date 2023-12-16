@@ -1,6 +1,6 @@
 import React from "react";
 import { ActivityIndicator } from "react-native";
-import { useFuelTypeLiveQuery } from "../services/state/elexon-insights-api.hooks";
+import { useFuelTypesLiveQuery } from "../services/state/elexon-insights-api.hooks";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "expo-router";
 import * as at from "../atoms";
@@ -9,7 +9,7 @@ import { IncompleteUnknownCategories } from "../atoms/cards";
 
 export const FuelTypeLive = () => {
   const nav = useNavigation();
-  const { data, isLoading, updated, refetch } = useFuelTypeLiveQuery();
+  const { data, isLoading, updated, refetch } = useFuelTypesLiveQuery();
   React.useEffect(() => {
     nav.setOptions({
       title: updated

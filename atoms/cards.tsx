@@ -42,3 +42,18 @@ export const IncompleteUnknownCategories = () => {
 const styles = StyleSheet.create({
   spacer: { height: 10 },
 });
+
+
+export const NoMapsonWeb = () => {
+  return (
+    <Card>
+      <Card.Title>
+        <Text>Maps not supported on web</Text>
+      </Card.Title>
+      <Card.Divider />
+      <Text>
+        Maps are not supported on web. Please use the app on a mobile device.
+      </Text>
+    </Card>
+  );
+}
