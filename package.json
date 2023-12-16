@@ -12,7 +12,7 @@
     "deploy:web": "npx expo export -p web && netlify deploy --dir dist",
     "e2e": "jest --config jest.e2e.config.js --maxWorkers=1 --forceExit --detectOpenHandles",
     "build:cloud": "eas build --platform all",
-    "build:android": "eas build --platform android --local --output outputs/prod.apk --clear-cache",
+    "build:android": "eas build --platform android --local --output outputs/prod.aab --clear-cache",
     "build:ios": "eas build --platform ios --local --output outputs/prod.ipa",
     "android:device": "adb install outputs/prod.apk && adb shell am start -n com.kilowatts/com.benjaminwatts.edfcrypto",
     "maestro:android": "maestro test maestro/flow.android.yaml",

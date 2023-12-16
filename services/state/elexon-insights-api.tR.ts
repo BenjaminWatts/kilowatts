@@ -26,7 +26,7 @@ export const queries = {
   accAll: (
     r: t.ElexonInsightsAcceptancesResponse
   ): t.ElexonInsightsAcceptancesResponseParsed => {
-    log.debug(`accAll: ${r.data.length} acceptance interval records found.. transformResponse`);
+    log.info(`accAll: ${r.data.length} acceptance interval records found.. transformResponse`);
     const withLevels = p.parseAcceptancesWithLevels(r.data);
     log.debug(`accAll: ${withLevels.length} individual acceptances found`);
     let output: t.ElexonInsightsAcceptancesResponseParsed = {};

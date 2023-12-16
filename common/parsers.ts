@@ -188,7 +188,7 @@ export const combinePnsAndAccs = ({
       log.debug(`combinePnsAndAccs: acceptances found for ${bmUnit}`);
       let schedule: t.LevelPair[] = pns[bmUnit];
       for (const acc of accs[bmUnit]) {
-        log.info(
+        log.debug(
           `combinePnsAndAccs: ${bmUnit} combining acceptance ${acc.acceptanceNumber}`
         );
         schedule = [

@@ -561,21 +561,6 @@ export const unitGroups: UnitGroup[] = [
       },
     ],
   },
-  {
-    details: {
-      name: "Keadby",
-      coords: {
-        lat: 53.59444,
-        lng: -0.75044,
-      },
-      fuelType: "gas",
-    },
-    units: [
-      {
-        bmUnit: "T_KEAD-2",
-      },
-    ],
-  },
   // E_DIDC01G E_DIDC02G E_DIDC03G E_DIDC04G
   {
     details: {

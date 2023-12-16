@@ -20,6 +20,7 @@ export const useUnitGroupsLiveQuery = () => {
   });
 
   const refetch = () => {
+    log.info(`useGenerationLiveQuery: refetching`);
     pns.refetch();
     accs.refetch();
   };
@@ -35,7 +36,7 @@ export const useUnitGroupsLiveQuery = () => {
       log.debug(`useGenerationLiveQuery: dismounting`);
       clearInterval(interval);
     };
-  }, []);
+  }, [setNowTime]);
 
   // retry on app resume
   React.useEffect(() => {
@@ -43,7 +44,7 @@ export const useUnitGroupsLiveQuery = () => {
       "change",
       (nextAppState) => {
         if (nextAppState === "active") {
-          log.debug(
+          log.info(
             `useGenerationLiveQuery: appStateListener: active -- refetching`
           );
           refetch();
@@ -58,8 +59,8 @@ export const useUnitGroupsLiveQuery = () => {
 
   React.useEffect(() => {
     const netInfoListener = NetInfo.addEventListener((state) => {
-      if (state.isConnected) {
-        log.debug(`useGenerationLiveQuery: netInfoListener: connected`);
+      if (state.isConnected && !pns.data || !accs.data && !pns.isLoading && !accs.isLoading) {
+        log.info(`useGenerationLiveQuery: netInfoListener: connected`);
         refetch();
       }
     });

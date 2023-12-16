@@ -16,8 +16,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.benjaminwatts.kilowatts"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.benjaminwatts.kilowatts",
+     "config": {
+      "usesNonExemptEncryption": false
+     }
     },
     "android": {
       "adaptiveIcon": {
