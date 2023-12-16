@@ -7,9 +7,10 @@ import log from '../services/log';
 type FuelTypeIconProps = {
     fuelType: FuelType
     size: number
+    color?: string
 }
 
-export const FuelTypeIcon: React.FC<FuelTypeIconProps> = ({fuelType, size}) => {
+export const FuelTypeIcon: React.FC<FuelTypeIconProps> = ({fuelType, size, color}) => {
     log.debug(`FuelTypeIcon: ${fuelType}`)
     const props = {size}
     switch (fuelType) {
