@@ -1,5 +1,7 @@
 import * as t from "./types";
 import log from "../services/log";
+import * as Updates from 'expo-updates';
+
 
 export const londonTime = (date: Date) =>
   date.toLocaleString("en-GB", { timeZone: "Europe/London" });
@@ -41,3 +43,30 @@ for rendering copyright noticed
 export const getCurrentYear = () => {
   return new Date().getFullYear();
 };
+
+
+
+/*
+ALLOW_LINK_FUELTYPES
+These are fuel types for which it is allowed to filter by
+*/
+export const ALLOW_LINK_FUELTYPES: t.FuelType[] = [
+  "wind",
+  "hydro",
+  "nuclear",
+  "biomass",
+  "gas",
+  "coal",
+  "interconnector"
+];
+
+
+/*
+getVersion
+using expo updates library to get the native and js version
+*/
+export const getVersion = () => {
+  return {
+    createdAt: Updates.createdAt
+  }
+}

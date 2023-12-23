@@ -1,10 +1,10 @@
 import React from "react";
 import { Button, Card, Text } from "@rneui/themed";
-import { Linking, StyleSheet, View } from "react-native";
+import { Linking, SafeAreaView, StyleSheet, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import log from "../services/log";
 import { urls } from "../services/nav";
-import { londonTime } from "../common/utils";
+import { londonTime, londonTimeHHMMSS } from "../common/utils";
 import { useRouter } from "expo-router";
 
 /*
@@ -68,6 +68,32 @@ export const UnknownUnitGroupCode = () => {
   );
 };
 
+type FuelTypeNotAllowedProps = {
+  fuelType: string;
+};
+/*
+FuelTypeNotAllowed
+Render a card with a message saying we can't find the unit group.
+*/
+export const FuelTypeNotAllowed: React.FC<FuelTypeNotAllowedProps> = ({
+  fuelType,
+}) => {
+  log.debug(`FuelTypeNotAllowed`);
+  return (
+    <SafeAreaView>
+      <Card>
+        <Card.Title>
+          <Text>{fuelType} not available</Text>
+        </Card.Title>
+        <Card.Divider />
+        <Text>
+          Cannot view live generation for {fuelType} unitsd. Please check the URL and try
+        </Text>
+      </Card>
+    </SafeAreaView>
+  );
+};
+
 /*
 MissingScreen
 Render a card with a message saying the screen doesn't exist.
@@ -109,10 +135,10 @@ export const UnitListHeader: React.FC<UnitListHeaderProps> = ({ now }) => {
     <Card containerStyle={styles.listHeaderCard}>
       {now ? (
         <Text {...props} testID="unit-list-header-text">
-          Live individual unit output at {londonTime(now)}
+         Live Output: {londonTimeHHMMSS(now)}
         </Text>
       ) : (
-        <Text {...props}>Loading data for individual units</Text>
+        <Text {...props}>Loading individual unit data</Text>
       )}
     </Card>
   );
@@ -120,7 +146,6 @@ export const UnitListHeader: React.FC<UnitListHeaderProps> = ({ now }) => {
 
 type UnitGroupHistoryListHeaderComponentProps = {
   bmUnit: string;
-
 };
 
 /*
@@ -132,7 +157,7 @@ export const UnitGroupScheduleHeader: React.FC<
 > = ({ bmUnit }) => {
   return (
     <Card containerStyle={styles.listHeaderCard}>
-      <Card.Title>Unit {bmUnit} schedule</Card.Title>
+      <Text>Unit {bmUnit} schedule</Text>
     </Card>
   );
 };
@@ -146,9 +171,30 @@ export const EmptyScheduleCard: React.FC = () => {
     <Card containerStyle={styles.listHeaderCard}>
       <Card.Title>No Scheduled Output</Card.Title>
       <Card.Divider />
-      <Text>None of the units are expected to generate/consume of the coming hours</Text>
+      <Text>
+        None of the units are expected to generate/consume of the coming hours
+      </Text>
       <View style={styles.spacer} />
       <Text>They may be under maintenance.</Text>
+    </Card>
+  );
+};
+
+/*
+No Live Units Found
+
+*/
+export const NoLiveUnits: React.FC = () => {
+  return (
+    <Card containerStyle={styles.listHeaderCard}>
+      <Card.Title>No Units Found</Card.Title>
+      <Card.Divider />
+      <Text>There are no units available with live data.</Text>
+      <View style={styles.spacer} />
+      <Text>
+        At the present time, many smaller generators connected to local
+        distribution grids do not publish live information.
+      </Text>
     </Card>
   );
 };
@@ -158,7 +204,7 @@ ApiError
 */
 type ApiErrorProps = {
   refetch: () => void;
-}
+};
 export const ApiErrorCard: React.FC<ApiErrorProps> = ({ refetch }) => {
   return (
     <Card>
@@ -168,16 +214,37 @@ export const ApiErrorCard: React.FC<ApiErrorProps> = ({ refetch }) => {
       <View style={styles.spacer} />
 
       <Text>
-        There was an error fetching/interpreting data from the Elexon API. Please try again later.
+        There was an error fetching/interpreting data from the Elexon API.
+        Please try again later.
       </Text>
 
       <View style={styles.spacer} />
 
-
       <Button onPress={refetch}>Try again</Button>
     </Card>
-  )
-}
+  );
+};
+
+export const NoInternetConnectionCard: React.FC = () => {
+  return (
+    <SafeAreaView>
+      <Card>
+        <Card.Title>
+          <Text>No Internet Connection</Text>
+        </Card.Title>
+        <View style={styles.spacer} />
+
+        <Text>
+          To function, the app needs a live internet connection to get the
+          latest market information.
+        </Text>
+        <Text>Please check your internet connection and try again.</Text>
+
+        <View style={styles.spacer} />
+      </Card>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   spacer: { height: 10 },

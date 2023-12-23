@@ -13,6 +13,7 @@ import {
   useRecentHistoryElexonRange,
   useRefetchOnAppOrNetworkResume,
 } from "../hooks";
+import { useEmbeddedWindAndSolarForecastQuery } from "./ng-eso-api";
 
 export const UPDATE_INTERVAL_LIVE_GENERATION_SECS = 1;
 export const POLLING_INTERVAL_ACCS_SECS = 15;
@@ -81,7 +82,7 @@ export const useUnitGroupsLiveQuery = () => {
       isError: false,
     };
   } catch (e: any) {
-    log.error(e)
+    log.error(e);
     return {
       ...query,
       data: null,
@@ -96,20 +97,50 @@ Get the latest data for output in each fuel type category
 */
 export const useFuelTypeLiveQuery = () => {
   log.debug(`useFuelTypeLiveQuery: mounting`);
-  const query = useUnitGroupsLiveQuery();
-  if (!query.data) {
+  const queries = {
+    fuelTypes: useUnitGroupsLiveQuery(),
+    embedded: useEmbeddedWindAndSolarForecastQuery({}),
+  };
+  if (!queries.fuelTypes.data) {
+    // we allow the embedded query to fail
     log.debug(`useFuelTypeLiveQuery: no data`);
-    return query;
+    return {
+      ...queries.fuelTypes,
+      data: null,
+    };
   } else {
     log.debug(`useFuelTypeLiveQuery: transforming to group by fuel type`);
     try {
+      if (queries.embedded.data) {
+        log.debug(
+          `useFuelTypeLiveQuery: interpolating embedded wind and solar`
+        );
+        const fuelTypes = p.groupByFuelTypeAndInterconnectors({
+          x: queries.fuelTypes.data,
+          includeEmbedded: false,
+        });
+        const embedded = p.interpolateCurrentEmbeddedWindAndSolar(
+          queries.fuelTypes.now.toISOString(),
+          queries.embedded.data
+        );
+        return {
+          ...queries.fuelTypes,
+          data: p.combineFuelTypesAndEmbedded(fuelTypes, embedded),
+        };
+      } else {
+        log.debug(`useFuelTypeLiveQuery: no embedded data`);
+        return {
+          ...queries.fuelTypes,
+          data: p.groupByFuelTypeAndInterconnectors({
+            x: queries.fuelTypes.data,
+            includeEmbedded: true,
+          }),
+        };
+      }
+    } catch (e: any) {
+      log.error(e);
       return {
-        ...query,
-        data: p.groupByFuelTypeAndInterconnectors(query.data),
-      };
-    } catch (e) {
-      return {
-        ...query,
+        ...queries.fuelTypes,
         data: null,
         isError: true,
       };
@@ -228,19 +259,19 @@ export const useUnitGroupScheduleQuery = (ug: UnitGroup) => {
     return query;
   } else {
     {
-     try {
-      return {
-        ...query,
-        data: p.filterUnitGroupScheduleQuery(now, query.data),
-      };
-     } catch (e: any) {
-      log.error(e)
-      return {
-        ...query,
-        data: null,
-        isError: true,
-      };
-     }
+      try {
+        return {
+          ...query,
+          data: p.filterUnitGroupScheduleQuery(now, query.data),
+        };
+      } catch (e: any) {
+        log.error(e);
+        return {
+          ...query,
+          data: null,
+          isError: true,
+        };
+      }
     }
   }
 };

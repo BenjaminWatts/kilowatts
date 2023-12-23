@@ -10,12 +10,15 @@ type UnitGroupMapProps = {
 
 export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
   log.debug(`UnitGroupMap: ${ug.details.name}`);
+  const { coords } = ug.details;
+  if (!coords) return <></>;
   const coordinate = {
-    latitude: ug.details.coords.lat,
-    longitude: ug.details.coords.lng,
+    latitude: coords.lat,
+    longitude: coords.lng,
   };
   return (
     <MapView
+      scrollEnabled={false}
       style={styles.mapCardContainer}
       initialRegion={{
         ...coordinate,
@@ -34,6 +37,10 @@ export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
 
 const styles = StyleSheet.create({
   mapCardContainer: {
-    height: 300,
+    display: 'flex',
+    flex: 1,
+    height: '50%',
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
 });

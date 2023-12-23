@@ -9,12 +9,14 @@ type ConsentDialogProps = {
   isVisible: boolean;
   onAccept: () => void;
   onBackdropPress?: () => void;
+  updatedAt: Date | null;
 };
 
 export const ConsentDialog: React.FC<ConsentDialogProps> = ({
   onAccept,
   isVisible,
   onBackdropPress,
+  updatedAt,
 }) => {
   const router = useRouter();
   return (
@@ -31,6 +33,7 @@ export const ConsentDialog: React.FC<ConsentDialogProps> = ({
         Contains BMRS data © Elexon Limited copyright and database right{" "}
         {getCurrentYear()}.
       </Text>
+      {updatedAt && <Text>App last updated {updatedAt.toLocaleString()}</Text>}
       <Dialog.Actions>
         <Dialog.Button
           title="I agree"

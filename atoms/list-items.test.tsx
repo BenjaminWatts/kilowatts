@@ -8,7 +8,7 @@ const mockOnPress = jest.fn();
 const mockLondonTime = (x: any) => {
   if (x === "2021-01-01T00:00:00Z")
     throw new Error("mockLondonTime: unexpected input");
-  return "12:45";
+  return "12:45:00";
 };
 const mockFuelTypeIcon = jest.fn();
 
@@ -19,7 +19,7 @@ jest.mock("./icons", () => ({
 
 // mock out the londonTime function
 jest.mock("../common/utils", () => ({
-  londonTime: (x: any) => mockLondonTime(x),
+  londonTimeHHMMSS: (x: any) => mockLondonTime(x),
 }));
 
 describe("atoms/list-items/GeneratorLive", () => {
@@ -106,7 +106,7 @@ describe("atoms/list-items/UnitLevelListItem", () => {
   });
 
   test("renders time", () => {
-    screen.getByText("12:45");
+    screen.getByText("12:45:00");
   });
 
   test("renders output value", () => {

@@ -41,5 +41,5 @@ jobs:
       - name: Publish update
         run: eas update --auto
 
-      - name: Build
-        run: eas build --platform all -e preview --non-interactive
+      # - name: Build
+      #   run: eas build --platform all -e preview --non-interactive

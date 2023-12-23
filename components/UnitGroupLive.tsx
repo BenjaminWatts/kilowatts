@@ -7,31 +7,35 @@ import { RefreshControl } from "react-native-gesture-handler";
 import { UnitLive } from "../atoms/list-items";
 import { ApiErrorCard, UnitListHeader } from "../atoms/cards";
 import { UnitGroupMap } from "../atoms/maps";
-
-// import { UnitGroupStack } from "./UnitGroupStack";
+import { StyleSheet, View } from "react-native";
 
 type UnitGroupLiveProps = {
   ug: UnitGroup;
 };
 export const UnitGroupLive: React.FC<UnitGroupLiveProps> = ({ ug }) => {
   log.debug(`UnitGroupLive ${ug.details.name}`);
-  const query = useUnitGroupLiveQuery(ug)
-  if(query.isError) return <ApiErrorCard refetch={query.refetch}/>
+  const query = useUnitGroupLiveQuery(ug);
+  if (query.isError) return <ApiErrorCard refetch={query.refetch} />;
   return (
     <>
-      <FlashList
-        estimatedItemSize={50}
-        refreshControl={
-          <RefreshControl refreshing={query.isLoading} onRefresh={() => {}} />
-        }
-        ListHeaderComponent={() => <UnitListHeader now={query.now} />}
-        data={query.data}
-        renderItem={({ item, index }) => <UnitLive index={index} {...item} />}
-        ListFooterComponent={
-          <UnitGroupMap ug={ug} />
-        }
-      />
-      
+      <View style={styles.listHalf}>
+        <FlashList
+          estimatedItemSize={50}
+          refreshControl={
+            <RefreshControl refreshing={query.isLoading} onRefresh={() => {}} />
+          }
+          ListHeaderComponent={() => <UnitListHeader now={query.now} />}
+          data={query.data}
+          renderItem={({ item, index }) => <UnitLive index={index} {...item} />}
+        />
+      </View>
+      <UnitGroupMap ug={ug} />
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  listHalf: {
+    height: "50%",
+  },
+});

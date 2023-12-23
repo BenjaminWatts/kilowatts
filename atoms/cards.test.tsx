@@ -17,7 +17,7 @@ jest.mock("expo-router", () => ({
 
 let mockLondonTime = jest.fn();
 jest.mock("../common/utils", () => ({
-    londonTime: (x: any) => mockLondonTime(x),
+  londonTimeHHMMSS: (x: any) => mockLondonTime(x),
 }));
 
 describe("atoms/cards/IncompleteUnknownCategories", () => {
@@ -81,15 +81,16 @@ describe("atoms/cards/UnitListHeader", () => {
 
   test("renders loading text with undefined now prop", () => {
     render(<c.UnitListHeader />);
-    screen.getByText("Loading data for individual units");
+    screen.getByText("Loading individual unit data");
   });
 
   test("renders live individual unit output and local time if now prop is a Date ", () => {
+
     const now = new Date(Date.parse("2023-01-01"));
     mockLondonTime.mockReturnValue("NOW");
     render(<c.UnitListHeader now={now} />);
     expect(mockLondonTime).toBeCalledWith(now);
-    screen.getByText("Live individual unit output at NOW");
+    screen.getByText("Live Output: NOW");
   });
 
   afterAll(() => {

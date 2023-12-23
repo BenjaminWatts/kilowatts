@@ -13,6 +13,9 @@ import * as Updates from "expo-updates";
 import { Alert, AppState, AppStateStatus } from "react-native";
 import log from "./services/log";
 import theme from "./services/theme";
+import { useInternetConnection } from "./services/hooks";
+import { Refresh } from "./atoms/controls";
+import { NoInternetConnectionCard } from "./atoms/cards";
 
 SplashScreen.preventAutoHideAsync();
 setTimeout(SplashScreen.hideAsync, 2000);
@@ -44,6 +47,8 @@ async function onFetchUpdateAsync() {
 }
 
 export const App = () => {
+  const {isConnected} = useInternetConnection()
+
   //   React.useEffect(() => {
   //     if (__DEV__ && Platform.OS !== "web") {
   //       const rt = require("./services/reactotron").initReactotron;
@@ -88,15 +93,20 @@ export const App = () => {
 
   if (!loaded) {
     return null;
-  
   }
+
+
   return (
     <>
       <ThemeProvider theme={theme}>
         <Provider store={store}>
+          {isConnected === null && <Refresh refreshing={true}/>}
+          {isConnected === false && <NoInternetConnectionCard/>}
+          {isConnected === true && (
           <WithLicense>
-            <ExpoRoot context={ctx} />
-          </WithLicense>
+          <ExpoRoot context={ctx} />
+        </WithLicense>
+          )}
         </Provider>
       </ThemeProvider>
     </>
