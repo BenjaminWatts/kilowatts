@@ -767,6 +767,15 @@ export const interpolateCurrentEmbeddedWindAndSolar = (
   return { wind, solar };
 };
 
+type CombineFuelTypesAndEmbeddedParams = {
+  now: Date;
+  includeEmbedded: boolean;
+  data: {
+    bm: t.UnitGroupLevel[];
+    embedded: t.NgEsoEmbeddedWindAndSolarForecastParsedResponse;
+  }
+};
+
 /*
 combineUnitsAndEmbedded
 For use when combining units and embedded wind and solar
@@ -774,11 +783,23 @@ For use when combining units and embedded wind and solar
 2. Adds embedded wind to the wind category
 */
 
-export const combineFuelTypesAndEmbedded = (
-  fuelTypes: t.FuelTypeLevel[],
-  embedded: InterpolateCurrentEmbeddedWindAndSolarResult
-) => {
+export const combineFuelTypesAndEmbedded = ({
+  now,
+  data,
+  includeEmbedded,
+}: CombineFuelTypesAndEmbeddedParams) => {
   log.debug(`combineUnitsAndEmbedded: combining fuel types and embedded`);
+
+  const fuelTypes = groupByFuelTypeAndInterconnectors({
+    x: data.bm,
+    includeEmbedded,
+  });
+
+  const embedded = interpolateCurrentEmbeddedWindAndSolar(
+    now.toISOString(),
+    data.embedded
+  )
+
   const output: t.FuelTypeLevel[] = [];
   const found = {
     wind: false,

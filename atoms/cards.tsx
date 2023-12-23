@@ -4,8 +4,9 @@ import { Linking, SafeAreaView, StyleSheet, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import log from "../services/log";
 import { urls } from "../services/nav";
-import { londonTime, londonTimeHHMMSS } from "../common/utils";
+import { londonTimeHHMMSS } from "../common/utils";
 import { useRouter } from "expo-router";
+import { FuelTypeLiveCompleteness } from "../common/types";
 
 /*
 IncompleteUnknownCategories
@@ -244,6 +245,16 @@ export const NoInternetConnectionCard: React.FC = () => {
     </SafeAreaView>
   );
 };
+
+export const FuelTypeCompletenessListHeader: React.FC<{completeness: FuelTypeLiveCompleteness}> = ({completeness}) => {
+  const {bm, embedded} = completeness;
+  return (
+    <Card containerStyle={styles.listHeaderCard}>
+      {(bm && embedded) && <Text>Includes Balancing Mechanism units and latest ESO embedded wind/solar forecast volumes.</Text>}
+      {(bm && !embedded) && <Text>Includes units participating in the Balancing Mechanism.</Text>}
+    </Card>
+  );
+}
 
 const styles = StyleSheet.create({
   spacer: { height: 10 },

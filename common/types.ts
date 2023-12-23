@@ -228,3 +228,39 @@ export type NgEsoEmbeddedWindAndSolarForecastParsedResponse = {
     wind:EmbeddedForecastValue
     solar:EmbeddedForecastValue
 }[]
+
+
+// hooks
+export type FuelTypeLiveCompleteness = {
+  bm: boolean;
+  embedded: boolean;
+}
+
+export type FuelTypeLiveHookResultLoading = {
+  now: null
+  isLoading: true;
+  error: undefined;
+  refetch: () => void;
+  data: null;
+  completeness: FuelTypeLiveCompleteness
+}
+
+export type FuelTypeLiveHookResultError = {
+  now: null;
+  isLoading: boolean;
+  error: Error
+  refetch: () => void;
+  data: null;
+  completeness: FuelTypeLiveCompleteness
+}
+
+export type FuelTypeLiveHookResultSuccess = {
+  now: Date;
+  isLoading: boolean;
+  error: undefined;
+  refetch: () => void;
+  completeness: FuelTypeLiveCompleteness
+  data: FuelTypeLevel[]
+}
+
+export type FuelTypeLiveHookResult = FuelTypeLiveHookResultSuccess | FuelTypeLiveHookResultError | FuelTypeLiveHookResultLoading;
