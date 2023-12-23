@@ -1,5 +1,5 @@
-import * as t from "../../common/types";
-import log from "../log";
+import * as t from "../../../common/types";
+import log from "../../log";
 
 export const queries = {
   embeddedWindAndSolarForecast: (

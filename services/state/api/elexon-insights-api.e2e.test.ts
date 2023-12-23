@@ -1,10 +1,10 @@
 import "@testing-library/jest-dom";
-import { store } from "./root";
+import { store } from "../root";
 import { elexonInsightsApi } from "./elexon-insights-api";
 import {
   BmUnitLevelPairs,
   ElexonInsightsAcceptancesParsed,
-} from "../../common/types";
+} from "../../../common/types";
 
 // list of common bm units to expect in any response
 const bmUnitsToExpect = ["T_CARR-1", "T_DRAXX-1"];

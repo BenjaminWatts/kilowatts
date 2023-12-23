@@ -1,7 +1,7 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import { elexonInsightsApi } from "./elexon-insights-api";
-import { ngEsoApi } from "./ng-eso-api";
+import { elexonInsightsApi } from "./api/elexon-insights-api";
+import { ngEsoApi } from "./api/ng-eso-api";
 import { termsSlice } from "./terms";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { GetDefaultMiddleware } from "@reduxjs/toolkit/dist/getDefaultMiddleware";

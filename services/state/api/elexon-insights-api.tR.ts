@@ -1,6 +1,6 @@
-import * as t from "../../common/types";
-import * as p from "../../common/parsers";
-import log from "../log";
+import * as t from "../../../common/types";
+import * as p from "../../../common/parsers";
+import log from "../../log";
 
 export const queries = {
   pnAll: (

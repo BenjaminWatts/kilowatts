@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { store } from "./root";
+import { store } from "../root";
 import { ngEsoApi } from "./ng-eso-api";
 
 

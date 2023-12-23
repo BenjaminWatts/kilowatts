@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import * as t from "../../common/types";
+import * as t from "../../../common/types";
 import * as tr from "./ng-eso-api.tR";
 
 const extraOptions = {

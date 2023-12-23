@@ -1,4 +1,4 @@
-import { ElexonInsightsAcceptancesDataRecord } from "../../common/types";
+import { ElexonInsightsAcceptancesDataRecord } from "../../../common/types";
 import * as tr from "./elexon-insights-api.tR";
 
 const rawResponses = {

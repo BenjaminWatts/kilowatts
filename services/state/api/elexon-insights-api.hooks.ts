@@ -4,15 +4,15 @@ import {
   usePnRangeQuery,
   useAccRangeQuery,
 } from "./elexon-insights-api";
-import * as p from "../../common/parsers";
-import log from "../log";
-import { UnitGroup } from "../../common/types";
+import * as p from "../../../common/parsers";
+import log from "../../log";
+import { UnitGroup } from "../../../common/types";
 import {
   useNowSettlementPeriod,
   useNowTime,
   useRecentHistoryElexonRange,
   useRefetchOnAppOrNetworkResume,
-} from "../hooks";
+} from "../../hooks";
 import { useEmbeddedWindAndSolarForecastQuery } from "./ng-eso-api";
 
 export const UPDATE_INTERVAL_LIVE_GENERATION_SECS = 1;

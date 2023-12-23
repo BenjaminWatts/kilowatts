@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import * as t from "../../common/types";
+import * as t from "../../../common/types";
 import * as tr from "./elexon-insights-api.tR";
 import { queryParams } from "./elexon-insights-api.queryParams";
 

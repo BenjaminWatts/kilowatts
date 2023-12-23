@@ -1,5 +1,5 @@
-import * as t from "../../common/types";
-import * as p from "../../common/parsers";
+import * as t from "../../../common/types";
+import * as p from "../../../common/parsers";
 
 export const queryParams = {
   settlementPeriodToQuery: (p: t.ElexonSettlementPeriodParams) => {
