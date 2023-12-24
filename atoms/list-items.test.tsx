@@ -27,7 +27,7 @@ describe("atoms/list-items/GeneratorLive", () => {
     mockOnPress.mockClear();
     mockFuelTypeIcon.mockClear();
     render(
-      <l.GeneratorLive
+      <l.UnitGroupLive
         index={0}
         fuelType="coal"
         name="my name"

@@ -2,12 +2,12 @@ import React, { useEffect, useMemo } from "react";
 import { useNavigation, useRouter } from "expo-router";
 import { useUnitGroupsLiveQuery } from "../services/state/api/elexon-insights-api.hooks";
 import { FlashList } from "@shopify/flash-list";
-import * as at from "../atoms";
-import { CallForContributions, NoLiveUnits } from "../atoms/cards";
 import log from "../services/log";
 import { urls } from "../services/nav";
+import { CallForContributions, NoLiveUnits } from "../atoms/cards";
 import { Refresh } from "../atoms/controls";
-import { FuelType } from "../common/types";
+import { UnitGroupLive as ListItem } from "../atoms/list-items";
+import { FuelType, UnitGroupLevel } from "../common/types";
 import { londonTimeHHMMSS } from "../common/utils";
 
 type UnitGroupLiveWithSearchProps = {
@@ -15,28 +15,42 @@ type UnitGroupLiveWithSearchProps = {
   search: string;
 };
 
-export const UnitGroupLiveList: React.FC<
-  UnitGroupLiveWithSearchProps
-> = ({ search, fuelType }) => {
+/*
+filterData is a function that takes a list of UnitGroupLevels and filters them
+*/
+const filterData = (
+  data: UnitGroupLevel[] | null,
+  search: string,
+  fuelType?: FuelType
+) => {
+  if (!data) return data;
+
+  return data.filter((d) => {
+    const nameMatch =
+      search === "" ||
+      d.details.name.toLowerCase().includes(search.toLowerCase());
+    const fuelTypeMatch = !fuelType || d.details.fuelType === fuelType;
+    return nameMatch && fuelTypeMatch;
+  });
+};
+
+export const UnitGroupLiveList: React.FC<UnitGroupLiveWithSearchProps> = ({
+  search,
+  fuelType,
+}) => {
   const router = useRouter();
   const query = useUnitGroupsLiveQuery();
 
   const { data, now, isLoading, refetch } = query;
-  const filteredData = useMemo(() => {
-    if (!data) return data;
-  
-    return data.filter((d) => {
-      const nameMatch = search === "" || d.details.name.toLowerCase().includes(search.toLowerCase());
-      const fuelTypeMatch = !fuelType || d.details.fuelType === fuelType;
-      return nameMatch && fuelTypeMatch;
-    });
-  }, [data, search, fuelType]);
-  
+  const filteredData = useMemo(
+    () => filterData(data, search, fuelType),
+    [data, search, fuelType]
+  );
 
   const nav = useNavigation();
 
   useEffect(() => {
-    if(now) {
+    if (now) {
       nav.setOptions({
         title: `Live Output: ${londonTimeHHMMSS(now)}`,
       });
@@ -54,7 +68,7 @@ export const UnitGroupLiveList: React.FC<
         const { fuelType, code } = item.details;
 
         return (
-          <at.listItems.GeneratorLive
+          <ListItem
             index={index}
             fuelType={fuelType}
             name={item.details.name}
@@ -74,4 +88,3 @@ export const UnitGroupLiveList: React.FC<
     />
   );
 };
-

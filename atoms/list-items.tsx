@@ -6,7 +6,7 @@ import { FuelTypeIcon } from "./icons";
 import { londonTime, londonTimeHHMMSS } from "../common/utils";
 import { FuelType, LevelPair, UnitGroupUnit } from "../common/types";
 
-type GeneratorLiveProps = {
+type UnitGroupLive = {
   index: number;
   fuelType: FuelType;
   name: string;
@@ -14,7 +14,7 @@ type GeneratorLiveProps = {
   onPress?: () => void;
 };
 
-export const GeneratorLive: React.FC<GeneratorLiveProps> = ({
+export const UnitGroupLive: React.FC<UnitGroupLive> = ({
   index,
   fuelType,
   name,
