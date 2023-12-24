@@ -21,7 +21,7 @@ export const GeneratorLive: React.FC<GeneratorLiveProps> = ({
   level,
   onPress,
 }) => (
-  <ListItem style={styles.listItemWrapper} onPress={onPress}>
+  <ListItem style={styles.listItemContainer} onPress={onPress}>
     <ListItem.Content
       style={styles.liveContainer}
       testID={`generator-live-${index}`}
@@ -71,7 +71,7 @@ export const UnitLive: React.FC<UnitLiveProps> = ({
   level,
   index,
 }) => (
-  <ListItem key={index} testID={`unit-type-live-list-item-${index}`}>
+  <ListItem style={styles.listItemContainer} key={index} testID={`unit-type-live-list-item-${index}`}>
     <ListItem.Content style={styles.liveContainer}>
       <ListItem.Title>{details.bmUnit}</ListItem.Title>
       <ListItem.Subtitle>{formatters.mw(level)}</ListItem.Subtitle>
@@ -86,7 +86,7 @@ export const UnitLevelListItem: React.FC<UnitLevelProps> = ({
   time,
 }) => {
   return (
-    <ListItem>
+    <ListItem style={styles.listItemContainer}>
       <ListItem.Content style={styles.liveContainer}>
         <ListItem.Title>
           {londonTimeHHMMSS(new Date(Date.parse(time)))}
@@ -108,13 +108,16 @@ const styles = StyleSheet.create({
   hSpacer: {
     width: 10,
   },
-  listItemWrapper: {
-    width: "100%",
-  },
+
   titleSubtitleWrapper: {
     display: "flex",
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 10,
   },
+  listItemContainer: {
+    width: "100%",
+    paddingTop: 0,
+    paddingBottom: 0,
+  }
 });

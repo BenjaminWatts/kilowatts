@@ -50,34 +50,23 @@ export const UnitGroupLiveWithSearch: React.FC<
   const { data, now, isLoading, refetch } = query;
   const filteredData = useMemo(() => {
     if (!data) return data;
-    if (search === "") {
-      if (!fuelType) {
-        return data;
-      } else {
-        return data.filter((d) => d.details.fuelType === fuelType);
-      }
-    }
+  
     return data.filter((d) => {
-      const searchMatch = d.details.name
-        .toLowerCase()
-        .includes(search.toLowerCase());
-      const fuelTypeMatch = fuelType ? d.details.fuelType === fuelType : true;
-      return searchMatch && fuelTypeMatch;
+      const nameMatch = search === "" || d.details.name.toLowerCase().includes(search.toLowerCase());
+      const fuelTypeMatch = !fuelType || d.details.fuelType === fuelType;
+      return nameMatch && fuelTypeMatch;
     });
-  }, [data, search]);
+  }, [data, search, fuelType]);
+  
 
   const nav = useNavigation();
 
   useEffect(() => {
-    nav.setOptions({
-      title: now
-        ? fuelType
-          ? `${formatters.fuelType(fuelType)} Output: ${londonTimeHHMMSS(
-              now
-            )}`
-          : `Live Output: ${londonTimeHHMMSS(now)}`
-        : "Loading...",
-    });
+    if(now) {
+      nav.setOptions({
+        title: `Live Output: ${londonTimeHHMMSS(now)}`,
+      });
+    }
   }, [query.now]);
 
   return (

@@ -29,7 +29,7 @@ export const UnitGroupHistoryScreen: React.FC<
             url={urls.unitGroupSchedule(unitGroup.details.code)}
           />
         )}
-        <UnitGroupSchedule ug={unitGroup} />;
+        <UnitGroupSchedule ug={unitGroup} />
       </>
     );
   }

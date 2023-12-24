@@ -51,6 +51,7 @@
     "react-native-svg-charts": "^5.4.0",
     "react-native-web": "~0.19.6",
     "react-redux": "^9.0.4",
+    "redux-persist": "^6.0.0",
     "victory-native": "^36.7.0"
   },
   "devDependencies": {

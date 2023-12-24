@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { store } from "./index";
+import { store } from "./root";
 import { elexonInsightsApi } from "./elexon-insights-api";
 import {
   BmUnitLevelPairs,

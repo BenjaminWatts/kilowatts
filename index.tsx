@@ -1,21 +1,15 @@
 import React from "react";
 import { registerRootComponent } from "expo";
-import { ExpoRoot } from "expo-router";
-import { Provider } from "react-redux";
-import { Platform } from "react-native";
-import { store } from "./services/state";
 import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { ThemeProvider } from "@rneui/themed";
-import { WithLicense } from "./components/WithLicense";
 import * as Updates from "expo-updates";
-import { Alert, AppState, AppStateStatus } from "react-native";
+import { Alert, AppState, AppStateStatus, Platform } from "react-native";
 import log from "./services/log";
 import theme from "./services/theme";
-import { useInternetConnection } from "./services/hooks";
-import { Refresh } from "./atoms/controls";
-import { NoInternetConnectionCard } from "./atoms/cards";
+import { InternetConnection } from "./components/InternetConnection";
+import { ReduxProvider } from "./services/state";
 
 SplashScreen.preventAutoHideAsync();
 setTimeout(SplashScreen.hideAsync, 2000);
@@ -47,8 +41,6 @@ async function onFetchUpdateAsync() {
 }
 
 export const App = () => {
-  const {isConnected} = useInternetConnection()
-
   //   React.useEffect(() => {
   //     if (__DEV__ && Platform.OS !== "web") {
   //       const rt = require("./services/reactotron").initReactotron;
@@ -89,27 +81,16 @@ export const App = () => {
     }
   }, [loaded]);
 
-  const ctx = require.context("./app");
-
   if (!loaded) {
     return null;
   }
 
-
   return (
-    <>
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          {isConnected === null && <Refresh refreshing={true}/>}
-          {isConnected === false && <NoInternetConnectionCard/>}
-          {isConnected === true && (
-          <WithLicense>
-          <ExpoRoot context={ctx} />
-        </WithLicense>
-          )}
-        </Provider>
-      </ThemeProvider>
-    </>
+    <ThemeProvider theme={theme}>
+      <ReduxProvider>
+        <InternetConnection />
+      </ReduxProvider>
+    </ThemeProvider>
   );
 };
 

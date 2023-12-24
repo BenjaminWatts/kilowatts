@@ -1,5 +1,5 @@
 import React from "react";
-import { useAppDispatch, useAppSelector } from "../services/state";
+import { useAppDispatch, useAppSelector } from "../services/state/root";
 import { acceptLicense, getLicenseAccepted } from "../services/state/terms";
 import { ConsentDialog } from "../atoms/dialogs";
 import log from "../services/log";

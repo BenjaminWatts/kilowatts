@@ -835,7 +835,7 @@ export const interconnectors: UnitGroup[] = [
   {
     details: {
       code: "BRTN",
-      name: "BritNed (Netherlands)",
+      name: "Netherlands",
       coords: {
         lat: 51.44298,
         lng: 0.70782,
@@ -846,7 +846,7 @@ export const interconnectors: UnitGroup[] = [
   },
   {
     details: {
-      name: "IFA (France)",
+      name: "France (IFA1)",
       coords: {
         lat: 51.104,
         lng: 1.0081,
@@ -857,7 +857,7 @@ export const interconnectors: UnitGroup[] = [
   },
   {
     details: {
-      name: "IFA2 France",
+      name: "France (IFA2)",
       code: "IFA2",
       coords: {
         lat: 50.81031,
@@ -869,7 +869,7 @@ export const interconnectors: UnitGroup[] = [
   },
   {
     details: {
-      name: "Nemo (Belgium - not Disney!)",
+      name: "Belgium",
       coords: {
         lat: 51.3113,
         lng: 1.3456,
@@ -881,7 +881,7 @@ export const interconnectors: UnitGroup[] = [
   // eastwest 53.227222, -3.072778
   {
     details: {
-      name: "East West (Republic of Ireland)",
+      name: "Republic of Ireland",
       code: "EWIC",
       coords: {
         lat: 53.227222,
@@ -893,7 +893,7 @@ export const interconnectors: UnitGroup[] = [
   },
   {
     details: {
-      name: "Moyle (Northern Ireland)",
+      name: "Northern Ireland",
       code: "MOYL",
       coords: {
         lat: 55.0667,
@@ -905,7 +905,7 @@ export const interconnectors: UnitGroup[] = [
   },
   {
     details: {
-      name: "Viking (Denmark)",
+      name: "Denmark",
       code: "VKL",
       coords: {
         lat: 52.930278,
@@ -917,7 +917,7 @@ export const interconnectors: UnitGroup[] = [
   },
   {
     details: {
-      name: "North Sea Link (Norway)",
+      name: "Norway",
       code: "NSL",
       coords: {
         lat: 55.145,
@@ -929,7 +929,7 @@ export const interconnectors: UnitGroup[] = [
   },
   {
     details: {
-      name: "Eleclink (France)",
+      name: "France (Eleclink)",
       code: "ELEC",
       coords: {
         lat: 51.098389,

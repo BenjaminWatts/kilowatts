@@ -87,7 +87,7 @@ export const FuelTypeNotAllowed: React.FC<FuelTypeNotAllowedProps> = ({
         </Card.Title>
         <Card.Divider />
         <Text>
-          Cannot view live generation for {fuelType} unitsd. Please check the URL and try
+          Cannot view live generation for {fuelType} unitsd. Please check the URL and try again.
         </Text>
       </Card>
     </SafeAreaView>
@@ -114,9 +114,8 @@ export const MissingScreen: React.FC = () => {
         onPress={() => {
           router.replace(urls.home);
         }}
-      >
-        Reset to Home screen
-      </Button>
+        title='Go to Home Screen'
+      />
     </Card>
   );
 };
@@ -220,7 +219,7 @@ export const ApiErrorCard: React.FC<ApiErrorProps> = ({ refetch }) => {
 
       <View style={styles.spacer} />
 
-      <Button onPress={refetch}>Try again</Button>
+      <Button onPress={refetch} title='Try Again'/>
     </Card>
   );
 };

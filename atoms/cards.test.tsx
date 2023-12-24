@@ -71,7 +71,7 @@ describe("atoms/cards/MissingScreen", () => {
   });
 
   test("can click on home link", () => {
-    const homeButton = screen.getByText("Reset to Home screen");
+    const homeButton = screen.getByText("Go to Home Screen");
     fireEvent.press(homeButton);
     expect(mockLinkingOpenURL).toBeCalledWith(urls.home);
   });
