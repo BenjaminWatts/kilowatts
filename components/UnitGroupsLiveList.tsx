@@ -15,13 +15,21 @@ type UnitGroupLiveWithSearchProps = {
   search: string;
 };
 
+type FilterDataParams = {
+  data: UnitGroupLevel[] | null;
+  search: string;
+  fuelType?: FuelType;
+}
+
 /*
 filterData is a function that takes a list of UnitGroupLevels and filters them
 */
-const filterData = (
-  data: UnitGroupLevel[] | null,
-  search: string,
-  fuelType?: FuelType
+export const filterData = (
+  {
+    data,
+    search,
+    fuelType
+  }: FilterDataParams
 ) => {
   if (!data) return data;
 
@@ -39,15 +47,15 @@ export const UnitGroupLiveList: React.FC<UnitGroupLiveWithSearchProps> = ({
   fuelType,
 }) => {
   const router = useRouter();
+  const nav = useNavigation();
   const query = useUnitGroupsLiveQuery();
 
   const { data, now, isLoading, refetch } = query;
   const filteredData = useMemo(
-    () => filterData(data, search, fuelType),
+    () => filterData({data, search, fuelType}),
     [data, search, fuelType]
   );
 
-  const nav = useNavigation();
 
   useEffect(() => {
     if (now) {
