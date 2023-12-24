@@ -3,7 +3,7 @@ import { useNavigation, useRouter } from "expo-router";
 import { useUnitGroupsLiveQuery } from "../services/state/elexon-insights-api.hooks";
 import { FlashList } from "@shopify/flash-list";
 import * as at from "../atoms";
-import { IncompleteUnknownCategories, NoLiveUnits } from "../atoms/cards";
+import { CallForContributions, NoLiveUnits } from "../atoms/cards";
 import { SearchUnitGroups } from "../atoms/inputs";
 import log from "../services/log";
 import { StyleSheet } from "react-native";
@@ -73,7 +73,7 @@ export const UnitGroupLiveWithSearch: React.FC<
     <FlashList
       refreshControl={<Refresh refreshing={isLoading} onRefresh={refetch} />}
       ListEmptyComponent={NoLiveUnits}
-      ListFooterComponent={IncompleteUnknownCategories}
+      ListFooterComponent={CallForContributions}
       data={filteredData}
       estimatedItemSize={1000}
       renderItem={({ item, index }) => {

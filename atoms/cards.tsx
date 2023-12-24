@@ -4,14 +4,14 @@ import { Linking, SafeAreaView, StyleSheet, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import log from "../services/log";
 import { urls } from "../services/nav";
-import { londonTime, londonTimeHHMMSS } from "../common/utils";
+import { londonTimeHHMMSS } from "../common/utils";
 import { useRouter } from "expo-router";
 
 /*
-IncompleteUnknownCategories
+CallForContributions
 Render a card with a message asking for help to categorise the unknown balancing mechanism units.
 */
-export const IncompleteUnknownCategories = () => {
+export const CallForContributions = () => {
   return (
     <Card>
       <Card.Title>
@@ -19,18 +19,7 @@ export const IncompleteUnknownCategories = () => {
       </Card.Title>
       <Card.Divider />
       <Text>
-        This open-source app is incomplete. We need help to categorise the
-        hundreds of individual balancing mechnism units into the right
-        categories, giving them human readable names and plotting them on the
-        map.
-      </Text>
-
-      <View style={styles.spacer} />
-
-      <Text>
-        All the Unknown values represents balancing mechanism units we haven't
-        yet categorised. We need open-source contributions to complete this
-        work.
+        This open-source app is incomplete. 
       </Text>
 
       <View style={styles.spacer} />

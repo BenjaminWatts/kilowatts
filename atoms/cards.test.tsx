@@ -20,19 +20,16 @@ jest.mock("../common/utils", () => ({
   londonTimeHHMMSS: (x: any) => mockLondonTime(x),
 }));
 
-describe("atoms/cards/IncompleteUnknownCategories", () => {
+describe("atoms/cards/CallForContributions", () => {
   beforeEach(() => {
-    render(<c.IncompleteUnknownCategories />);
+    render(<c.CallForContributions />);
     mockLinkingOpenURL.mockClear();
   });
 
   test("renders text", () => {
     screen.getByText("Help us!");
     screen.getByText(
-      "This open-source app is incomplete. We need help to categorise the hundreds of individual balancing mechnism units into the right categories, giving them human readable names and plotting them on the map."
-    );
-    screen.getByText(
-      "All the Unknown values represents balancing mechanism units we haven't yet categorised. We need open-source contributions to complete this work."
+      "This open-source app is incomplete."
     );
     screen.getByText(
       "Please help us by contributing to the project on GitHub."
