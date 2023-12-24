@@ -1,6 +1,7 @@
 import { InfoModal } from "./InfoModal";
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react-native";
+import { updateId } from "expo-updates";
 
 // local mocks
 const mockConsentDialog = jest.fn();
@@ -22,6 +23,7 @@ describe("components/InfoModal", () => {
       isVisible: false,
       onBackdropPress: expect.any(Function),
       onAccept: expect.any(Function),
+      updatedAt: null
     });
   });
   test('after clicking on header-info-icon expect ConsentDialog to be called with prop isVisible=true', () => {
@@ -31,6 +33,7 @@ describe("components/InfoModal", () => {
       isVisible: true,
       onBackdropPress: expect.any(Function),
       onAccept: expect.any(Function),
+      updatedAt: null
     });
   })
 });

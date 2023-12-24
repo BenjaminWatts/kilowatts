@@ -10,9 +10,6 @@ type InternetConnectionProps = {};
 
 export const InternetConnection: React.FC<InternetConnectionProps> = () => {
   const { isConnected } = useInternetConnection();
-
-  const ctx = require.context("../app");
-
   return (
     <>
       {isConnected === null && <Refresh refreshing={true} />}
@@ -20,10 +17,22 @@ export const InternetConnection: React.FC<InternetConnectionProps> = () => {
       {isConnected === true && (
         <WithLicense>
           <ForegroundComponent>
-            <ExpoRoot context={ctx} />
+            <Connected />
           </ForegroundComponent>
         </WithLicense>
       )}
     </>
+  );
+};
+
+const Connected = () => {
+  const ctx = require.context("../app");
+
+  return (
+    <WithLicense>
+      <ForegroundComponent>
+        <ExpoRoot context={ctx} />
+      </ForegroundComponent>
+    </WithLicense>
   );
 };

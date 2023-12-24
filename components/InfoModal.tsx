@@ -17,6 +17,7 @@ export const InfoModal: React.FC<InfoModalProps> = () => {
   return (
     <>
       <ConsentDialog
+        updatedAt={null}
         isVisible={modalVisible}
         onBackdropPress={() => setModalVisible(false)}
         onAccept={() => setModalVisible(false)}

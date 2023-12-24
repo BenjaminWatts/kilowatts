@@ -3,7 +3,6 @@ import { UnitGroup } from "../common/types";
 import log from "../services/log";
 import { useUnitGroupScheduleQuery } from "../services/state/api/elexon-insights-api.hooks";
 import { RefreshControl, ScrollView } from "react-native-gesture-handler";
-import { FlashList } from "@shopify/flash-list";
 import { ApiErrorCard, UnitGroupScheduleHeader } from "../atoms/cards";
 import { UnitLevelListItem } from "../atoms/list-items";
 import { View } from "react-native";

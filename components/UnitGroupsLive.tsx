@@ -101,8 +101,3 @@ export const UnitGroupLiveWithSearch: React.FC<
   );
 };
 
-const styles = StyleSheet.create({
-  linkWrapper: {
-    width: "100%",
-  },
-});
