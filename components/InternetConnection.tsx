@@ -4,6 +4,7 @@ import { NoInternetConnectionCard } from "../atoms/cards";
 import { Refresh } from "../atoms/controls";
 import { WithLicense } from "./WithLicense";
 import { useInternetConnection } from "../services/hooks";
+import { ForegroundComponent } from "./Foreground";
 
 type InternetConnectionProps = {};
 
@@ -18,7 +19,9 @@ export const InternetConnection: React.FC<InternetConnectionProps> = () => {
       {isConnected === false && <NoInternetConnectionCard />}
       {isConnected === true && (
         <WithLicense>
-          <ExpoRoot context={ctx} />
+          <ForegroundComponent>
+            <ExpoRoot context={ctx} />
+          </ForegroundComponent>
         </WithLicense>
       )}
     </>

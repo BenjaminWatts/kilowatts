@@ -2,7 +2,7 @@ import React from "react";
 import { FlashList } from "@shopify/flash-list";
 import { useNavigation, useRouter } from "expo-router";
 import { useFuelTypeLiveQuery } from "../services/state/fuelTypeLive";
-import { ApiErrorCard, FuelTypeCompletenessListHeader, IncompleteUnknownCategories } from "../atoms/cards";
+import { ApiErrorCard, CallForContributions, FuelTypeCompletenessListHeader } from "../atoms/cards";
 import { FuelTypeLive as ListItem } from "../atoms/list-items";
 import { Refresh } from "../atoms/controls";
 import { ALLOW_LINK_FUELTYPES, londonTimeHHMMSS } from "../common/utils";
@@ -24,7 +24,7 @@ export const FuelTypeLive = () => {
     <FlashList
       testID="fuel-type-live-list"
       ListHeaderComponent={<FuelTypeCompletenessListHeader completeness={query.completeness}/>}
-      ListFooterComponent={IncompleteUnknownCategories}
+      ListFooterComponent={CallForContributions}
       refreshControl={
         <Refresh refreshing={query.isLoading} onRefresh={query.refetch} />
       }
