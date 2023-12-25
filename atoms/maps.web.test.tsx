@@ -6,4 +6,9 @@ describe("atoms/maps.web/UnitGroupMap", () => {
     render(<m.UnitGroupMap />);
     expect(screen.debug()).toBe(undefined);
   });
+
+  test("renders undefined as maps not supported on web yet", () => {
+    render(<m.UnitsGroupMap />);
+    expect(screen.debug()).toBe(undefined);
+  });
 });

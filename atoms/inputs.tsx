@@ -16,6 +16,7 @@ export const SearchUnitGroups:React.FC<SearchUnitGroupsProps> = ({
     log.debug(`SearchUnitGroups ${value}`)
     return (
         <SearchBar
+            style={{margin: 0}}
             placeholder='Search'
             value={value}
             onChangeText={onChangeText}

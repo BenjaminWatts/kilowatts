@@ -2,7 +2,7 @@
 
 export const log = {
     debug: (msg: string) => {
-        // console.log(msg)
+        console.log(msg)
     },
     info: (msg: string) => console.log(msg),
     error: (err: Error) => console.error(err),

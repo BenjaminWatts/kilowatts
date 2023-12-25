@@ -46,6 +46,8 @@ Deployment Status: [![Netlify Status](https://api.netlify.com/api/v1/badges/afd6
 
 ## Android:
 
+Note that the version of gradle must be manually downgraded to allow builds. In `android/gradle/wrapper/gradle-wrapper.properties`, change the version in `distributionUrl` to 7.5.1.
+
 Screenshots:
 
 <div class="image-container" style="display: flex;">
