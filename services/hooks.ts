@@ -105,7 +105,7 @@ export const useInternetConnection = () => {
   const [isConnected, setIsConnected] = React.useState<boolean|null>(true);
   React.useEffect(() => {
     const netInfoListener = NetInfo.addEventListener((state) => {
-      console.log(`useInternetConnection: netInfoListener: ${state.isConnected}`);
+      log.debug(`useInternetConnection: netInfoListener: ${state.isConnected}`);
       setIsConnected(state.isConnected);
     });
     return () => {

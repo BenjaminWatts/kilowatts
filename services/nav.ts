@@ -1,5 +1,6 @@
 import { unitGroupsDict } from "../assets/data/units";
 import { FuelType, UnitGroup } from "../common/types";
+import { interconnectors } from "../assets/data/interconnectors";
 import log from "../services/log";
 
 type Urls = Record<string, (code: string) => any> | any;
@@ -20,6 +21,12 @@ export const lookups = {
     log.debug(`Looking up unit group for code: ${code}`)
     const ug = unitGroupsDict[code.toUpperCase()];
     log.debug(`Found unit group: ${ug}`)
-    return ug ? ug : undefined;
+    if(ug) return ug
+    log.debug(`try interconnectors`)
+    const interconnector = interconnectors.find(i => i.details.code === code.toUpperCase())
+    if(interconnector) return interconnector
+    log.debug(`no unit group found`)
+    return undefined
+    
   },
 };

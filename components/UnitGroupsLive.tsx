@@ -6,14 +6,13 @@ import * as at from "../atoms";
 import { CallForContributions, NoLiveUnits } from "../atoms/cards";
 import { SearchUnitGroups } from "../atoms/inputs";
 import log from "../services/log";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { urls } from "../services/nav";
 import { Refresh } from "../atoms/controls";
 import { FuelType, UnitGroupLevel } from "../common/types";
 import formatters from "../common/formatters";
-import { londonTimeHHMMSS } from "../common/utils";
+import { ALLOW_LINK_FUELTYPES, londonTimeHHMMSS } from "../common/utils";
 import { UnitsGroupMap } from "../atoms/maps";
-import { hide } from "expo-splash-screen";
 
 type UnitGroupsLiveProps = {
   fuelType?: FuelType;
@@ -73,7 +72,7 @@ export const UnitGroupLiveWithSearch: React.FC<
 
   return (
     <UnitGroupsLiveList
-      hideMap={search !== "" || Platform.OS === "web"}
+      hideMap={search !== ""}
       isLoading={isLoading}
       refetch={refetch}
       data={filteredData}
@@ -120,6 +119,7 @@ const UnitGroupsLiveList: React.FC<UnitGroupsLiveListProps> = ({
             setItems(info.viewableItems.map((i) => i.item));
           }}
           renderItem={({ item, index }) => {
+        
             const { fuelType, code } = item.details;
 
             return (
@@ -129,7 +129,7 @@ const UnitGroupsLiveList: React.FC<UnitGroupsLiveListProps> = ({
                 name={item.details.name}
                 level={item.level}
                 onPress={() => {
-                  if (code && fuelType !== "interconnector") {
+                  if (code && ALLOW_LINK_FUELTYPES.includes(fuelType)) {
                     router.push(urls.unitGroup(code));
                   } else {
                     log.info(
@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
   },
   listWrapper: {
     height: "50%",
+    paddingBottom: 30,
   },
   listWrapperNoMap: {
     height: "100%",

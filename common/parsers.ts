@@ -318,6 +318,7 @@ export const groupByUnitGroup = (x: t.BmUnitValues): t.UnitGroupLevel[] => {
       level: units.reduce((a, b) => a + b.level, 0),
     });
   }
+  // debugger
 
   log.debug(`getUnitGroups: other unknown units`);
   for (const unit of Object.keys(x)) {

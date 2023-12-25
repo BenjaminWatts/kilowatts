@@ -228,3 +228,14 @@ export type NgEsoEmbeddedWindAndSolarForecastParsedResponse = {
     wind:EmbeddedForecastValue
     solar:EmbeddedForecastValue
 }[]
+
+
+// maps
+
+export type UnitGroupMapProps = {
+  ug: UnitGroup;
+};
+
+export type UnitsGroupMapProps = {
+  ugs: UnitGroupLevel[];
+};

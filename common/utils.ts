@@ -44,8 +44,6 @@ export const getCurrentYear = () => {
   return new Date().getFullYear();
 };
 
-
-
 /*
 ALLOW_LINK_FUELTYPES
 These are fuel types for which it is allowed to filter by
