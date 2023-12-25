@@ -4,6 +4,7 @@
 node_modules/
 android
 .env
+coverage
 
 # Expo
 .expo/

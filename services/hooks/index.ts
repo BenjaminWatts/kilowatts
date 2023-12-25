@@ -1,39 +1,9 @@
 import { AppState } from "react-native";
-import { getSettlementPeriod } from "../common/utils";
-import log from "../services/log";
+import log from "../../services/log";
 import React from "react";
 import NetInfo from "@react-native-community/netinfo";
-import { ElexonRangeParams } from "../common/types";
-
-/*
-useNowTime
-*/
-export const useNowTime = (updateIntervalSecs: number) => {
-  const [nowTime, setNowTime] = React.useState(new Date());
-  React.useEffect(() => {
-    log.debug(`useUnitGroupLiveQuery: mounting`);
-    const interval = setInterval(() => {
-      log.debug(`useUnitGroupLiveQuery: updating nowTime`);
-      setNowTime(new Date());
-    }, updateIntervalSecs * 1000);
-    return () => {
-      log.debug(`useUnitGroupLiveQuery: dismounting`);
-      clearInterval(interval);
-    };
-  }, []);
-  return nowTime;
-};
-
-/*
-useNowSettlementPeriod
-*/
-export const useNowSettlementPeriod = (updateIntervalSecs: number) => {
-  const now = useNowTime(updateIntervalSecs);
-  return {
-    now,
-    settlementPeriod: getSettlementPeriod(now.toISOString()),
-  };
-};
+import { ElexonRangeParams } from "../../common/types";
+import {useNowSettlementPeriod} from "../hooks/useNowSettlementPeriod";
 
 /*
 useRefetchOnAppOrNetworkResume
@@ -65,21 +35,6 @@ export const useRefetchOnAppOrNetworkResume = ({
       appStateListener.remove();
     };
   }, []);
-  // retry if internet restored
-
-  // React.useEffect(() => {
-  //   const netInfoListener = NetInfo.addEventListener((state) => {
-  //     if (state.isConnected && !isLoading) {
-  //       log.debug(
-  //         `useUnitGroupLiveQuery: netInfoListener: reconnected, refetching`
-  //       );
-  //       refetch();
-  //     }
-  //   });
-  //   return () => {
-  //     netInfoListener();
-  //   };
-  // });
 };
 
 
