@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { ListItem } from "@rneui/themed";
 import formatters from "../common/formatters";
 import { FuelTypeIcon } from "./icons";
-import { londonTime, londonTimeHHMMSS } from "../common/utils";
+import { londonTimeHHMMSS } from "../common/utils";
 import { FuelType, LevelPair, UnitGroupUnit } from "../common/types";
 
 type UnitGroupLive = {
