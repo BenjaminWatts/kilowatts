@@ -1,20 +1,17 @@
 import log from "../log";
 import React from "react";
 
-/*
-useNowTime
-updateIntervalSecs: number
-*/
+/* Returns the current time, updated with frequency updateIntervalSecs*/
 export const useNowTime = (updateIntervalSecs: number) => {
   const [nowTime, setNowTime] = React.useState(new Date());
   React.useEffect(() => {
-    log.debug(`useUnitGroupLiveQuery: mounting`);
+    log.debug(`useNowTime: mounting`);
     const interval = setInterval(() => {
-      log.debug(`useUnitGroupLiveQuery: updating nowTime`);
+      log.debug(`useNowTime: updating nowTime`);
       setNowTime(new Date());
     }, updateIntervalSecs * 1000);
     return () => {
-      log.debug(`useUnitGroupLiveQuery: dismounting`);
+      log.debug(`useNowTime: dismounting`);
       clearInterval(interval);
     };
   }, []);

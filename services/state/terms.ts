@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 type TermsState = {
   licenseAccepted: boolean;
@@ -17,7 +17,7 @@ export const termsSlice = createSlice({
     }
   },
   selectors: {
-    getLicenseAccepted: (state) => {
+    getTermsAccepted: (state) => {
       return state.licenseAccepted;
     },
 
@@ -25,4 +25,4 @@ export const termsSlice = createSlice({
 });
 
 export const { acceptLicense} = termsSlice.actions;
-export const { getLicenseAccepted } = termsSlice.selectors;
+export const { getTermsAccepted } = termsSlice.selectors;

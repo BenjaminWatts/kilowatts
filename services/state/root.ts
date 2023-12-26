@@ -9,7 +9,6 @@ import { GetDefaultMiddleware } from "@reduxjs/toolkit/dist/getDefaultMiddleware
 export const rootReducer = combineReducers({
   elexonInsightsApi: elexonInsightsApi.reducer,
   ngEsoApi: ngEsoApi.reducer,
-  // favouritesSlice: favouritesSlice.reducer, disabled for now
   termsSlice: termsSlice.reducer,
 });
 
