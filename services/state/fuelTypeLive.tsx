@@ -2,12 +2,7 @@ import {groupByFuelTypeAndInterconnectors, combineFuelTypesAndEmbedded} from "..
 import log from "../log";
 import { useEmbeddedWindAndSolarForecastQuery } from "./api/ng-eso-api";
 import { useUnitGroupsLiveQuery } from "./api/elexon-insights-api.hooks";
-import {
-  FuelTypeLiveHookResult,
-  FuelTypeLiveHookResultError,
-  FuelTypeLiveHookResultLoading,
-  FuelTypeLiveHookResultSuccess,
-} from "../../common/types";
+import * as t from "../../common/types";
 
 export const UPDATE_INTERVAL_LIVE_GENERATION_SECS = 1;
 export const POLLING_INTERVAL_ACCS_SECS = 15;
@@ -15,12 +10,9 @@ export const POLLING_INTERVAL_EMBEDDED_SECS = 60;
 
 export const MAX_RETRIES = 99999999;
 
-/*
-useFuelTypeLiveQuery
-Get the latest data for output in each fuel type category
-*/
-export const useFuelTypeLiveQuery = (): FuelTypeLiveHookResult => {
-  log.debug(`useFuelTypeLiveQuery: mounting`);
+/*Get the latest data for output in each fuel type category*/
+export const useFuelTypeLiveQuery = (): t.FuelTypeLiveHookResult => {
+  log.info(`useFuelTypeLiveQuery: mounting`);
 
   const queries = {
     bm: useUnitGroupsLiveQuery(),
@@ -38,7 +30,7 @@ export const useFuelTypeLiveQuery = (): FuelTypeLiveHookResult => {
   };
 
   const refetch = () => {
-    log.debug(`useFuelTypeLiveQuery: refetching`);
+    log.info(`useFuelTypeLiveQuery: refetching`);
     queries.bm.refetch();
     queries.embedded.refetch();
   };
@@ -49,7 +41,7 @@ export const useFuelTypeLiveQuery = (): FuelTypeLiveHookResult => {
   // return early if we don't have any data for bm, which is fatal
 
   if (!queries.bm.data) {
-    log.debug(
+    log.info(
       `useFuelTypeLiveQuery: without bm data cannot render anything meaningful`
     );
     return {
@@ -57,7 +49,7 @@ export const useFuelTypeLiveQuery = (): FuelTypeLiveHookResult => {
       completeness,
       refetch,
       data: null,
-    } as FuelTypeLiveHookResultLoading;
+    } as t.FuelTypeLiveHookResultLoading;
   }
 
   try {
@@ -79,7 +71,7 @@ export const useFuelTypeLiveQuery = (): FuelTypeLiveHookResult => {
         },
         includeEmbedded: false,
       }),
-    } as FuelTypeLiveHookResultSuccess;
+    } as t.FuelTypeLiveHookResultSuccess;
   } else {
     log.debug(
       `useFuelTypeLiveQuery: no embedded data but returning partial response`
@@ -92,16 +84,17 @@ export const useFuelTypeLiveQuery = (): FuelTypeLiveHookResult => {
         x: queries.bm.data,
         includeEmbedded: true,
       }),
-    } as FuelTypeLiveHookResultSuccess;
+    } as t.FuelTypeLiveHookResultSuccess;
   }
 
   } catch (error: any) {
+    log.error(error);
     return {
       isLoading,
       completeness,
       refetch,
       error,
       data: null,
-    } as FuelTypeLiveHookResultError;
+    } as t.FuelTypeLiveHookResultError;
   }
 };

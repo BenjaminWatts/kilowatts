@@ -9,7 +9,7 @@ const expoConfig = {
   expo: {
     name: "kilowatts",
     slug: "kilowatts",
-    version: "1.0.1",
+    version: "1.0.2",
     orientation: "portrait",
     icon: "./assets/images/icon.png",
     scheme: "kilowatts",
@@ -60,7 +60,7 @@ const expoConfig = {
         projectId: "06a9e672-4ff0-4f7d-9373-6c4c8dcbdf91",
       },
     },
-    runtimeVersion: "1.0.1",
+    runtimeVersion: "1.0.2",
     updates: {
       url: "https://u.expo.dev/06a9e672-4ff0-4f7d-9373-6c4c8dcbdf91",
     },
