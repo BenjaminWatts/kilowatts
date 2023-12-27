@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import * as t from "../../../common/types";
 import * as tr from "./ng-eso-api.tR";
+import { extractRehydrationInfo } from "./persist";
 
 const extraOptions = {
   maxRetries: 9999999,
@@ -22,6 +23,8 @@ export const ngEsoApi = createApi({
       transformResponse: tr.queries.embeddedWindAndSolarForecast,
     }),
   }),
+  extractRehydrationInfo: (action) => extractRehydrationInfo(action, "ngEsoApi"),
+
 });
 
 export const {

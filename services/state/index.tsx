@@ -1,6 +1,6 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { compose, configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import storage from '@react-native-async-storage/async-storage';
 import { rootReducer, middleware } from "./root";
 import { PersistGate } from "redux-persist/integration/react";
 import { Provider } from "react-redux";
@@ -14,7 +14,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
-  middleware,
+  middleware
 });
 
 export const persistor = persistStore(store);

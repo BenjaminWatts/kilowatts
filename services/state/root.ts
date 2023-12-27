@@ -5,6 +5,14 @@ import { ngEsoApi } from "./api/ng-eso-api";
 import { termsSlice } from "./terms";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { GetDefaultMiddleware } from "@reduxjs/toolkit/dist/getDefaultMiddleware";
+import {
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 
 export const rootReducer = combineReducers({
   elexonInsightsApi: elexonInsightsApi.reducer,
@@ -13,7 +21,11 @@ export const rootReducer = combineReducers({
 });
 
 export const middleware = (getDefaultMiddleware: GetDefaultMiddleware) =>
-  getDefaultMiddleware()
+  getDefaultMiddleware({
+    serializableCheck: {
+      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+    },
+  })
     .concat(elexonInsightsApi.middleware)
     .concat(ngEsoApi.middleware);
 

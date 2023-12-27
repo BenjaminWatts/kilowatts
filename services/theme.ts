@@ -1,7 +1,7 @@
-import { createTheme } from "@rneui/themed";
+import { createTheme, ThemeProvider } from "@rneui/themed";
 
 
-const theme = createTheme({
+export const theme = createTheme({
     // lightColors: {
     // //   primary: 'lightgreen',
     // },
@@ -12,4 +12,4 @@ const theme = createTheme({
     // },
   });
 
-  export default theme;
+export {ThemeProvider}

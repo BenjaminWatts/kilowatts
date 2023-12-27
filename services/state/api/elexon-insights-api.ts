@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import * as t from "../../../common/types";
 import * as tr from "./elexon-insights-api.tR";
 import { queryParams } from "./elexon-insights-api.queryParams";
+import { extractRehydrationInfo, isHydrateAction } from "./persist";
 
 const extraOptions = {
   maxRetries: 9999999,
@@ -56,7 +57,8 @@ export const elexonInsightsApi = createApi({
         )}${queryParams.bmUnitsToQuery(p.bmUnits)}`,
       transformResponse: tr.queries.accRange,
     }),
-  }),
+  }), 
+  extractRehydrationInfo: (action) => extractRehydrationInfo(action, "elexonInsightsApi"),
 });
 
 export const {

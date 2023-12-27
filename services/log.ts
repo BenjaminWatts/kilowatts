@@ -1,13 +1,15 @@
-import { logger } from "react-native-logs";
+import { logger, sentryTransport } from "react-native-logs";
+import { getSentry } from "./platform";
 
-const log = logger.createLogger();
+/* Configure sentry to send info (and above) level logs */
+const config = {
+  severity: "info",
+  transport: sentryTransport,
+  transportOptions: {
+    SENTRY: getSentry()
+  },
+};
 
-// export const log = {
-//     debug: (msg: string) => {
-//         console.log(msg)
-//     },
-//     info: (msg: string) => console.log(msg),
-//     error: (err: Error) => console.error(err),
-// }
+const log = logger.createLogger(config);
 
-export default log
+export default log;
