@@ -1,10 +1,7 @@
-import { ElexonRangeParams } from "../../common/types";
+import { ElexonRangeParams, UseCurrentRangeParams } from "../../common/types";
 import { useNearest30Minutes } from "./useNearest30Minutes";
 
-type UseCurrentRangeParams = {
-  hoursInAdvance: number;
-  hoursInPast: number;
-};
+
 
 
 export const calculate = {
@@ -27,8 +24,9 @@ given a number of hours in advance and in past, return a from, to range
 export const useCurrentRange = ({
   hoursInAdvance,
   hoursInPast,
+  updateIntervalSecs
 }: UseCurrentRangeParams): ElexonRangeParams => {
-  const now = useNearest30Minutes(1);
+  const now = useNearest30Minutes(updateIntervalSecs);
 
   return {
     from: calculate.hoursInPast(now, hoursInPast).toISOString(),

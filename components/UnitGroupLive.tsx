@@ -1,12 +1,11 @@
 import React from "react";
 import { UnitGroup } from "../common/types";
-import { useUnitGroupLiveQuery } from "../services/state/api/elexon-insights-api.hooks";
+import { useUnitGroupLiveQuery } from "../services/state/unitGroupLive";
 import log from "../services/log";
 import { FlashList } from "@shopify/flash-list";
 import { RefreshControl } from "react-native-gesture-handler";
 import { UnitLive } from "../atoms/list-items";
 import { ApiErrorCard, UnitListHeader } from "../atoms/cards";
-import { UnitGroupMap } from "../atoms/maps";
 import { StyleSheet, View } from "react-native";
 
 type UnitGroupLiveProps = {
@@ -17,20 +16,17 @@ export const UnitGroupLive: React.FC<UnitGroupLiveProps> = ({ ug }) => {
   const query = useUnitGroupLiveQuery(ug);
   if (query.isError) return <ApiErrorCard refetch={query.refetch} />;
   return (
-    <>
-      <View style={styles.listHalf}>
-        <FlashList
-          estimatedItemSize={50}
-          refreshControl={
-            <RefreshControl refreshing={query.isLoading} onRefresh={() => {}} />
-          }
-          ListHeaderComponent={() => <UnitListHeader now={query.now} />}
-          data={query.data}
-          renderItem={({ item, index }) => <UnitLive index={index} {...item} />}
-        />
-      </View>
-      <UnitGroupMap ug={ug} />
-    </>
+    <View style={styles.listHalf}>
+      <FlashList
+        estimatedItemSize={50}
+        refreshControl={
+          <RefreshControl refreshing={query.isLoading} onRefresh={() => {}} />
+        }
+        ListHeaderComponent={() => <UnitListHeader now={query.now} />}
+        data={query.data}
+        renderItem={({ item, index }) => <UnitLive index={index} {...item} />}
+      />
+    </View>
   );
 };
 

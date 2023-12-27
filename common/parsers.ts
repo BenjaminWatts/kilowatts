@@ -609,7 +609,7 @@ export const transformUnitGroupLiveQuery = ({
 type TransformUnitHistoryQueryParams = {
   pns: t.BmUnitLevelPairs;
   accs: t.ElexonInsightsAcceptancesResponseParsed;
-  truncateBefore: Date;
+  // truncateBefore: Date;
   units: t.UnitGroupUnit[];
 };
 
@@ -621,21 +621,19 @@ type TransformUnitHistoryDataOutput = {
   };
 };
 
+/* group pns and accs by bmUnit */
 export const transformUnitHistoryQuery = ({
   pns,
   accs,
-  truncateBefore,
+  // truncateBefore,
   units,
 }: TransformUnitHistoryQueryParams): TransformUnitHistoryDataOutput[] => {
   log.debug(`useUnitGroupHistoryQuery: joining pns and accs`);
   const combined = combinePnsAndAccs({ pns, accs });
-  log.debug(
-    `useUnitGroupHistoryQuery: removing any values before ${truncateBefore}`
-  );
-  const filtered = filterBefore(combined, truncateBefore);
+  // const filtered = filterBefore(combined, truncateBefore);
   log.debug(`useUnitGroupHistoryQuery: joining with ug.units`);
   const unitData = units.map((u) => {
-    const bmUnitData = filtered[u.bmUnit];
+    const bmUnitData = combined[u.bmUnit];
     if (!bmUnitData) {
       return {
         details: u,
@@ -774,7 +772,7 @@ type CombineFuelTypesAndEmbeddedParams = {
   data: {
     bm: t.UnitGroupLevel[];
     embedded: t.NgEsoEmbeddedWindAndSolarForecastParsedResponse;
-  }
+  };
 };
 
 /*
@@ -799,7 +797,7 @@ export const combineFuelTypesAndEmbedded = ({
   const embedded = interpolateCurrentEmbeddedWindAndSolar(
     now.toISOString(),
     data.embedded
-  )
+  );
 
   const output: t.FuelTypeLevel[] = [];
   const found = {
@@ -846,4 +844,81 @@ export const combineFuelTypesAndEmbedded = ({
   output.sort((a, b) => b.level - a.level);
 
   return output;
+};
+
+const FREQUENCY_SECS = 60
+
+type CreateRegularTimeseriesParams = {
+  from: Date;
+  to: Date;
+  levels: t.LevelPair[];
+};
+
+/* create regular timeseries */
+export const createRegularTimeseries = ({
+  from,
+  to,
+  levels,
+}: CreateRegularTimeseriesParams): t.LevelPair[] => {
+  const lastLevel = levels[levels.length - 1];
+
+  const output: t.LevelPair[] = [];
+  const fromTime = new Date(from).getTime();
+  const toTime = new Date(to).getTime();
+  let currentTime = fromTime;
+
+  while (currentTime <= toTime) {
+    const time = new Date(currentTime).toISOString();
+
+    if (time < lastLevel.time) {
+      const level = interpolateLevelPair(time, levels);
+      output.push({ time, level });
+    } else {
+      output.push({ time, level: 0 });
+    }
+
+    currentTime += FREQUENCY_SECS * 1000;
+  }
+
+  return output;
+};
+
+type JoinRegularTimeseriesParams = {
+  from: Date;
+  to: Date;
+  timeseries: {
+    name: string;
+    levels: t.LevelPair[];
+  }[];
+};
+
+type TimeseriesDict = Record<string, Record<string, number>>;
+type TimeseriesList = {time: Date}[]
+/* join timeseries to create an object suitable for rendering using victory charts*/
+
+export const joinRegularTimeseries = ({
+  from,
+  to,
+  timeseries,
+}: JoinRegularTimeseriesParams):TimeseriesList => {
+  const outputDict: TimeseriesDict = {};
+  const fromTime = new Date(from).getTime();
+  const toTime = new Date(to).getTime();
+  let currentTime = fromTime;
+  while (currentTime <= toTime) {
+    const time = new Date(currentTime).toISOString();
+    outputDict[time] = {};
+    for (const series of timeseries) {
+      const interp = interpolateLevelPair(time, series.levels)
+      if(interp !== 0) {
+        outputDict[time][series.name] = interp;
+      }
+    }
+    currentTime += FREQUENCY_SECS * 1000;
+  }
+  let outputList: TimeseriesList = [];
+  for (const time of Object.keys(outputDict)) {
+    outputList.push({time: new Date(time), ...outputDict[time]});
+  }
+  return outputList;
 };

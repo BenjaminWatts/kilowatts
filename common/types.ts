@@ -273,3 +273,10 @@ export type UnitGroupMapProps = {
 export type UnitsGroupMapProps = {
   ugs: UnitGroupLevel[];
 };
+
+
+export type UseCurrentRangeParams = {
+  hoursInAdvance: number;
+  hoursInPast: number;
+  updateIntervalSecs: number;
+};

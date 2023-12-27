@@ -40,20 +40,20 @@ const UnitGroupTabs: React.FC<UnitGroupTabsProps> = () => {
                 options={{
                   tabBarIcon: ({ color }) => (
                     <TabBarIcon
-                      testID="unit-group-live-tab-icon"
-                      name="live-tv"
+                      testID="unit-group-chart-tab-icon"
+                      name="pie-chart"
                       color={color}
                     />
                   ),
                 }}
               />
               <Tabs.Screen
-                name="schedule"
+                name="geo"
                 options={{
                   tabBarIcon: ({ color }) => (
                     <TabBarIcon
-                      testID="unit-group-units-tab-icon"
-                      name="calendar-today"
+                      testID="unit-group-map-tab-icon"
+                      name="map"
                       color={color}
                     />
                   ),

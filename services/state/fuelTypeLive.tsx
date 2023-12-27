@@ -1,7 +1,7 @@
 import {groupByFuelTypeAndInterconnectors, combineFuelTypesAndEmbedded} from "../../common/parsers";
 import log from "../log";
 import { useEmbeddedWindAndSolarForecastQuery } from "./api/ng-eso-api";
-import { useUnitGroupsLiveQuery } from "./api/elexon-insights-api.hooks";
+import { useUnitGroupsLiveQuery } from "./unitGroupsLive";
 import * as t from "../../common/types";
 
 export const UPDATE_INTERVAL_LIVE_GENERATION_SECS = 1;

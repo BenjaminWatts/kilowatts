@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { londonTimeHHMMSS } from "../common/utils";
 import { useNavigation } from "expo-router";
-import { useUnitGroupsLiveQuery } from "../services/state/api/elexon-insights-api.hooks";
+import { useUnitGroupsLiveQuery } from "../services/state/unitGroupsLive";
 import { UnitGroupsLiveList } from "./UnitGroupsLiveList";
 import { FuelType, UnitGroupLevel } from "../common/types";
 

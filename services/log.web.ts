@@ -1,7 +1,7 @@
 
 
 export const log = {
-    debug: console.log,
+    debug: () => {},
     info: console.log,
     warn: console.log,
     error: console.log,

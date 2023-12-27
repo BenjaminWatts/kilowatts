@@ -4,6 +4,7 @@ import log from "../../../services/log";
 import { UnitGroupLive } from "../../../components/UnitGroupLive";
 import { SmartAppBanner } from "../../../components/SmartAppBanner.web";
 import { urls } from "../../../services/nav";
+import { UnitGroupChart } from "../../../components/UnitGroupChart";
 
 export const UnitGroupScreen = () => {
   log.debug("UnitGroupScreen");
@@ -19,6 +20,7 @@ export const UnitGroupScreen = () => {
           <SmartAppBanner url={urls.unitGroup(unitGroup.details.code)} />
         )}
 
+        <UnitGroupChart ug={unitGroup} />
         <UnitGroupLive ug={unitGroup} />
       </>
     );
