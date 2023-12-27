@@ -12,7 +12,6 @@ export const MAX_RETRIES = 99999999;
 
 /*Get the latest data for output in each fuel type category*/
 export const useFuelTypeLiveQuery = (): t.FuelTypeLiveHookResult => {
-  log.info(`useFuelTypeLiveQuery: mounting`);
 
   const queries = {
     bm: useUnitGroupsLiveQuery(),

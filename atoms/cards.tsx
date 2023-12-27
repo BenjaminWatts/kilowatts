@@ -13,6 +13,7 @@ CallForContributions
 Render a card with a message asking for help to categorise the unknown balancing mechanism units.
 */
 export const CallForContributions = () => {
+  log.debug(`cards/atoms/CallForContributions`)
   return (
     <Card>
       <Card.Title>
@@ -43,7 +44,7 @@ UnknownUnitGroupCode
 Render a card with a message saying we can't find the unit group.
 */
 export const UnknownUnitGroupCode = () => {
-  log.debug(`UnknownUnitGroupCode`);
+  log.debug(`cards/atoms/UnknownUnitGroupCode`);
   return (
     <Card>
       <Card.Title>
@@ -68,7 +69,7 @@ Render a card with a message saying we can't find the unit group.
 export const FuelTypeNotAllowed: React.FC<FuelTypeNotAllowedProps> = ({
   fuelType,
 }) => {
-  log.debug(`FuelTypeNotAllowed`);
+  log.debug(`cards/atoms/FuelTypeNotAllowed`);
   return (
     <SafeAreaView>
       <Card>
@@ -89,7 +90,7 @@ MissingScreen
 Render a card with a message saying the screen doesn't exist.
 */
 export const MissingScreen: React.FC = () => {
-  log.debug(`MissingScreen`);
+  log.debug(`cards/atoms/MissingScreen`);
   const router = useRouter();
   return (
     <Card>
@@ -119,6 +120,7 @@ UnitListHeader
 Render a card with either a loading message or the london time of the latest update
 */
 export const UnitListHeader: React.FC<UnitListHeaderProps> = ({ now }) => {
+  log.debug(`cards/atoms/UnitListHeader`)
   const props = { testID: "unit-list-header-text" };
   return (
     <Card containerStyle={styles.listHeaderCard}>
@@ -144,6 +146,7 @@ Render a card with the unit group name and the words "Upcoming Schedule"
 export const UnitGroupScheduleHeader: React.FC<
   UnitGroupHistoryListHeaderComponentProps
 > = ({ bmUnit }) => {
+  log.debug(`cards/atoms/UnitGroupScheduleHeader`)
   return (
     <Card containerStyle={styles.listHeaderCard}>
       <Text>Unit {bmUnit} schedule</Text>
@@ -156,6 +159,7 @@ EmptyScheduleCard
 
 */
 export const EmptyScheduleCard: React.FC = () => {
+  log.debug(`cards/atoms/EmptyScheduleCard`)
   return (
     <Card containerStyle={styles.listHeaderCard}>
       <Card.Title>No Scheduled Output</Card.Title>
@@ -174,6 +178,7 @@ No Live Units Found
 
 */
 export const NoLiveUnits: React.FC = () => {
+  log.debug(`cards/atoms/NoLiveUnits`)
   return (
     <Card containerStyle={styles.listHeaderCard}>
       <Card.Title>No Units Found</Card.Title>
@@ -195,6 +200,7 @@ type ApiErrorProps = {
   refetch: () => void;
 };
 export const ApiErrorCard: React.FC<ApiErrorProps> = ({ refetch }) => {
+  log.info(`cards/atoms/ApiErrorCard`)
   return (
     <Card>
       <Card.Title>
@@ -215,6 +221,7 @@ export const ApiErrorCard: React.FC<ApiErrorProps> = ({ refetch }) => {
 };
 
 export const NoInternetConnectionCard: React.FC = () => {
+  log.debug(`cards/atoms/NoInternetConnectionCard`)
   return (
     <SafeAreaView>
       <Card>
@@ -236,6 +243,7 @@ export const NoInternetConnectionCard: React.FC = () => {
 };
 
 export const FuelTypeCompletenessListHeader: React.FC<{completeness: FuelTypeLiveCompleteness}> = ({completeness}) => {
+  log.debug(`cards/atoms/FuelTypeCompletenessListHeader`)
   const {bm, embedded} = completeness;
   return (
     <Card containerStyle={styles.listHeaderCard}>

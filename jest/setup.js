@@ -16,3 +16,13 @@ jest.mock('react-native-reanimated', () => {
 jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
 
 require("@shopify/flash-list/jestSetup");
+
+jest.mock('@sentry/react-native', () => {
+  return {
+    init: jest.fn(),
+    captureException: jest.fn(),
+    captureMessage: jest.fn(),
+    withScope: jest.fn(),
+    configureScope: jest.fn(),
+  };
+})

@@ -1,7 +1,6 @@
 // test rendering the UnitGroupsLive component, and entering text into the search box
 import { render, screen, fireEvent } from "@testing-library/react-native";
 import { UnitGroupsLive } from "./UnitGroupsLive";
-import { useRoute } from "@react-navigation/native";
 
 const mockRenders = [
   jest.spyOn(require("../components/UnitGroupsLiveList"), "UnitGroupLiveList"),
@@ -11,6 +10,16 @@ const mockRenders = [
 // mock the list component
 jest.mock("../components/UnitGroupsLiveList", () => ({
   UnitGroupLiveList: () => <div>UnitGroupLiveList</div>,
+}));
+
+// mock useUnitGroupsLiveQuery
+jest.mock("../services/state/api/elexon-insights-api.hooks", () => ({
+  useUnitGroupsLiveQuery: () => ({
+    data: [],
+    now: new Date(),
+    isLoading: false,
+    refetch: jest.fn(),
+  }),
 }));
 
 // mock expo router

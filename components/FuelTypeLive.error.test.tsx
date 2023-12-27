@@ -37,6 +37,7 @@ jest.mock("expo-router", () => ({
   }),
 }));
 
+
 // mockrenders for mocked components
 
 const mockRenders = {
