@@ -1,10 +1,14 @@
 import React from 'react'
 import { useFuelTypeHistoryQuery } from '../services/state/fuelTypeRange';
+import { UnitGroupUnitsStackedChart } from '../atoms/charts';
 
-export const FuelTypeRange = () => {
+type FuelTypeRangeProps = {
+    height: number;
+}
+export const FuelTypeRange:React.FC<FuelTypeRangeProps> = ({height}) => {
     const query = useFuelTypeHistoryQuery();
-    console.log(query.data)
+    if(!query.data) return (<></>)
     return (
-        <></>
+        <UnitGroupUnitsStackedChart height={height} data={query.data}/>
     )
 }

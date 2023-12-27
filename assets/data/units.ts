@@ -1,4 +1,5 @@
 import { FuelType, UnitGroup, UnitGroupsDict } from "../../common/types";
+import { interconnectors } from "./interconnectors";
 
 export const unitGroups: UnitGroup[] = [
   {
@@ -3890,5 +3891,11 @@ for (const ug of unitGroups) {
         fuelTypeUnitsDict[ug.details.fuelType].push(unit.bmUnit);
       }
     }
+  }
+}
+
+for (const interconnector of interconnectors) {
+  for (const bmUnit of interconnector.units) {
+    fuelTypeUnitsDict['interconnector'].push(bmUnit.bmUnit);
   }
 }

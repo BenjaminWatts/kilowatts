@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { ListItem } from "@rneui/themed";
 import formatters from "../common/formatters";
 import { FuelTypeIcon } from "./icons";
@@ -47,17 +47,16 @@ export const FuelTypeLive: React.FC<FuelTypeLiveProps> = ({
   level,
   onPress,
 }) => (
-  <ListItem testID={`fuel-type-live-list-item-${name}`} onPress={onPress}>
+  <Pressable style={styles.listItemContainer} testID={`fuel-type-live-list-item-${name}`} onPress={onPress}  >
     <ListItem.Content style={styles.liveContainer}>
       <View style={styles.titleSubtitleWrapper}>
         <FuelTypeIcon fuelType={name} size={20} />
-
-        <ListItem.Title>{formatters.fuelType(name)}</ListItem.Title>
+        <ListItem.Subtitle>{formatters.fuelType(name)}</ListItem.Subtitle>
       </View>
 
       <ListItem.Subtitle>{formatters.mw(level)}</ListItem.Subtitle>
     </ListItem.Content>
-  </ListItem>
+  </Pressable>
 );
 
 type UnitLiveProps = {
@@ -98,12 +97,20 @@ export const UnitLevelListItem: React.FC<UnitLevelProps> = ({
 };
 
 const styles = StyleSheet.create({
+  listItemContainer: {
+    height: 30,
+    width: '100%',
+  },
   liveContainer: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     width: "100%",
     justifyContent: "space-between",
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    marginVertical: 0,
+    marginHorizontal: 0,
   },
   hSpacer: {
     width: 10,
@@ -115,9 +122,5 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     gap: 10,
   },
-  listItemContainer: {
-    width: "100%",
-    paddingTop: 0,
-    paddingBottom: 0,
-  }
+
 });

@@ -927,6 +927,22 @@ export const joinRegularTimeseries = ({
   return outputList;
 };
 
+type UnitGroupUnitsStackedChartDataValues = {
+  gas: number;
+  coal: number;
+  nuclear: number;
+  wind: number;
+  solar: number;
+  hydro: number;
+  biomass: number;
+  battery: number;
+  interconnector: number;
+};
+
+type UnitGroupUnitsStackedChartData = UnitGroupUnitsStackedChartDataValues & {
+  time: Date;
+};
+
 type TransformFuelTypeHistoryQueryParams = {
   range: {
     from: Date;
@@ -940,8 +956,8 @@ export const transformFuelTypeHistoryQuery = ({
   range,
   bm,
   embedded,
-}: TransformFuelTypeHistoryQueryParams) => {
-  const outputDict: TimeseriesDict = {};
+}: TransformFuelTypeHistoryQueryParams): UnitGroupUnitsStackedChartData[] => {
+  let outputList: UnitGroupUnitsStackedChartData[] = [];
   const fromTime = new Date(range.from);
   const toTime = new Date(range.to);
   log.info(`transformFuelTypeHistoryQuery: ${fromTime} to ${toTime}`);
@@ -951,11 +967,19 @@ export const transformFuelTypeHistoryQuery = ({
     const time = new Date(currentTime).toISOString();
     let hasBm = false;
 
-    let timeDict: Record<string, any> = {
-      'time': time,
-    }
-    for (const fuelType in fuelTypeUnitsDict) {
-      let output = 0;
+    let timeDict: Record<string, number> = {
+      ...interpolateCurrentEmbeddedWindAndSolar(time, embedded),
+      gas: 0,
+      coal: 0,
+      nuclear: 0,
+      hydro: 0,
+      biomass: 0,
+      battery: 0,
+      solar: 0,
+      wind: 0,
+      interconnector: 0
+    };
+    for (const fuelType in timeDict) {
       const units = fuelTypeUnitsDict[fuelType];
       for (const unit of units) {
         if (!isEmbeddedUnit(unit)) {
@@ -963,38 +987,37 @@ export const transformFuelTypeHistoryQuery = ({
           if (pairs) {
             try {
               const level = interpolateLevelPair(time, pairs);
-              output += level;
+              if (level !== 0) {
+                hasBm = true;
+                timeDict[fuelType] += level;
+              }
             } catch (e) {}
           }
         }
       }
-      if (output !== 0) {
-        hasBm = true;
-        timeDict[fuelType] = output;
-      }
     }
     if (hasBm) {
-      // add embedded
-      const emb = interpolateCurrentEmbeddedWindAndSolar(
-        time,
-        embedded
-      );
-      if(emb.solar !== 0) {
-        timeDict['solar'] = emb.solar;
-      }
-      if(timeDict.wind) {
-        timeDict['wind'] += emb.wind;
-      } else {
-        timeDict['wind'] = emb.wind;
-      }
-      
-      outputDict[time] = timeDict;
+      outputList.push({ time: new Date(time), ...stackTimeDict(timeDict as any)});
     }
     currentTime += FREQUENCY_SECS * 1000;
   }
-  let outputList: TimeseriesList = [];
-  for (const time of Object.keys(outputDict)) {
-    outputList.push({ time: new Date(time), ...outputDict[time] });
-  }
-  return outputList;
+
+  return outputList
+
 };
+
+const stackTimeDict = (x: UnitGroupUnitsStackedChartDataValues) => {
+  // x.wind = 0
+  let output: UnitGroupUnitsStackedChartDataValues = {
+    nuclear: x.nuclear,
+    wind: x.wind + x.nuclear,
+    solar: x.solar + x.wind + x.nuclear,
+    hydro: x.hydro + x.solar + x.wind + x.nuclear,
+    biomass: x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
+    gas: x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
+    coal: x.coal + x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
+    battery: x.battery + x.coal + x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
+    interconnector: x.interconnector + x.battery + x.coal + x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear
+  }
+  return output
+}

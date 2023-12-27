@@ -9,6 +9,9 @@ export const londonTime = (date: Date) =>
 export const londonTimeHHMMSS = (date: Date) =>
   londonTime(date).split(" ")[1];
 
+  export const londonTimeHHMM = (date: Date) =>
+  londonTimeHHMMSS(date).split(":").slice(0, 2).join(":");
+
 export const getSettlementPeriod = (
   dateString?: string
 ): t.ElexonSettlementPeriodParams => {
