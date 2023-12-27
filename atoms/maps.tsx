@@ -1,6 +1,6 @@
 import React from "react";
 import MV, { MapViewProps, Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { UnitGroup, UnitGroupLevel } from "../common/types";
+import {  UnitGroupMapProps, UnitsGroupMapProps } from "../common/types";
 import log from "../services/log";
 import { Platform, StyleSheet } from "react-native";
 import formatters from "../common/formatters";
@@ -8,9 +8,6 @@ import { FuelTypeIcon } from "./icons";
 import { useRouter } from "expo-router";
 import { urls } from "../services/nav";
 
-type UnitGroupMapProps = {
-  ug: UnitGroup;
-};
 
 const getMapProvider = () => {
   if (Platform.OS === "android") {
@@ -50,9 +47,7 @@ export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
   );
 };
 
-type UnitsGroupMapProps = {
-  ugs: UnitGroupLevel[];
-};
+
 
 export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ ugs }) => {
   const router = useRouter();

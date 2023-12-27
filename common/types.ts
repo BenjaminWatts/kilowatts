@@ -264,3 +264,12 @@ export type FuelTypeLiveHookResultSuccess = {
 }
 
 export type FuelTypeLiveHookResult = FuelTypeLiveHookResultSuccess | FuelTypeLiveHookResultError | FuelTypeLiveHookResultLoading;
+// maps
+
+export type UnitGroupMapProps = {
+  ug: UnitGroup;
+};
+
+export type UnitsGroupMapProps = {
+  ugs: UnitGroupLevel[];
+};
