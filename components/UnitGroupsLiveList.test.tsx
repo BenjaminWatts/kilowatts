@@ -1,5 +1,13 @@
 import React from "react";
 import * as u from "./UnitGroupsLiveList";
+import { render, screen, fireEvent, act } from "@testing-library/react-native";
+import { refresh } from "@react-native-community/netinfo";
+import { UnitGroupLevel } from "../common/types";
+
+const mockFns = {
+  refresh: jest.fn(),
+  UnitsGroupMap: jest.fn(),
+};
 
 //mock expo router
 
@@ -9,135 +17,86 @@ jest.mock("expo-router", () => ({
   }),
 }));
 
-// useUnitGroupsLiveQuery
-jest.mock("../services/state/api/elexon-insights-api.hooks", () => ({
-  useUnitGroupsLiveQuery: () => ({
-    data: null,
-    isLoading: true,
-    refetch: () => {},
-  }),
+// mock UnitsGroupMap
+jest.mock("../atoms/maps", () => ({
+  UnitsGroupMap: (p: any) => {
+    mockFns.UnitsGroupMap(p);
+    return <></>;
+  },
 }));
 
-describe("UnitGroupsLiveList/filterData", () => {
-  it("should return null if data is null", () => {
-    expect(
-      u.filterData({
-        data: null,
-        search: "",
-        fuelType: undefined,
-      })
-    ).toBe(null);
+describe("components/UnitGroupsLiveList hideMap and no data", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    render(
+      <u.UnitGroupsLiveList
+        hideMap={true}
+        isLoading={true}
+        refetch={mockFns.refresh}
+        data={null}
+      />
+    );
   });
 
-  it("should remove non coal units if fuelType is coal", () => {
+  test("UnitsGroupMap should not have been called", () => {
+    expect(mockFns.UnitsGroupMap).not.toHaveBeenCalled();
+  });
+
+  test("No Units Found should be visible (as ListEmptyComponent)", () => {
+    expect(screen.getByText("No Units Found")).toBeTruthy();
+  });
+
+  test("Call for contributions component text should be visible ", () => {
     expect(
-      u.filterData({
-        data: [
-          {
-            details: {
-              name: "coal",
-              fuelType: "coal",
-            },
-            units: [],
-            level: 0,
-          },
-          {
-            details: {
-              name: "gas",
-              fuelType: "gas",
-            },
-            units: [],
-            level: 0,
-          },
-        ],
-        search: "",
-        fuelType: "coal",
-      })
-    ).toEqual([
-      {
+      screen.getByText("This open-source app is incomplete.")
+    ).toBeTruthy();
+  });
+});
+
+describe("components/UnitGroupsLiveList show map and render data", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    // generate 200 items
+    const data: UnitGroupLevel[] = [];
+    for (let i = 0; i < 1000; i++) {
+      data.push({
         details: {
-          name: "coal",
+          name: `coal ${i}`,
           fuelType: "coal",
+          code: `coal-${i}`,
         },
         units: [],
         level: 0,
-      },
-    ]);
+      });
+    }
+
+    render(
+      <u.UnitGroupsLiveList
+        hideMap={false}
+        isLoading={true}
+        refetch={() => {}}
+        data={data}
+      />
+    );
   });
 
-  it("it should filter search results", () => {
-    const search = "Drax";
-    expect(
-      u.filterData({
-        data: [
-          {
-            details: {
-              name: "Drax",
-              fuelType: "coal",
-            },
-            units: [],
-            level: 0,
-          },
-          {
-            details: {
-              name: "Carrington",
-              fuelType: "gas",
-            },
-            units: [],
-            level: 0,
-          },
-        ],
-        search,
-        fuelType: undefined,
-      })
-    ).toEqual([
-      {
-        details: {
-          name: "Drax",
-          fuelType: "coal",
-        },
-        units: [],
-        level: 0,
-      },
-    ]);
+  test('expect "No Units Found" to not be visible', () => {
+    expect(screen.queryByText("No Units Found")).toBeNull();
+  })
+
+  test("UnitsGroupMap should have been called with initially no items", () => {
+    expect(mockFns.UnitsGroupMap).toHaveBeenCalled();
+    const call = mockFns.UnitsGroupMap.mock.calls[0][0]
+    expect(call.ugs).toEqual([]);
   });
 
-  it("search is not case sensitive", () => {
-    const search = "DrAx";
-    expect(
-      u.filterData({
-        data: [
-          {
-            details: {
-              name: "Drax",
-              fuelType: "coal",
-            },
-            units: [],
-            level: 0,
-          },
-          {
-            details: {
-              name: "Carrington",
-              fuelType: "gas",
-            },
-            units: [],
-            level: 0,
-          },
-        ],
-        search,
-        fuelType: undefined,
-      })
-    ).toEqual([
-      {
-        details: {
-          name: "Drax",
-          fuelType: "coal",
-        },
-        units: [],
-        level: 0,
-      },
-    ]);
-  });
+  test('wait until list rendered', () => {
+    screen.getByText("coal 0")
+  })
+
+  // :TODO: add tests to simulate scrolling and check that UnitsGroupMap is called with the correct items
+
 
 
 });

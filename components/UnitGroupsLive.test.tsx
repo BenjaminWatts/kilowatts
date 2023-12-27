@@ -1,109 +1,90 @@
 // test rendering the UnitGroupsLive component, and entering text into the search box
-import { render, screen, fireEvent } from "@testing-library/react-native";
+import { render, act } from "@testing-library/react-native";
 import { UnitGroupsLive } from "./UnitGroupsLive";
 
-const mockRenders = [
-  jest.spyOn(require("../components/UnitGroupsLiveList"), "UnitGroupLiveList"),
-  jest.spyOn(require("../atoms/inputs"), "SearchUnitGroups"),
-];
-
-// mock the list component
-jest.mock("../components/UnitGroupsLiveList", () => ({
-  UnitGroupLiveList: () => <div>UnitGroupLiveList</div>,
-}));
-
-// mock useUnitGroupsLiveQuery
-jest.mock("../services/state/api/elexon-insights-api.hooks", () => ({
-  useUnitGroupsLiveQuery: () => ({
-    data: [],
-    now: new Date(),
-    isLoading: false,
-    refetch: jest.fn(),
-  }),
-}));
-
-// mock expo router
-jest.mock("expo-router", () => ({
-  useNavigation: () => ({
-    setOptions: jest.fn(),
-  }),
-  useRouter: () => ({
-    params: {},
-  }),
-}));
-
-const typingEvents = {
-  drax: () => {
-    const input = screen.getByPlaceholderText("Search");
-    fireEvent.changeText(input, "Drax");
-    return input;
-  },
-  ratcliffe: () => {
-    const input = screen.getByPlaceholderText("Search");
-    fireEvent.changeText(input, "Ratcliffe");
-    return input;
-  }
+const mockFns = {
+  SearchUnitGroups: jest.fn(),
+  UnitGroupLiveWithSearch: jest.fn(),
 };
+
+// mock the search box component
+jest.mock("../atoms/inputs", () => ({
+  SearchUnitGroups: (p: any) => {
+    mockFns.SearchUnitGroups(p);
+    return <></>;
+  },
+}));
+
+// mock the with search component
+jest.mock("./UnitGroupsLiveWithSearch", () => ({
+  UnitGroupLiveWithSearch: (p: any) => {
+    mockFns.UnitGroupLiveWithSearch(p);
+    return <></>;
+  },
+}));
 
 describe("UnitGroupsLive/noFuelType", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    console.log(UnitGroupsLive);
     render(<UnitGroupsLive />);
   });
 
-  test("search input is visible", () => {
-    screen.getByPlaceholderText("Search");
+  test("SearchUnitGroups has been called with value=='' ", () => {
+    const call = mockFns.SearchUnitGroups.mock.calls[0][0];
+    expect(call.value).toBe("");
   });
 
   test('UnitGroupLiveList is rendered with the prop search == "" and fuelType undefined ', () => {
-    expect(mockRenders[0]).toHaveBeenCalledWith(
-      { search: "", fuelType: undefined },
-      {}
-    );
+    const call = mockFns.UnitGroupLiveWithSearch.mock.calls[0][0];
+    expect(call.search).toBe("");
+    expect(call.fuelType).toBe(undefined);
   });
 
-  test("can enter Drax into search input and this is reflected in the rendered text", () => {
-    const input = typingEvents.drax();
-    expect(input.props.value).toBe("Drax");
-  });
+  test("typing Drax results in rerenders to the search and with search components", () => {
+    const call = mockFns.SearchUnitGroups.mock.calls[0][0];
+    const onChangeText = call.onChangeText;
+    console.log(onChangeText);
+    act(() => onChangeText("Drax"));
 
-  test("after typing Drax, UnitGroupLiveList is called with prop Search == Drax", () => {
-    typingEvents.drax();
-    expect(mockRenders[0]).toHaveBeenCalledWith(
-      { search: "Drax", fuelType: undefined },
-      {}
-    );
+    const nextSearchCall = mockFns.SearchUnitGroups.mock.calls[1][0];
+    expect(nextSearchCall.value).toBe("Drax");
+
+    const nextWithSearchCall = mockFns.UnitGroupLiveWithSearch.mock.calls[1][0];
+    expect(nextWithSearchCall.search).toBe("Drax");
+    expect(nextWithSearchCall.fuelType).toBe(undefined);
   });
 });
 
-
-describe("UnitGroupsLive/coal", () => {
+describe("UnitGroupsLive/withFuelType", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    render(<UnitGroupsLive fuelType="coal"/>);
+    console.log(UnitGroupsLive);
+    render(<UnitGroupsLive fuelType="coal" />);
   });
 
-  test("search input is visible", () => {
-    screen.getByPlaceholderText("Search");
+  test("SearchUnitGroups has been called with value=='' ", () => {
+    const call = mockFns.SearchUnitGroups.mock.calls[0][0];
+    expect(call.value).toBe("");
   });
 
   test('UnitGroupLiveList is rendered with the prop search == "" and fuelType coal ', () => {
-    expect(mockRenders[0]).toHaveBeenCalledWith(
-      { search: "", fuelType: 'coal' },
-      {}
-    );
+    const call = mockFns.UnitGroupLiveWithSearch.mock.calls[0][0];
+    expect(call.search).toBe("");
+    expect(call.fuelType).toBe("coal");
   });
 
-  test("can enter Ratcliffe into search input and this is reflected in the rendered text", () => {
-    const input = typingEvents.ratcliffe();
-    expect(input.props.value).toBe("Ratcliffe");
-  });
+  test("typing Drax results in rerenders to the search and with search components", () => {
+    const call = mockFns.SearchUnitGroups.mock.calls[0][0];
+    const onChangeText = call.onChangeText;
+    console.log(onChangeText);
+    act(() => onChangeText("Drax"));
 
-  test("after typing Drax, UnitGroupLiveList is called with prop Search == Ratcliffe", () => {
-    typingEvents.ratcliffe();
-    expect(mockRenders[0]).toHaveBeenCalledWith(
-      { search: "Ratcliffe", fuelType: 'coal' },
-      {}
-    );
+    const nextSearchCall = mockFns.SearchUnitGroups.mock.calls[1][0];
+    expect(nextSearchCall.value).toBe("Drax");
+
+    const nextWithSearchCall = mockFns.UnitGroupLiveWithSearch.mock.calls[1][0];
+    expect(nextWithSearchCall.search).toBe("Drax");
+    expect(nextWithSearchCall.fuelType).toBe("coal");
   });
 });

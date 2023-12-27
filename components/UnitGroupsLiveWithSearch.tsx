@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { Platform } from "react-native";
 import { londonTimeHHMMSS } from "../common/utils";
 import { useNavigation } from "expo-router";
 import { useUnitGroupsLiveQuery } from "../services/state/api/elexon-insights-api.hooks";

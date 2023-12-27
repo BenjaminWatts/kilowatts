@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo } from "react";
-import { useNavigation, useRouter } from "expo-router";
-import { useUnitGroupsLiveQuery } from "../services/state/api/elexon-insights-api.hooks";
+import React from "react";
+import { useRouter } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
 import log from "../services/log";
 import { urls } from "../services/nav";
 import { CallForContributions, NoLiveUnits } from "../atoms/cards";
 import { Refresh } from "../atoms/controls";
 import { UnitGroupLive as ListItem } from "../atoms/list-items";
-import { FuelType, UnitGroupLevel } from "../common/types";
+import { UnitGroupLevel } from "../common/types";
 import { View, StyleSheet } from "react-native";
 import { UnitsGroupMap } from "../atoms/maps";
 
@@ -36,6 +35,7 @@ export const UnitGroupsLiveList: React.FC<UnitGroupsLiveListProps> = ({
       )}
       <View style={!hideMap ? styles.listWrapper : styles.listWrapperNoMap}>
         <FlashList
+          testID='unit-groups-live-list'
           refreshControl={
             <Refresh refreshing={isLoading} onRefresh={refetch} />
           }
@@ -46,9 +46,9 @@ export const UnitGroupsLiveList: React.FC<UnitGroupsLiveListProps> = ({
           viewabilityConfig={{
             itemVisiblePercentThreshold: 100,
           }}
-          onViewableItemsChanged={(info) => {
-            setItems(info.viewableItems.map((i) => i.item));
-          }}
+          onViewableItemsChanged={(info) => 
+            setItems(info.viewableItems.map((i) => i.item))
+          }
           renderItem={({ item, index }) => {
             const { fuelType, code } = item.details;
 

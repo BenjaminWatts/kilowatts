@@ -26,7 +26,7 @@ type GetZoomParams = {
   fuelType: FuelType;
 };
 
-const isNorthSeaWind = ({ fuelType, coords }: GetZoomParams) => {
+export const isNorthSeaWind = ({ fuelType, coords }: GetZoomParams) => {
   if (fuelType != "wind") return false;
   if (coords.lng > 1) {
     return true;
@@ -39,7 +39,7 @@ const zoomLevels = {
   other: 10,
 };
 
-const getZoom = (params: GetZoomParams) => {
+export const getZoom = (params: GetZoomParams): number => {
   return isNorthSeaWind(params) ? zoomLevels.northSeaWind : zoomLevels.other;
 };
 
@@ -93,6 +93,7 @@ export const GoogleMarkerMap: React.FC<GoogleMarkerMapProps> = ({
 
   return (
     <GoogleMap
+      
       mapContainerStyle={containerStyle}
       center={center}
       options={{
