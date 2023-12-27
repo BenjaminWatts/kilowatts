@@ -1,4 +1,3 @@
-import { usePnRangeQuery, useAccRangeQuery } from "./api/elexon-insights-api";
 import * as p from "../../common/parsers";
 import log from "../log";
 import {
@@ -6,7 +5,7 @@ import {
   UnitGroup,
   UseCurrentRangeParams,
 } from "../../common/types";
-import { useCurrentRange } from "../hooks";
+import { useUnitHistoryQuery } from "./unitsHistory";
 
 type UnitGroupHistoryQueryParams = {
   range: UseCurrentRangeParams;
@@ -18,46 +17,22 @@ export const useUnitGroupHistoryQuery = ({
   ug,
   range,
 }: UnitGroupHistoryQueryParams) => {
-  const params = {
-    ...useCurrentRange(range),
+  const query = useUnitHistoryQuery({
+    range,
     bmUnits: ug.units.map((u) => u.bmUnit),
-  };
+  });
 
-  log.debug(
-    `useUnitGroupHistoryQuery: establishing queries with params ${JSON.stringify(
-      params
-    )}`
-  );
-
-  const queries = {
-    pn: usePnRangeQuery(params),
-    acc: useAccRangeQuery(params),
-  };
-
-  const baseParams = {
-    isLoading: queries.pn.isLoading || queries.acc.isLoading,
-    refetch: () => {
-      log.debug(`useUnitGroupHistoryQuery: refetching`);
-      queries.pn.refetch();
-      queries.acc.refetch();
-    },
-    data: null,
-    isError: false,
-  };
-
-  if (baseParams.isLoading || !queries.pn.data || !queries.acc.data) {
-    return baseParams;
+  if (!query.data) {
+    return query;
   }
 
   try {
     const units = p.transformUnitHistoryQuery({
-      pns: queries.pn.data,
-      accs: queries.acc.data,
+      data: query.data,
       units: ug.units,
     });
 
-    const from = new Date(params.from);
-    const to = new Date(params.to);
+    const { from, to } = query.range;
 
     const timeseries: { name: string; levels: LevelPair[] }[] = units
       .filter((u) => u.data.levels.length !== 0)
@@ -79,13 +54,13 @@ export const useUnitGroupHistoryQuery = ({
     });
 
     return {
-      ...baseParams,
+      ...query,
       data: joined,
     };
   } catch (e: any) {
     log.error(e);
     return {
-      ...baseParams,
+      ...query,
       data: null,
       isError: true,
     };

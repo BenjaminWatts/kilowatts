@@ -1,6 +1,6 @@
 import * as t from "./types";
 import log from "../services/log";
-import { unitGroups } from "../assets/data/units";
+import { fuelTypeUnitsDict, unitGroups } from "../assets/data/units";
 import { interconnectors } from "../assets/data/interconnectors";
 
 /*
@@ -368,6 +368,10 @@ export const groupByUnitGroup = (x: t.BmUnitValues): t.UnitGroupLevel[] => {
   return output;
 };
 
+const isEmbeddedUnit = (bmUnit: string) => {
+  return bmUnit.startsWith("E_");
+};
+
 type GroupByFuelTypeAndInterconnectorsParams = {
   x: t.UnitGroupLevel[];
   includeEmbedded: boolean;
@@ -406,7 +410,7 @@ export const groupByFuelTypeAndInterconnectors = ({
     for (const ug of x) {
       if (ug.details.fuelType === ft) {
         for (const u of ug.units) {
-          if (includeEmbedded || !u.unit.bmUnit.startsWith("E_")) {
+          if (includeEmbedded || !isEmbeddedUnit(u.unit.bmUnit)) {
             level += u.level;
             unitGroupLevels.push(ug);
           }
@@ -846,7 +850,7 @@ export const combineFuelTypesAndEmbedded = ({
   return output;
 };
 
-const FREQUENCY_SECS = 60
+const FREQUENCY_SECS = 60;
 
 type CreateRegularTimeseriesParams = {
   from: Date;
@@ -893,14 +897,14 @@ type JoinRegularTimeseriesParams = {
 };
 
 type TimeseriesDict = Record<string, Record<string, number>>;
-type TimeseriesList = {time: Date}[]
+type TimeseriesList = { time: Date }[];
 /* join timeseries to create an object suitable for rendering using victory charts*/
 
 export const joinRegularTimeseries = ({
   from,
   to,
   timeseries,
-}: JoinRegularTimeseriesParams):TimeseriesList => {
+}: JoinRegularTimeseriesParams): TimeseriesList => {
   const outputDict: TimeseriesDict = {};
   const fromTime = new Date(from).getTime();
   const toTime = new Date(to).getTime();
@@ -909,8 +913,8 @@ export const joinRegularTimeseries = ({
     const time = new Date(currentTime).toISOString();
     outputDict[time] = {};
     for (const series of timeseries) {
-      const interp = interpolateLevelPair(time, series.levels)
-      if(interp !== 0) {
+      const interp = interpolateLevelPair(time, series.levels);
+      if (interp !== 0) {
         outputDict[time][series.name] = interp;
       }
     }
@@ -918,7 +922,79 @@ export const joinRegularTimeseries = ({
   }
   let outputList: TimeseriesList = [];
   for (const time of Object.keys(outputDict)) {
-    outputList.push({time: new Date(time), ...outputDict[time]});
+    outputList.push({ time: new Date(time), ...outputDict[time] });
+  }
+  return outputList;
+};
+
+type TransformFuelTypeHistoryQueryParams = {
+  range: {
+    from: Date;
+    to: Date;
+  };
+  bm: t.BmUnitLevelPairs;
+  embedded: t.NgEsoEmbeddedWindAndSolarForecastParsedResponse;
+};
+/* create a regular minute-by-minute timeseries which aggregates by fuelType*/
+export const transformFuelTypeHistoryQuery = ({
+  range,
+  bm,
+  embedded,
+}: TransformFuelTypeHistoryQueryParams) => {
+  const outputDict: TimeseriesDict = {};
+  const fromTime = new Date(range.from);
+  const toTime = new Date(range.to);
+  log.info(`transformFuelTypeHistoryQuery: ${fromTime} to ${toTime}`);
+
+  let currentTime = fromTime.getTime();
+  while (currentTime <= toTime.getTime()) {
+    const time = new Date(currentTime).toISOString();
+    let hasBm = false;
+
+    let timeDict: Record<string, any> = {
+      'time': time,
+    }
+    for (const fuelType in fuelTypeUnitsDict) {
+      let output = 0;
+      const units = fuelTypeUnitsDict[fuelType];
+      for (const unit of units) {
+        if (!isEmbeddedUnit(unit)) {
+          const pairs = bm[unit];
+          if (pairs) {
+            try {
+              const level = interpolateLevelPair(time, pairs);
+              output += level;
+            } catch (e) {}
+          }
+        }
+      }
+      if (output !== 0) {
+        hasBm = true;
+        timeDict[fuelType] = output;
+      }
+    }
+    if (hasBm) {
+      // add embedded
+      const emb = interpolateCurrentEmbeddedWindAndSolar(
+        time,
+        embedded
+      );
+      if(emb.solar !== 0) {
+        timeDict['solar'] = emb.solar;
+      }
+      if(timeDict.wind) {
+        timeDict['wind'] += emb.wind;
+      } else {
+        timeDict['wind'] = emb.wind;
+      }
+      
+      outputDict[time] = timeDict;
+    }
+    currentTime += FREQUENCY_SECS * 1000;
+  }
+  let outputList: TimeseriesList = [];
+  for (const time of Object.keys(outputDict)) {
+    outputList.push({ time: new Date(time), ...outputDict[time] });
   }
   return outputList;
 };

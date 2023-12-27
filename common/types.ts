@@ -148,6 +148,21 @@ export type FuelType =
   | "unknown"
   | "battery";
 
+
+const FUEL_TYPE_NAMES: FuelType[] = [
+  "gas",
+  "coal",
+  "nuclear",
+  "wind",
+  "hydro",
+  "biomass",
+  "solar",
+  "oil",
+  "interconnector",
+  "unknown",
+  "battery",
+]
+
 export type UnitGroupUnit = {
   bmUnit: string;
   name?: string;

@@ -1,4 +1,4 @@
-import { UnitGroup, UnitGroupsDict } from "../../common/types";
+import { FuelType, UnitGroup, UnitGroupsDict } from "../../common/types";
 
 export const unitGroups: UnitGroup[] = [
   {
@@ -3865,4 +3865,30 @@ export const unitGroups: UnitGroup[] = [
 export const unitGroupsDict: UnitGroupsDict = {};
 for (const ug of unitGroups) {
   if(ug.details.code) unitGroupsDict[ug.details.code] = ug;
+}
+
+type FuelTypeUnitsDict = Record<string, string[]>
+
+export const fuelTypeUnitsDict: FuelTypeUnitsDict = {
+  'gas': [],
+  'wind': [],
+  'biomass': [],
+  'hydro': [],
+  'battery': [],
+  'unknown': [],
+  'coal': [],
+  'nuclear': [],
+  'oil': [],
+  'solar': [],
+  'interconnector': [],
+};
+
+for (const ug of unitGroups) {
+  if (ug.details.fuelType) {
+    for (const unit of ug.units) {
+      if (unit.bmUnit) {
+        fuelTypeUnitsDict[ug.details.fuelType].push(unit.bmUnit);
+      }
+    }
+  }
 }
