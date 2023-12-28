@@ -245,9 +245,9 @@ export const NoInternetConnectionCard: React.FC = () => {
 export const FuelTypeCompletenessListHeader: React.FC<{completeness: FuelTypeLiveCompleteness}> = ({completeness}) => {
   log.debug(`cards/atoms/FuelTypeCompletenessListHeader`)
   const {bm, embedded} = completeness;
+  if((bm && embedded)) return null
   return (
     <Card containerStyle={styles.listHeaderCard}>
-      {(bm && embedded) && <Text>Includes Balancing Mechanism units and latest ESO embedded wind/solar forecast volumes.</Text>}
       {(bm && !embedded) && <Text>Includes units participating in the Balancing Mechanism.</Text>}
     </Card>
   );
@@ -257,6 +257,5 @@ const styles = StyleSheet.create({
   spacer: { height: 10 },
   listHeaderCard: {
     margin: 0,
-    // padding: 0,
   },
 });

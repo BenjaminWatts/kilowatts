@@ -850,7 +850,7 @@ export const combineFuelTypesAndEmbedded = ({
   return output;
 };
 
-const FREQUENCY_SECS = 60;
+export const FUEL_LIVE_FREQUENCY_SECS = 15;
 
 type CreateRegularTimeseriesParams = {
   from: Date;
@@ -881,7 +881,7 @@ export const createRegularTimeseries = ({
       output.push({ time, level: 0 });
     }
 
-    currentTime += FREQUENCY_SECS * 1000;
+    currentTime += FUEL_LIVE_FREQUENCY_SECS * 1000;
   }
 
   return output;
@@ -918,7 +918,7 @@ export const joinRegularTimeseries = ({
         outputDict[time][series.name] = interp;
       }
     }
-    currentTime += FREQUENCY_SECS * 1000;
+    currentTime += FUEL_LIVE_FREQUENCY_SECS * 1000;
   }
   let outputList: TimeseriesList = [];
   for (const time of Object.keys(outputDict)) {
@@ -966,7 +966,7 @@ export const transformFuelTypeHistoryQuery = ({
   let outputList: UnitGroupUnitsStackedChartData[] = [];
   const fromTime = new Date(range.from);
   const toTime = new Date(range.to);
-  log.info(`transformFuelTypeHistoryQuery: ${fromTime} to ${toTime}`);
+  log.debug(`transformFuelTypeHistoryQuery: ${fromTime} to ${toTime}`);
 
   let currentTime = fromTime.getTime();
   while (currentTime <= toTime.getTime()) {
@@ -1003,7 +1003,7 @@ export const transformFuelTypeHistoryQuery = ({
     if (hasBm) {
       outputList.push({ time: new Date(time), ...timeDict as any});
     }
-    currentTime += FREQUENCY_SECS * 1000;
+    currentTime += FUEL_LIVE_FREQUENCY_SECS * 1000;
   }
 
   const ranked = rankByAverage(outputList);

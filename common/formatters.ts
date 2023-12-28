@@ -10,6 +10,11 @@ export const formatters = {
         return `${kw} kW`;
     }
 
+    if(x < 1000 || x > -1000) {
+        const gw = x / 1000;
+        return `${gw.toFixed(3)} GW`;
+    }
+
     const value = Math.round(x * 100) / 100;
 
     return `${value.toLocaleString()} MW`;
@@ -18,6 +23,10 @@ export const formatters = {
     // capitalise first letter
     return x.charAt(0).toUpperCase() + x.slice(1);
   },
+  mwToGW: (x: number) => {
+    const value = Math.round(x / 10) / 100;
+    return `${value.toLocaleString()}GW`;
+  }
 };
 export default formatters;
 
