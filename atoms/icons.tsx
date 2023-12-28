@@ -6,7 +6,7 @@ import {
   FontAwesome5,
 } from "@expo/vector-icons";
 import { Icon, IconProps } from "@rneui/themed";
-import { FuelType } from "../common/types";
+import { FuelType, getFuelTypeColor } from "../common/types";
 import log from "../services/log";
 
 type FuelTypeIconProps = {
@@ -19,7 +19,7 @@ export const FuelTypeIcon: React.FC<FuelTypeIconProps> = ({
   size,
 }) => {
   log.debug(`FuelTypeIcon: ${fuelType}`);
-  const props = { size };
+  const props = { size, color: getFuelTypeColor(fuelType) };
   switch (fuelType) {
     case "gas":
       return <Ionicons testID='fuel-type-gas-icon' name="flame" {...props} />;

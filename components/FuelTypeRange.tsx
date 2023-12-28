@@ -5,6 +5,7 @@ import { UnitGroupUnitsStackedChart } from '../atoms/charts';
 type FuelTypeRangeProps = {
     height: number;
 }
+
 export const FuelTypeRange:React.FC<FuelTypeRangeProps> = ({height}) => {
     const query = useFuelTypeHistoryQuery();
     if(!query.data) return (<></>)

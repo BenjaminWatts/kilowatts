@@ -148,8 +148,7 @@ export type FuelType =
   | "unknown"
   | "battery";
 
-
-const FUEL_TYPE_NAMES: FuelType[] = [
+export const FUEL_TYPE_NAMES: FuelType[] = [
   "gas",
   "coal",
   "nuclear",
@@ -162,6 +161,34 @@ const FUEL_TYPE_NAMES: FuelType[] = [
   "unknown",
   "battery",
 ]
+
+type FuelTypeColor = {
+  fuelType: FuelType;
+  color: string;
+}
+
+export const FUEL_TYPE_COLORS: FuelTypeColor[] = [
+  { fuelType: "gas", color: "#F56C42" },        // Natural Gas (Moderate)
+  { fuelType: "coal", color: "#464646" },      // Coal (Least Friendly)
+  { fuelType: "nuclear", color: "#3399CC" },   // Nuclear (Clean)
+  { fuelType: "wind", color: "#8CD19D" },      // Wind (Clean)
+  { fuelType: "hydro", color: "#009688" },     // Hydro (Clean)
+  { fuelType: "biomass", color: "#A2D872" },   // Biomass (Moderate Green)
+  { fuelType: "solar", color: "#FFD700" },     // Solar (Cleanest Yellow)
+  { fuelType: "oil", color: "#CC0000" },       // Oil (Least Friendly)
+  { fuelType: "interconnector", color: "#993333" },  // Interconnector (Moderate)
+  { fuelType: "unknown", color: "#A9A9A9" },   // Unknown (Gray)
+  { fuelType: "battery", color: "#FF9933" },   // Battery (Moderate Orange)
+]
+
+export const getFuelTypeColor = (fuelType: FuelType) => {
+  const color = FUEL_TYPE_COLORS.find(ftc => ftc.fuelType === fuelType)?.color;
+  if (color) {
+    return color;
+  } else {
+    return "#000000";
+  }
+}
 
 export type UnitGroupUnit = {
   bmUnit: string;

@@ -951,12 +951,18 @@ type TransformFuelTypeHistoryQueryParams = {
   bm: t.BmUnitLevelPairs;
   embedded: t.NgEsoEmbeddedWindAndSolarForecastParsedResponse;
 };
+
+export type TransformedFuelTypeHistoryQuery = {
+  ranked: RankedFuelType[];
+  stacked: UnitGroupUnitsStackedChartData[]
+}
+
 /* create a regular minute-by-minute timeseries which aggregates by fuelType*/
 export const transformFuelTypeHistoryQuery = ({
   range,
   bm,
   embedded,
-}: TransformFuelTypeHistoryQueryParams): UnitGroupUnitsStackedChartData[] => {
+}: TransformFuelTypeHistoryQueryParams): TransformedFuelTypeHistoryQuery => {
   let outputList: UnitGroupUnitsStackedChartData[] = [];
   const fromTime = new Date(range.from);
   const toTime = new Date(range.to);
@@ -975,10 +981,8 @@ export const transformFuelTypeHistoryQuery = ({
       hydro: 0,
       biomass: 0,
       battery: 0,
-      solar: 0,
-      wind: 0,
       interconnector: 0
-    };
+    } as UnitGroupUnitsStackedChartDataValues
     for (const fuelType in timeDict) {
       const units = fuelTypeUnitsDict[fuelType];
       for (const unit of units) {
@@ -997,27 +1001,89 @@ export const transformFuelTypeHistoryQuery = ({
       }
     }
     if (hasBm) {
-      outputList.push({ time: new Date(time), ...stackTimeDict(timeDict as any)});
+      outputList.push({ time: new Date(time), ...timeDict as any});
     }
     currentTime += FREQUENCY_SECS * 1000;
   }
 
-  return outputList
+  const ranked = rankByAverage(outputList);
+
+  const stacked = stackTimeDict(outputList, ranked);
+
+  return {ranked, stacked}
 
 };
 
-const stackTimeDict = (x: UnitGroupUnitsStackedChartDataValues) => {
-  // x.wind = 0
-  let output: UnitGroupUnitsStackedChartDataValues = {
-    nuclear: x.nuclear,
-    wind: x.wind + x.nuclear,
-    solar: x.solar + x.wind + x.nuclear,
-    hydro: x.hydro + x.solar + x.wind + x.nuclear,
-    biomass: x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
-    gas: x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
-    coal: x.coal + x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
-    battery: x.battery + x.coal + x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
-    interconnector: x.interconnector + x.battery + x.coal + x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear
+type RankedFuelType = {fuelType: t.FuelType, rank: number, average: number}
+
+/* get the average for each attribute. return rankings for each where 0 is the highest and 9 is the lowest */
+const rankByAverage = (x: UnitGroupUnitsStackedChartDataValues[]): RankedFuelType[] => {
+  const averages: Record<string, number> = {
+    gas: 0,
+    coal: 0,
+    nuclear: 0,
+    wind: 0,
+    solar: 0,
+    hydro: 0,
+    biomass: 0,
+    battery: 0,
+    interconnector: 0,
+    oil: 0,
+    unknown: 0
+  };
+  for (const y of x) {
+    for (const fuelType of t.FUEL_TYPE_NAMES) {
+      const level = (y as any)[fuelType];
+      if(level && level > 0) {
+        averages[fuelType] += level
+      }
+    }
+  }
+  for (const fuelType in averages) {
+    averages[fuelType] = averages[fuelType] / x.length;
+  }
+  const sorted = Object.keys(averages).sort((a, b) => averages[a] - averages[b]);
+  const output: RankedFuelType[] = []
+  for (let i = 0; i < sorted.length; i++) {
+    output.push({ fuelType: sorted[i] as t.FuelType, rank: i, average: averages[sorted[i]] })
   }
   return output
 }
+
+/* stack the values according to the average rankings. the lowest rank appears at the bottom the highest rank is at the top*/
+const stackTimeDict = (x: UnitGroupUnitsStackedChartData[], ranked: RankedFuelType[]) => {
+  // co
+  let output: UnitGroupUnitsStackedChartData[] = []
+  for (const y of x) {
+    let total = 0
+    let row: any = {}
+    for( const fT of ranked) {
+      const {fuelType} = fT
+      const level = (y as any)[fuelType]
+      if(level && level > 0) {total += level}
+      row[fuelType] = total
+    }
+    output.push({
+      ...row,
+      time: y.time,
+    })
+  }
+  return output
+}
+
+
+// const stackTimeDict = (x: UnitGroupUnitsStackedChartDataValues) => {
+//   // x.wind = 0
+//   let output: UnitGroupUnitsStackedChartDataValues = {
+//     nuclear: x.nuclear,
+//     wind: x.wind + x.nuclear,
+//     solar: x.solar + x.wind + x.nuclear,
+//     hydro: x.hydro + x.solar + x.wind + x.nuclear,
+//     biomass: x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
+//     gas: x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
+//     coal: x.coal + x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
+//     battery: x.battery + x.coal + x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear,
+//     interconnector: x.interconnector + x.battery + x.coal + x.gas + x.biomass + x.hydro + x.solar + x.wind + x.nuclear
+//   }
+//   return output
+// }

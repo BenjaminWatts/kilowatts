@@ -3,10 +3,13 @@ import { CartesianChart, Area } from "victory-native";
 import { useFont } from "@shopify/react-native-skia";
 import { londonTimeHHMM } from "../common/utils";
 import { View, useWindowDimensions } from "react-native";
+import { TransformedFuelTypeHistoryQuery } from "../common/parsers";
+import { getFuelTypeColor } from "../common/types";
+import { area } from "d3-shape";
 
 type UnitGroupUnitsStackedChartProps = {
   height: number;
-  data: any[];
+  data: TransformedFuelTypeHistoryQuery;
 };
 export const UnitGroupUnitsStackedChart: React.FC<
   UnitGroupUnitsStackedChartProps
@@ -14,10 +17,11 @@ export const UnitGroupUnitsStackedChart: React.FC<
   const sm = require("../assets/fonts/SpaceMono-Regular.ttf");
   const font = useFont(sm, 12);
   const dims = useWindowDimensions();
+  const reversed = [...data.ranked].reverse()
   return (
     <View style={{ height, width: dims.width - 5 }}>
       <CartesianChart
-        data={data}
+        data={data.stacked}
         axisOptions={{
           font,
           tickCount: 4,
@@ -42,55 +46,41 @@ export const UnitGroupUnitsStackedChart: React.FC<
       >
         {({ points, chartBounds }) => (
           <>
-            {/* <Line
-              color={"black"}
-              points={[
-                {
-                  x: now,
-                  y: 0,
-                },
-                {
-                  x: now,
-                  y: 30000,
-                },
-              ]}
-            /> */}
-            <Area
-              y0={chartBounds.bottom}
-              points={points.interconnector}
-              color="lilac"
-            />
-            <Area
-              y0={chartBounds.bottom}
-              points={points.battery}
-              color="pink"
-            />
-            <Area y0={chartBounds.bottom} points={points.coal} color="black" />
-            <Area y0={chartBounds.bottom} points={points.gas} color="blue" />
-
-            <Area
-              y0={chartBounds.bottom}
-              points={points.biomass}
-              color="brown"
-            />
-            <Area
-              y0={chartBounds.bottom}
-              points={points.hydro}
-              color="lightblue"
-            />
-
-            <Area
-              y0={chartBounds.bottom}
-              points={points.solar}
-              color="yellow"
-            />
-            <Area y0={chartBounds.bottom} points={points.wind} color="grey" />
-
-            <Area
-              y0={chartBounds.bottom}
-              points={points.nuclear}
-              color="orange"
-            />
+          {reversed.map((unit) => {
+            const getPoints = (fuelType: string) => {
+              switch (fuelType) {
+                case "wind":
+                  return points.wind;
+                case "nuclear":
+                  return points.nuclear;
+                case "gas":
+                  return points.gas;
+                case "hydro":
+                  return points.hydro;
+                case "solar":
+                  return points.solar;
+                case "biomass":
+                  return points.biomass;
+                case "battery":
+                  return points.battery;
+                case "coal":
+                  return points.coal;
+                case "interconnector":
+                  return points.interconnector;
+                default:
+                  return []
+              }
+            }
+            return (
+              <Area
+                key={unit.fuelType}
+                y0={chartBounds.bottom}
+                points={getPoints(unit.fuelType)}
+                color={getFuelTypeColor(unit.fuelType)}
+              />
+            )
+          })}
+                       
           </>
         )}
       </CartesianChart>
