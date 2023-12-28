@@ -12,7 +12,8 @@ export const formatters = {
 
     if(x < 1000 || x > -1000) {
         const gw = x / 1000;
-        return `${gw.toFixed(3)} GW`;
+        
+        return `${gw.toFixed(3)}GW`;
     }
 
     const value = Math.round(x * 100) / 100;

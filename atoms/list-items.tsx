@@ -21,7 +21,7 @@ export const UnitGroupLive: React.FC<UnitGroupLive> = ({
   level,
   onPress,
 }) => (
-  <ListItem style={styles.listItemContainer} onPress={onPress}>
+  <Pressable style={styles.listItemContainer} onPress={onPress}>
     <ListItem.Content
       style={styles.liveContainer}
       testID={`generator-live-${index}`}
@@ -33,7 +33,7 @@ export const UnitGroupLive: React.FC<UnitGroupLive> = ({
 
       <ListItem.Subtitle>{formatters.mw(level)}</ListItem.Subtitle>
     </ListItem.Content>
-  </ListItem>
+  </Pressable>
 );
 
 type FuelTypeLiveProps = {
@@ -47,7 +47,11 @@ export const FuelTypeLive: React.FC<FuelTypeLiveProps> = ({
   level,
   onPress,
 }) => (
-  <Pressable style={styles.listItemContainer} testID={`fuel-type-live-list-item-${name}`} onPress={onPress}  >
+  <Pressable
+    style={styles.listItemContainer}
+    testID={`fuel-type-live-list-item-${name}`}
+    onPress={onPress}
+  >
     <ListItem.Content style={styles.liveContainer}>
       <View style={styles.titleSubtitleWrapper}>
         <FuelTypeIcon fuelType={name} size={20} />
@@ -70,7 +74,11 @@ export const UnitLive: React.FC<UnitLiveProps> = ({
   level,
   index,
 }) => (
-  <ListItem style={styles.listItemContainer} key={index} testID={`unit-type-live-list-item-${index}`}>
+  <ListItem
+    style={styles.listItemContainer}
+    key={index}
+    testID={`unit-type-live-list-item-${index}`}
+  >
     <ListItem.Content style={styles.liveContainer}>
       <ListItem.Title>{details.bmUnit}</ListItem.Title>
       <ListItem.Subtitle>{formatters.mw(level)}</ListItem.Subtitle>
@@ -99,7 +107,9 @@ export const UnitLevelListItem: React.FC<UnitLevelProps> = ({
 const styles = StyleSheet.create({
   listItemContainer: {
     height: 30,
-    width: '100%',
+    width: "100%",
+    backgroundColor: "white",
+    padding: 3,
   },
   liveContainer: {
     display: "flex",
@@ -122,5 +132,4 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     gap: 10,
   },
-
 });

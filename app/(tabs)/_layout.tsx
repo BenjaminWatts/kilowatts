@@ -14,7 +14,7 @@ export default function RootTabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Generation Mix",          
+          title: "Live Generation",          
           tabBarIcon: ({ color }) => (
             <TabBarIcon
               testID="categories-tab-icon"

@@ -1,13 +1,12 @@
 import React from "react";
 import MV, { MapViewProps, Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import {  UnitGroupMapProps, UnitsGroupMapProps } from "../common/types";
+import { UnitGroupMapProps, UnitsGroupMapProps } from "../common/types";
 import log from "../services/log";
 import { Platform, StyleSheet } from "react-native";
 import formatters from "../common/formatters";
 import { FuelTypeIcon } from "./icons";
 import { useRouter } from "expo-router";
 import { urls } from "../services/nav";
-
 
 const getMapProvider = () => {
   if (Platform.OS === "android") {
@@ -17,11 +16,20 @@ const getMapProvider = () => {
 };
 
 const MapView = (props: MapViewProps) => (
-  <MV provider={getMapProvider()} {...props} />
+  <MV
+    provider={getMapProvider()}
+    {...props}
+    // cacheEnabled={true}
+    liteMode={true}
+    mapType={Platform.select({
+      ios: "mutedStandard",
+      android: "satellite",
+    })}
+  />
 );
 
 export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
-  log.debug(`UnitGroupMap: ${ug.details.name}`);
+  console.log(`UnitGroupMap: ${ug.details.name}`);
   const { coords, name } = ug.details;
   if (!coords || !name) return <></>;
   const coordinate = {
@@ -47,17 +55,15 @@ export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
   );
 };
 
-
-
-export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ ugs }) => {
-  const router = useRouter();
+export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
+  // console.log(markers[0]);
+  // const router = useRouter();
   return (
     <MapView
       scrollEnabled={false}
       zoomEnabled={false}
       rotateEnabled={false}
       zoomTapEnabled={false}
-      // cacheEnabled={true}
       style={styles.mapCardContainer}
       initialRegion={{
         latitude: 54.5,
@@ -66,28 +72,21 @@ export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ ugs }) => {
         longitudeDelta: 12,
       }}
     >
-      {ugs
-        .filter((ugs) => ugs.details.coords !== undefined)
-        .map((ugs) => {
-          const { coords, code, name } = ugs.details;
-          if (!coords || !code || !name) return null;
-          return (
+      {markers
+        .map((marker) => (
             <Marker
               onPress={() => {
-                router.push(urls.unitGroup(ugs.details.code));
+                // router.push(urls.unitGroup(ugs.details.code));
               }}
-              key={ugs.details.code ? ugs.details.code : ugs.details.name}
-              coordinate={{
-                latitude: coords.lat,
-                longitude: coords.lng,
-              }}
-              title={ugs.details.name}
-              description={`${formatters.fuelType(ugs.details.fuelType)}`}
+              key={marker.code}
+              coordinate={marker.coordinate}
+              title={marker.title}
+              description={`${formatters.fuelType(marker.fuelType)}`}
             >
-              <FuelTypeIcon fuelType={ugs.details.fuelType} size={20} />
+              <FuelTypeIcon fuelType={marker.fuelType} size={20} />
             </Marker>
-          );
-        })}
+          )
+        )}
     </MapView>
   );
 };
@@ -97,7 +96,5 @@ const styles = StyleSheet.create({
     display: "flex",
     flex: 1,
     height: "50%",
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
 });

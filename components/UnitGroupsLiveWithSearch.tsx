@@ -15,7 +15,7 @@ type FilterDataParams = {
 filterData is a function that takes a list of UnitGroupLevels and filters them
 */
 export const filterData = ({ data, search, fuelType }: FilterDataParams) => {
-  if (!data) return data;
+  if (!data) return [];
 
   return data.filter((d) => {
     const nameMatch =
@@ -37,27 +37,10 @@ export const UnitGroupLiveWithSearch: React.FC<
   const query = useUnitGroupsLiveQuery();
 
   const { data, now, isLoading, refetch } = query;
-  const filteredData = useMemo(() => {
-    if (!data) return data;
-
-    return data.filter((d) => {
-      const nameMatch =
-        search === "" ||
-        d.details.name.toLowerCase().includes(search.toLowerCase());
-      const fuelTypeMatch = !fuelType || d.details.fuelType === fuelType;
-      return nameMatch && fuelTypeMatch;
-    });
-  }, [data, search, fuelType]);
-
-  const nav = useNavigation();
-
-  React.useEffect(() => {
-    if (now) {
-      nav.setOptions({
-        title: `Live Output: ${londonTimeHHMMSS(now)}`,
-      });
-    }
-  }, [query.now]);
+  const filteredData = useMemo(
+    () => filterData({ data, search, fuelType }),
+    [data, search, fuelType]
+  );
 
   return (
     <UnitGroupsLiveList

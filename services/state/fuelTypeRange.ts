@@ -5,6 +5,7 @@ import {
 } from "../../common/types";
 import { useUnitHistoryQuery } from "./unitsHistory";
 import { useEmbeddedWindAndSolarForecastQuery } from "./api/ng-eso-api";
+import { useNowTime } from "../hooks";
 
 const range: UseCurrentRangeParams = {
   hoursInPast: 0.5,
@@ -19,9 +20,15 @@ export const useFuelTypeHistoryQuery = () => {
       range,
     }),
     embedded: useEmbeddedWindAndSolarForecastQuery({}),
+    now: useNowTime(5)
   };
   const baseParams = {
     isLoading: queries.bm.isLoading || queries.embedded.isLoading,
+    error: null,
+    refetch: () => {
+      queries.bm.refetch();
+      queries.embedded.refetch();
+    },
   };
   if (!queries.bm.data || !queries.embedded.data) {
     return {
@@ -36,9 +43,10 @@ export const useFuelTypeHistoryQuery = () => {
           range: queries.bm.range,
           bm: queries.bm.data,
           embedded: queries.embedded.data,
+          rankAt: queries.now
         }),
       };
-    } catch (e) {
+    } catch (e: any) {
       log.error(e);
       return {
         ...baseParams,

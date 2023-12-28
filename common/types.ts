@@ -312,8 +312,15 @@ export type UnitGroupMapProps = {
   ug: UnitGroup;
 };
 
+export type UnitGroupMarker = {
+  code: string;
+  title: string;
+  coordinate: {latitude: number; longitude: number};
+  fuelType: FuelType;
+}
+
 export type UnitsGroupMapProps = {
-  ugs: UnitGroupLevel[];
+  markers: UnitGroupMarker[]
 };
 
 

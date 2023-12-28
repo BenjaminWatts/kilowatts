@@ -3,11 +3,8 @@ import {
   CartesianChart,
   Area,
   PointsArray,
-  Line,
-  ChartBounds,
 } from "victory-native";
 import { useFont } from "@shopify/react-native-skia";
-import { View, useWindowDimensions } from "react-native";
 import {
   FUEL_LIVE_FREQUENCY_SECS,
   TransformedFuelTypeHistoryQuery,
@@ -19,7 +16,6 @@ import { londonTimeHHMM } from "../common/utils";
 const sm = require("../assets/fonts/SpaceMono-Regular.ttf");
 
 type Points = {
-  now: PointsArray;
   wind: PointsArray;
   nuclear: PointsArray;
   gas: PointsArray;
@@ -29,6 +25,8 @@ type Points = {
   battery: PointsArray;
   coal: PointsArray;
   interconnector: PointsArray;
+  now: PointsArray;
+  settlementPeriod: PointsArray;
 };
 
 const getPoints = (points: Points, fuelType: string) => {
@@ -57,93 +55,132 @@ const getPoints = (points: Points, fuelType: string) => {
 };
 
 type UnitGroupUnitsStackedChartProps = {
-  height: number;
   data: TransformedFuelTypeHistoryQuery;
 };
 
-const addNowLine = (data: TransformedFuelTypeHistoryQuery) => {
-  const now = new Date();
+type CreateChartDataResult = {
+  time: Date;
+  wind: number;
+  nuclear: number;
+  gas: number;
+  hydro: number;
+  solar: number;
+  biomass: number;
+  battery: number;
+  coal: number;
+  interconnector: number;
+  now: number;
+  settlementPeriod: number;
+}[];
+
+/* embellish the data for the chart by adding vertical type lines for now and the start and end of a settlement period  */
+const createChartData = (
+  data: TransformedFuelTypeHistoryQuery
+): CreateChartDataResult => {
+  if (!data.nowLine) {
+    return data.stacked.map((x) => ({
+      ...x,
+      now: 0,
+      settlementPeriod: 0,
+    }));
+  }
+  const now = data.nowLine;
+
   const withNow = data.stacked.map((d) => {
-    if (
-      Math.abs(now.getTime() - d.time.getTime()) * 2 <=
-      FUEL_LIVE_FREQUENCY_SECS * 1000
-    ) {
-      console.log(d)
-      return {
-        ...d,
-        now: Math.max(
-          ...[
-            d.wind,
-            d.nuclear,
-            d.gas,
-            d.hydro,
-            d.solar,
-            d.biomass,
-            d.battery,
-            d.coal,
-            d.interconnector,
-          ]
-        ),
-      };
-    } else {
-      return { ...d, now: 0 };
-    }
+    const time = d.time;
+    const isNow =
+      Math.abs(now.getTime() - time.getTime()) * 2 <=
+      FUEL_LIVE_FREQUENCY_SECS * 1000;
+
+    const isStartEndSettlementPeriod =
+      (time.getMinutes() * 60 + time.getSeconds()) % (30 * 60) <=
+      FUEL_LIVE_FREQUENCY_SECS;
+
+    const maxValue = Math.max(
+      ...[
+        d.wind,
+        d.nuclear,
+        d.gas,
+        d.hydro,
+        d.solar,
+        d.biomass,
+        d.battery,
+        d.coal,
+        d.interconnector,
+      ]
+    );
+
+    return {
+      ...d,
+      settlementPeriod: isStartEndSettlementPeriod ? maxValue : 0,
+      now: isNow ? maxValue : 0,
+    };
   });
   return withNow;
 };
 
 export const UnitGroupUnitsStackedChart: React.FC<
   UnitGroupUnitsStackedChartProps
-> = ({ data, height }) => {
+> = ({ data }) => {
   const font = useFont(sm, 12);
-  const dims = useWindowDimensions();
   const reversed = [...data.ranked].reverse();
-  // Calculate the x-coordinate for the current time
+  const chartData = createChartData(data);
 
   return (
-    <View style={{ height, width: dims.width - 5 }}>
-      <CartesianChart
-        data={addNowLine(data)}
-        axisOptions={{
-          font,
-          tickCount: 4,
-          formatXLabel: londonTimeHHMM,
-          formatYLabel: formatters.mwToGW,
-        }}
-        xKey="time"
-        yKeys={[
-          "wind",
-          "nuclear",
-          "gas",
-          "hydro",
-          "solar",
-          "biomass",
-          "battery",
-          "coal",
-          "interconnector",
-          "now",
-        ]}
-      >
-        {({ points, chartBounds }) => (
-          <>
-            {reversed.map((unit) => (
-              <Area
-                key={unit.fuelType}
-                y0={chartBounds.bottom}
-                points={getPoints(points, unit.fuelType)}
-                color={getFuelTypeColor(unit.fuelType)}
-              />
-            ))}
+    <CartesianChart
+      data={chartData}
+      axisOptions={{
+        font,
+        tickCount: {
+          y: 3,
+          x: 4,
+        },
+        formatXLabel: (x) => londonTimeHHMM(new Date(x)),
+        formatYLabel: formatters.mwToGW,
+      }}
+      xKey="time"
+      yKeys={[
+        "wind",
+        "nuclear",
+        "gas",
+        "hydro",
+        "solar",
+        "biomass",
+        "battery",
+        "coal",
+        "interconnector",
+        "now",
+        "settlementPeriod",
+      ]}
+    >
+      {({ points, chartBounds }) => (
+        <>
+          {reversed.map((unit) => (
             <Area
-              key={"now"}
+              key={unit.fuelType}
               y0={chartBounds.bottom}
-              points={points.now}
-              color={"black"}
-              curveType="step"
+              points={getPoints(points, unit.fuelType)}
+              color={getFuelTypeColor(unit.fuelType)}
             />
-          </>
-        )}
-      </CartesianChart>
-    </View>
+          ))}
+
+          <Area
+            key={"settlementPeriod"}
+            y0={chartBounds.bottom}
+            points={points.settlementPeriod}
+            color={"grey"}
+            curveType="step"
+          />
+
+          <Area
+            key={"now"}
+            y0={chartBounds.bottom}
+            points={points.now}
+            color={"red"}
+            curveType="step"
+          />
+        </>
+      )}
+    </CartesianChart>
   );
 };

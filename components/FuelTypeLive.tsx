@@ -22,7 +22,6 @@ const calculateChartHeight = (
 export const FuelTypeLive = () => {
   const router = useRouter();
   const query = useFuelTypeLiveQuery();
-
   if (query.error) return <ApiErrorCard refetch={query.refetch} />;
   const dims = useWindowDimensions();
   return (
