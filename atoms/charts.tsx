@@ -50,6 +50,8 @@ const formatYLabel = (value: number, index: number) => {
   }
 }
 
+const axisSvg = { fontSize: 15, fill: "grey" }
+
 export const UnitGroupUnitsStackedChart: React.FC<
   UnitGroupUnitsStackedChartProps
 > = ({ data, orderedFuelTypes }) => {
@@ -62,10 +64,7 @@ export const UnitGroupUnitsStackedChart: React.FC<
             data={data}
             contentInset={contentInset}
             min={0}
-            svg={{
-              fill: "grey",
-              fontSize: 10,
-            }}
+            svg={axisSvg}
             numberOfTicks={2}
             yAccessor={({ item }) => item.total}
             formatLabel={formatters.mwToGW}
@@ -88,12 +87,11 @@ export const UnitGroupUnitsStackedChart: React.FC<
             <XAxis
               style={{ height: 30, marginTop: 0, paddingTop: 0}}
               data={data}
-              // numberOfTicks={2}
               contentInset={{ left: 10, right: 10 }}
               xAccessor={({ item }) => item.time}
               formatLabel={formatYLabel}
-              svg={{ fontSize: 10, fill: "grey" }}
-            />
+              svg={axisSvg}
+              />
           </View>
         </View>
       )}

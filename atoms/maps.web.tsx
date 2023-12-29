@@ -8,6 +8,18 @@ import {
 } from "../common/types";
 import log from "../services/log";
 import { getUnitGroupUrl } from "../services/nav";
+import {
+  MaterialCommunityIcons,
+  Ionicons,
+  Feather,
+  FontAwesome5,
+  FontAwesome,
+} from "@expo/vector-icons";
+import ReactDOMServer from 'react-dom/server';
+import { getIconUrl } from "./icons";
+
+// import {} from 'expo-font'
+// import { getIconUrl } from "./icons";
 
 const containerStyle = {
   width: "100%",
@@ -35,15 +47,6 @@ export const isNorthSeaWind = ({ fuelType, coords }: GetZoomParams) => {
 const zoomLevels = {
   northSeaWind: 50,
   other: 10,
-};
-
-const createWebMarker = (
-  marker: UnitGroupMarker
-): { lat: number; lng: number } => {
-  return {
-    lat: marker.coordinate.latitude,
-    lng: marker.coordinate.longitude,
-  };
 };
 
 export const getZoom = (params: GetZoomParams): number => {
@@ -84,7 +87,7 @@ export const GoogleMarkerMap: React.FC<GoogleMarkerMapProps> = ({
         }
       );
       map.fitBounds(bounds);
-      map.setMapTypeId("hybrid");
+      // map.setMapTypeId("hybrid");
       log.debug(`Map loaded`);
     },
     [center, zoom]
@@ -99,6 +102,7 @@ export const GoogleMarkerMap: React.FC<GoogleMarkerMapProps> = ({
 
   return (
     <GoogleMap
+      mapTypeId="satellite"
       mapContainerStyle={containerStyle}
       center={center}
       options={{
@@ -113,6 +117,10 @@ export const GoogleMarkerMap: React.FC<GoogleMarkerMapProps> = ({
     >
       {markers.map((marker, index) => (
         <Marker
+        icon={{
+          url: getIconUrl(marker.fuelType),
+          scaledSize: new window.google.maps.Size(30, 30)
+        }}
           key={index}
           position={{
             lat: marker.coordinate.latitude,
@@ -124,6 +132,7 @@ export const GoogleMarkerMap: React.FC<GoogleMarkerMapProps> = ({
             window.location.replace(href);
           }}
         />
+
       ))}
     </GoogleMap>
   );

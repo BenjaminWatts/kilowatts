@@ -178,7 +178,7 @@ export const FUEL_TYPE_COLORS: FuelTypeColor[] = [
   { fuelType: "oil", color: "#CC0000" },       // Oil (Least Friendly)
   { fuelType: "interconnector", color: "#993333" },  // Interconnector (Moderate)
   { fuelType: "unknown", color: "#A9A9A9" },   // Unknown (Gray)
-  { fuelType: "battery", color: "purple" },   // Battery (Orange)
+  { fuelType: "battery", color: "#800080" },   // Battery (Orange)
 ]
 
 export const getFuelTypeColor = (fuelType: FuelType) => {

@@ -14,6 +14,10 @@ type FuelTypeIconProps = {
   size: number;
 };
 
+export const getIconUrl = (fuelType: FuelType) => {
+  return `/icons/${fuelType.toString()}.svg`
+}
+
 export const FuelTypeIcon: React.FC<FuelTypeIconProps> = ({
   fuelType,
   size,
