@@ -1,5 +1,5 @@
 import { unitGroupsDict } from "../assets/data/units";
-import { FuelType, UnitGroup } from "../common/types";
+import { FuelType, UnitGroup, UnitGroupLevel } from "../common/types";
 import { interconnectors } from "../assets/data/interconnectors";
 import log from "../services/log";
 
@@ -27,6 +27,14 @@ export const lookups = {
     if(interconnector) return interconnector
     log.debug(`no unit group found`)
     return undefined
-    
   },
+};
+
+
+/* from a unit group, get the url for its details page, if navigation should not be permitted return null */
+export const getUnitGroupUrl = ({ code, fuelType }: {code?: string, fuelType: FuelType}): string | null => {
+  if (code && fuelType !== "interconnector") {
+    return urls.unitGroup(code);
+  }
+  return null;
 };

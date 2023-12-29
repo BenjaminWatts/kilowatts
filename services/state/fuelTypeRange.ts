@@ -43,7 +43,7 @@ export const useFuelTypeHistoryQuery = () => {
           range: queries.bm.range,
           bm: queries.bm.data,
           embedded: queries.embedded.data,
-          rankAt: queries.now
+          startAt: queries.now
         }),
       };
     } catch (e: any) {

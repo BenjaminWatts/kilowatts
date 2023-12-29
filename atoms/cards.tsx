@@ -253,6 +253,24 @@ export const FuelTypeCompletenessListHeader: React.FC<{completeness: FuelTypeLiv
   );
 }
 
+export const MixScheduleCard: React.FC = () => {
+  log.debug(`cards/atoms/MixScheduleCard`)
+  return (
+    <Card containerStyle={styles.listHeaderCard}>
+      <Text>Rolling Schedule</Text>
+    </Card>
+  );
+}
+
+export const LiveMixHeaderCard: React.FC = () => {
+  log.debug(`cards/atoms/LiveMixHeaderCard`)
+  return (
+    <Card containerStyle={styles.listHeaderCard}>
+      <Text>Live Mix</Text>
+    </Card>
+  );
+}
+
 const styles = StyleSheet.create({
   spacer: { height: 10 },
   listHeaderCard: {

@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   skeleton: {
-    height: "90%",
-    width: "90%",
+    height: "100%",
+    width: "100%",
   },
 });

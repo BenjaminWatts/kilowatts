@@ -101,7 +101,7 @@ export const interpolateLevelPair = (
   let befores: t.LevelPair[] = [];
   let afters: t.LevelPair[] = [];
 
-  const rounder = (x: number) => Math.round(x * 100) / 100;
+  const rounder = (x: number) => Math.round(x * 1000) / 1000;
 
   for (const levelPair of levelPairs) {
     const isExactMatch = levelPair.time === time;
@@ -326,9 +326,10 @@ export const groupByUnitGroup = (x: t.BmUnitValues): t.UnitGroupLevel[] => {
       const isDomestic =
         unit.startsWith("T_") || unit.startsWith("E_") || unit.startsWith("2_");
 
-      if (isDomestic) {
+      if (isDomestic && __DEV__) {
         output.push({
           details: {
+            code: unit,
             name: unit,
             fuelType: "unknown",
           },
@@ -349,6 +350,7 @@ export const groupByUnitGroup = (x: t.BmUnitValues): t.UnitGroupLevel[] => {
       if (isInterconnector) {
         output.push({
           details: {
+            code: unit,
             name: unit,
             fuelType: "interconnector",
           },
@@ -394,8 +396,7 @@ export const groupByFuelTypeAndInterconnectors = ({
   log.debug(`groupByFuelType: getting fuel types for domestic generators`);
   for (const ug of x) {
     if (
-      ug.details.fuelType === "unknown" ||
-      ug.details.fuelType === "battery"
+      ug.details.fuelType === "unknown" 
     ) {
       continue;
     }
@@ -836,7 +837,7 @@ export const combineFuelTypesAndEmbedded = ({
     });
   }
 
-  if (!found.solar) {
+  if (!found.solar && embedded.solar > 0) {
     output.push({
       name: "solar",
       level: embedded.solar,
@@ -850,7 +851,7 @@ export const combineFuelTypesAndEmbedded = ({
   return output;
 };
 
-export const FUEL_LIVE_FREQUENCY_SECS = 30;
+export const FUEL_LIVE_FREQUENCY_SECS = 60;
 
 type CreateRegularTimeseriesParams = {
   from: Date;
@@ -898,8 +899,8 @@ type JoinRegularTimeseriesParams = {
 
 type TimeseriesDict = Record<string, Record<string, number>>;
 type TimeseriesList = { time: Date }[];
-/* join timeseries to create an object suitable for rendering using victory charts*/
 
+/* join timeseries to create an object suitable for rendering using victory charts*/
 export const joinRegularTimeseries = ({
   from,
   to,
@@ -927,22 +928,6 @@ export const joinRegularTimeseries = ({
   return outputList;
 };
 
-type UnitGroupUnitsStackedChartDataValues = {
-  gas: number;
-  coal: number;
-  nuclear: number;
-  wind: number;
-  solar: number;
-  hydro: number;
-  biomass: number;
-  battery: number;
-  interconnector: number;
-};
-
-type UnitGroupUnitsStackedChartData = UnitGroupUnitsStackedChartDataValues & {
-  time: Date;
-};
-
 type TransformFuelTypeHistoryQueryParams = {
   range: {
     from: Date;
@@ -950,45 +935,68 @@ type TransformFuelTypeHistoryQueryParams = {
   };
   bm: t.BmUnitLevelPairs;
   embedded: t.NgEsoEmbeddedWindAndSolarForecastParsedResponse;
-  rankAt?: Date;
+  startAt: Date;
 };
 
 export type TransformedFuelTypeHistoryQuery = {
-  ranked: RankedFuelType[];
-  stacked: UnitGroupUnitsStackedChartData[];
-  nowLine?: Date
-};
+  time: Date;
+  gas: number;
+  coal: number;
+  nuclear: number;
+  wind: number;
+  solar: number;
+  oil: number;
+  hydro: number;
+  biomass: number;
+  battery: number;
+  unknown: number;
+  interconnector: number;
+  total: number;
+}
+
+const removeNegatives = (x: TransformedFuelTypeHistoryQuery) => {
+  let output: any = {...x};
+  for (const key of Object.keys(output)) {
+    if(output[key] < 0) {
+      output[key] = 0;
+    }
+  }
+  return output as TransformedFuelTypeHistoryQuery
+}
 
 /* create a regular minute-by-minute timeseries which aggregates by fuelType*/
 export const transformFuelTypeHistoryQuery = ({
   range,
   bm,
   embedded,
-  rankAt,
-}: TransformFuelTypeHistoryQueryParams): TransformedFuelTypeHistoryQuery => {
-  let outputList: UnitGroupUnitsStackedChartData[] = [];
-  let levelPairs: Record<string, t.LevelPair[]> = {};
+  startAt,
+}: TransformFuelTypeHistoryQueryParams): TransformedFuelTypeHistoryQuery[] => {
+  let outputList: TransformedFuelTypeHistoryQuery[] = [];
 
-  const fromTime = new Date(range.from);
+  const fromTime = startAt
   const toTime = new Date(range.to);
 
   log.debug(`transformFuelTypeHistoryQuery: ${fromTime} to ${toTime}`);
 
   let currentTime = fromTime.getTime();
   while (currentTime <= toTime.getTime()) {
-    const time = new Date(currentTime).toISOString();
+    const time = new Date(currentTime)
+    const isoTime = time.toISOString();
     let hasBm = false;
+    let total = 0;
 
-    let timeDict: Record<string, number> = {
-      ...interpolateCurrentEmbeddedWindAndSolar(time, embedded),
+    let timeDict = {
+      ...interpolateCurrentEmbeddedWindAndSolar(isoTime, embedded),
       gas: 0,
       coal: 0,
       nuclear: 0,
       hydro: 0,
       biomass: 0,
       battery: 0,
+      oil: 0,
+      unknown: 0,
       interconnector: 0,
-    } as UnitGroupUnitsStackedChartDataValues;
+    } as TransformedFuelTypeHistoryQuery;
     for (const fuelType in timeDict) {
       const units = fuelTypeUnitsDict[fuelType];
       for (const unit of units) {
@@ -996,10 +1004,11 @@ export const transformFuelTypeHistoryQuery = ({
           const pairs = bm[unit];
           if (pairs) {
             try {
-              const level = interpolateLevelPair(time, pairs);
+              const level = interpolateLevelPair(isoTime, pairs);
               if (level !== 0) {
                 hasBm = true;
-                timeDict[fuelType] += level;
+                (timeDict as any)[fuelType] += level;
+                total += level;
               }
             } catch (e) {}
           }
@@ -1007,114 +1016,11 @@ export const transformFuelTypeHistoryQuery = ({
       }
     }
     if (hasBm) {
-      outputList.push({ time: new Date(time), ...(timeDict as any) });
-      for (const fuelType in timeDict) {
-        if (!levelPairs[fuelType]) {
-          levelPairs[fuelType] = [];
-        }
-        levelPairs[fuelType].push({ time, level: timeDict[fuelType] });
-      }
+      const row = { ...removeNegatives(timeDict), total, time }
+      outputList.push(row);
     }
     currentTime += FUEL_LIVE_FREQUENCY_SECS * 1000;
   }
+  return outputList
 
-  const ranked = rankAt
-    ? rankAtDate(rankAt, levelPairs)
-    : rankByAverage(outputList);
-
-  const stacked = stackTimeDict(outputList, ranked);
-
-  return { ranked, stacked, nowLine: rankAt };
-};
-
-type RankedFuelType = { fuelType: t.FuelType; rank: number; average: number };
-
-/* rank the outputs at a specific point in time - usually now*/
-const rankAtDate = (
-  date: Date,
-  x: Record<string, t.LevelPair[]>
-): RankedFuelType[] => {
-  const time = date.toISOString();
-  const interpolated = Object.keys(x).map((fuelType) => ({
-    fuelType,
-    level: interpolateLevelPair(time, x[fuelType]),
-  }));
-  const sorted = interpolated.sort((a, b) => b.level - a.level);
-  const output: RankedFuelType[] = [];
-  for (let i = 0; i < sorted.length; i++) {
-    output.push({
-      fuelType: sorted[i].fuelType as t.FuelType,
-      rank: i,
-      average: sorted[i].level,
-    });
-  }
-  return output;
-};
-
-/* get the average for each attribute. return rankings for each where 0 is the highest and 9 is the lowest */
-const rankByAverage = (
-  x: UnitGroupUnitsStackedChartDataValues[]
-): RankedFuelType[] => {
-  const averages: Record<string, number> = {
-    gas: 0,
-    coal: 0,
-    nuclear: 0,
-    wind: 0,
-    solar: 0,
-    hydro: 0,
-    biomass: 0,
-    battery: 0,
-    interconnector: 0,
-    oil: 0,
-    unknown: 0,
-  };
-  for (const y of x) {
-    for (const fuelType of t.FUEL_TYPE_NAMES) {
-      const level = (y as any)[fuelType];
-      if (level && level > 0) {
-        averages[fuelType] += level;
-      }
-    }
-  }
-  for (const fuelType in averages) {
-    averages[fuelType] = averages[fuelType] / x.length;
-  }
-  const sorted = Object.keys(averages).sort(
-    (a, b) => averages[a] - averages[b]
-  );
-  const output: RankedFuelType[] = [];
-  for (let i = 0; i < sorted.length; i++) {
-    output.push({
-      fuelType: sorted[i] as t.FuelType,
-      rank: i,
-      average: averages[sorted[i]],
-    });
-  }
-  return output;
-};
-
-/* stack the values according to the average rankings. the lowest rank appears at the bottom the highest rank is at the top*/
-const stackTimeDict = (
-  x: UnitGroupUnitsStackedChartData[],
-  ranked: RankedFuelType[]
-) => {
-  // co
-  let output: UnitGroupUnitsStackedChartData[] = [];
-  for (const y of x) {
-    let total = 0;
-    let row: any = {};
-    for (const fT of ranked) {
-      const { fuelType } = fT;
-      const level = (y as any)[fuelType];
-      if (level && level > 0) {
-        total += level;
-      }
-      row[fuelType] = total;
-    }
-    output.push({
-      ...row,
-      time: y.time,
-    });
-  }
-  return output;
 };

@@ -25,16 +25,19 @@ export const unitGroups: UnitGroup[] = [
       {
         bmUnit: "T_HEYM11",
       },
+      {
+        bmUnit: "T_HEYM2-D",
+      },
     ],
   },
 
   {
     details: {
-      code: 'TORN',
+      code: "TORN",
       name: "Torness",
       coords: {
-        lat: 55.96929194350165, 
-        lng: -2.4061520827496983
+        lat: 55.96929194350165,
+        lng: -2.4061520827496983,
       },
       fuelType: "nuclear",
     },
@@ -45,12 +48,15 @@ export const unitGroups: UnitGroup[] = [
       {
         bmUnit: "T_TORN-2",
       },
+      {
+        bmUnit: "T_TORN-D",
+      },
     ],
   },
 
   {
     details: {
-      code: 'SIZB',
+      code: "SIZB",
       name: "Sizewell B",
       coords: {
         lat: 52.2123,
@@ -70,7 +76,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'HRTL',
+      code: "HRTL",
       name: "Hartlepool",
       coords: {
         lat: 54.6341,
@@ -90,7 +96,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'PEMB',
+      code: "PEMB",
       name: "Pembroke",
       coords: {
         lat: 51.68436,
@@ -119,7 +125,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'CARR',
+      code: "CARR",
       name: "Carrington",
       coords: {
         lat: 53.43772,
@@ -139,7 +145,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'LBAR',
+      code: "LBAR",
       name: "Little Barford",
       coords: {
         lat: 52.20533,
@@ -156,7 +162,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'SPLN',
+      code: "SPLN",
       name: "Spalding",
       coords: {
         lat: 52.80721,
@@ -176,7 +182,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'MOWEO',
+      code: "MOWEO",
       name: "Moray East",
       coords: {
         lat: 58.188,
@@ -199,7 +205,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'HOW',
+      code: "HOW",
       name: "Hornsea ",
       coords: {
         lat: 53.6815,
@@ -231,7 +237,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'SGRWO',
+      code: "SGRWO",
       name: "Seagreen",
       coords: {
         lat: 56.6355,
@@ -263,7 +269,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'TKN',
+      code: "TKN",
       name: "Triton Knoll",
       coords: {
         lat: 53.2123,
@@ -283,7 +289,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'FAWN',
+      code: "FAWN",
       name: "Fawley North",
       coords: {
         lat: 50.818,
@@ -348,7 +354,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'CNQPS',
+      code: "CNQPS",
       name: "Connah's Quay",
       coords: {
         lat: 53.2317,
@@ -374,7 +380,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'RATS',
+      code: "RATS",
       name: "Ratcliffe",
       coords: {
         lat: 52.866945,
@@ -500,7 +506,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'GYAR',
+      code: "GYAR",
       name: "Great Yarmouth",
       coords: {
         lat: 52.58395,
@@ -535,12 +541,231 @@ export const unitGroups: UnitGroup[] = [
       {
         bmUnit: "T_SCCL-3",
       },
+      {
+        bmUnit: "T_SCCL-4",
+      },
+    ],
+  },
+
+  // Chapel Farm Battery E_CHAPB-1
+
+  {
+    details: {
+      code: "CHAP",
+      name: "Chapel Farm",
+      coords: {
+        lat: 51.466,
+        lng: -0.379,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_CHAPB-1",
+      },
+    ],
+  },
+
+  // Port of Tyne E_POTES-1
+  
+    {
+      details: {
+        code: "POTE",
+        name: "Port of Tyne",
+        coords: {
+          lat: 54.989,
+          lng: -1.455,
+        },
+        fuelType: "battery",
+      },
+      units: [
+        {
+          bmUnit: "E_POTES-1",
+        },
+      ],
+    },
+
+  // Keith storage T_KTHRS-1, T_KTHRS-2
+  
+    {
+      details: {
+        code: "KTHRS",
+        name: "Keith",
+        coords: {
+          lat: 57.547,
+          lng: -2.956,
+        },
+        fuelType: "battery",
+      },
+      units: [
+        {
+          bmUnit: "T_KTHRS-1",
+        },
+        {
+          bmUnit: "T_KTHRS-2",
+        },
+      ],
+    },
+
+
+  // Camilla battery, Auchtertool V__AG-HEL0DN
+
+  {
+    details: {
+      code: "CAML",
+      name: "Camilla",
+      coords: {
+        lat: 56.116,
+        lng: -3.3,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "V__AG-HEL0DN",
+      },
+    ],
+  },
+
+  // Fordtown, Kintore battery V__AG-HEL0CP
+  
+    {
+      details: {
+        code: "FORD",
+        name: "Fordtown",
+        coords: {
+          lat: 57.229,
+          lng: -2.266,
+        },
+        fuelType: "battery",
+      },
+      units: [
+        {
+          bmUnit: "V__AG-HEL0CP",
+        },
+      ],
+    },
+
+
+  // Wishaw Bess T_WISHB-1
+
+  {
+    details: {
+      code: "WISH",
+      name: "Wishaw Bess",
+      coords: {
+        lat: 55.777,
+        lng: -3.927,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "T_WISHB-1",
+      },
+    ],
+  },
+
+
+  // Ilmer Lane battery E_ILMEB-1
+  
+    {
+      details: {
+        code: "ILME",
+        name: "Ilmer Lane",
+        coords: {
+          lat: 51.644,
+          lng: -0.807,
+        },
+        fuelType: "battery",
+      },
+      units: [
+        {
+          bmUnit: "E_ILMEB-1",
+        },
+      ],
+    },
+
+
+  // Lockleaze Battery 2__LRWED001
+
+  {
+    details: {
+      code: "LOCK",
+      name: "Lockleaze",
+      coords: {
+        lat: 51.466,
+        lng: -0.379,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "2__LRWED001",
+      },
+    ],
+  },
+
+  // Blockwich Battery E_ARNKB-1
+
+  {
+    details: {
+      code: "ARNK",
+      name: "Blockwich",
+      coords: {
+        lat: 53.237,
+        lng: -2.506,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_ARNKB-1",
+      },
+    ],
+  },
+
+  // Roosecote Battery E_ROOSB-1
+
+  {
+    details: {
+      code: "ROOS",
+      name: "Roosecote",
+      coords: {
+        lat: 54.108,
+        lng: -3.244,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_ROOSB-1",
+      },
+    ],
+  },
+
+  // Brook Farm Battery E_BROFB-1
+
+  {
+    details: {
+      code: "BROF",
+      name: "Brook Farm",
+      coords: {
+        lat: 51.466,
+        lng: -0.379,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_BROFB-1",
+      },
     ],
   },
 
   {
     details: {
-      code: 'MRWD',
+      code: "MRWD",
       name: "Marchwood",
       coords: {
         lat: 50.89798,
@@ -557,7 +782,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code : 'HUMR',
+      code: "HUMR",
       name: "Immingham",
       coords: {
         lat: 53.63779,
@@ -574,7 +799,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code : 'LAGA',
+      code: "LAGA",
       name: "Langage",
       coords: {
         lat: 50.3872,
@@ -591,7 +816,7 @@ export const unitGroups: UnitGroup[] = [
   // E_DIDC01G E_DIDC02G E_DIDC03G E_DIDC04G
   {
     details: {
-      code: 'DIDC',
+      code: "DIDC",
       name: "Didcot",
       coords: {
         lat: 51.6246,
@@ -648,7 +873,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'DAMC',
+      code: "DAMC",
       name: "Damhead Creek",
       coords: {
         lat: 51.42492,
@@ -668,7 +893,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'STAY',
+      code: "STAY",
       name: "Staythorpe",
       coords: {
         lat: 53.07368,
@@ -714,7 +939,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code : 'WBURB',
+      code: "WBURB",
       name: "West Burton",
       coords: {
         lat: 53.36223,
@@ -731,12 +956,6 @@ export const unitGroups: UnitGroup[] = [
       },
       {
         bmUnit: "T_WBURB-3",
-      },
-      {
-        bmUnit: "T_WBURB-41",
-      },
-      {
-        bmUnit: "T_WBURB-43",
       },
       {
         bmUnit: "T_WBUGT-1",
@@ -756,9 +975,88 @@ export const unitGroups: UnitGroup[] = [
     ],
   },
 
+  // West Burton Battery T_WBURB-41, T_WBURB-43
+
   {
     details: {
-      code: 'RCBK',
+      code: "WBURBB",
+      name: "West Burton",
+      coords: {
+        lat: 53.36223,
+        lng: -0.80759,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "T_WBURB-41",
+      },
+      {
+        bmUnit: "T_WBURB-43",
+      },
+    ],
+  },
+
+  // whitelee battery T_WHLWB-1
+
+  {
+    details: {
+      code: "WHLW",
+      name: "Whitelee",
+      coords: {
+        lat: 55.6812,
+        lng: -4.2791,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "T_WHLWB-1",
+      },
+    ],
+  },
+
+  // Hunningly Stairfoot battery E_BARNB-1
+  
+    {
+      details: {
+        code: "BARN",
+        name: "Hunningly Stairfoot",
+        coords: {
+          lat: 53.517,
+          lng: -1.432,
+        },
+        fuelType: "battery",
+      },
+      units: [
+        {
+          bmUnit: "E_BARNB-1",
+        },
+      ],
+    },
+
+  // Gypsy Lane battery V_AG-HEL0AG	
+
+  {
+    details: {
+      code: "GYLA",
+      name: "Gypsy Lane",
+      coords: {
+        lat: 54.581,
+        lng: -1.25,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "V_AG-HEL0AG",
+      },
+    ],
+  },
+
+  {
+    details: {
+      code: "RCBK",
       name: "Race Bank",
       coords: {
         lat: 53.136,
@@ -801,7 +1099,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'WHILW',
+      code: "WHILW",
       name: "Whitelee",
       coords: {
         lat: 55.6812,
@@ -867,8 +1165,181 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
+      code: "RHEI",
+      name: "Rheidol",
+      coords: {
+        lat: 52.396,
+        lng: -3.9,
+      },
+      fuelType: "hydro",
+    },
+    units: [
+      {
+        bmUnit: "E_RHEI-1",
+      },
+    ],
+  },
+
+  {
+    details: {
+      code: "TILB",
+      name: "Tilbury",
+      coords: {
+        lat: 51.454926,
+        lng: 0.391677,
+      },
+      fuelType: "biomass",
+    },
+    units: [
+      {
+        bmUnit: "E_TGP1",
+      },
+    ],
+  },
+
+  //Creag Riabhach Wind Farm
+  //T_CREAW-1
+  //58.21076473583207, -4.500526851791008
+
+  {
+    details: {
+      code: "CREA",
+      name: "Creag Riabhach",
+      coords: {
+        lat: 58.21076473583207,
+        lng: -4.500526851791008,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "T_CREAW-1",
+      },
+    ],
+  },
+
+  // Pillswood Battery Storage E_PILLB-1, E_PILLB-2
+
+  {
+    details: {
+      code: "PILL",
+      name: "Pillswood",
+      coords: {
+        lat: 51.464,
+        lng: -0.379,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_PILLB-1",
+      },
+      {
+        bmUnit: "E_PILLB-2",
+      },
+    ],
+  },
+
+  // Contego Battery E_CONTB-1, Burgess Hill
+
+  {
+    details: {
+      code: "CONT",
+      name: "Contego",
+      coords: {
+        lat: 50.954,
+        lng: -0.142,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_CONTB-1",
+      },
+    ],
+  },
+
+  // Arbroath Battery Storage E_ARBRB-1
+
+  {
+    details: {
+      code: "ARBR",
+      name: "Arbroath",
+      coords: {
+        lat: 56.559,
+        lng: -2.587,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_ARBRB-1",
+      },
+    ],
+  },
+
+  // Farnham Battery Storage E_FARNB-1
+
+  {
+    details: {
+      code: "FARN",
+      name: "Farnham",
+      coords: {
+        lat: 51.214,
+        lng: -0.802,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_FARNB-1",
+      },
+    ],
+  },
+
+  // Broadditch Battery E_BROAB-1
+
+  {
+    details: {
+      code: "BROA",
+      name: "Broadditch",
+      coords: {
+        lat: 51.399,
+        lng: 0.231,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_BROAB-1",
+      },
+    ],
+  },
+
+  //T_COVNB-1
+  //Pivot Power Coventry
+
+  {
+    details: {
+      code: "COVN",
+      name: "Coventry",
+      coords: {
+        lat: 52.421,
+        lng: -1.506,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "T_COVNB-1",
+      },
+    ],
+  },
+
+  {
+    details: {
       name: "Duddon Sands",
-      code: 'WDNSO',
+      code: "WDNSO",
       coords: {
         lat: 53.9851,
         lng: -3.462,
@@ -928,7 +1399,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'SHRSW',
+      code: "SHRSW",
       name: "Sheringham Shoal",
       coords: {
         lat: 53.81,
@@ -1168,7 +1639,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code :"AKGL",
+      code: "AKGL",
       name: "Aikengall",
       coords: {
         lat: 55.9172,
@@ -1190,7 +1661,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code : "ANSU",
+      code: "ANSU",
       name: "An Suidhe",
       coords: {
         lat: 56.2187,
@@ -1209,7 +1680,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'ARCHW',
+      code: "ARCHW",
       name: "Arecleoch",
       coords: {
         lat: 55.0688,
@@ -1384,6 +1855,43 @@ export const unitGroups: UnitGroup[] = [
     units: [
       {
         bmUnit: "T_BLKWW-1",
+      },
+    ],
+  },
+  // craig 2 wind farm E_CRGTW-1
+
+  {
+    details: {
+      code: "CRGTW",
+      name: "Craig",
+      coords: {
+        lat: 55.1199,
+        lng: -4.032,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "E_CRGTW-1",
+      },
+    ],
+  },
+
+  // Little Raith Battery E_LITRB-1
+
+  {
+    details: {
+      code: "LITRB",
+      name: "Little Raith",
+      coords: {
+        lat: 56.143,
+        lng: -3.353,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_LITRB-1",
       },
     ],
   },
@@ -1594,7 +2102,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'CLU',
+      code: "CLU",
       name: "Clunie",
       coords: {
         lat: 56.71688724042855,
@@ -1613,7 +2121,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'CON',
+      code: "CON",
       name: "Conon",
       coords: {
         lat: 57.5746352506808,
@@ -1632,7 +2140,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'GAR',
+      code: "GAR",
       name: "Garry",
       coords: {
         lat: 57.070466800000005,
@@ -1650,7 +2158,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'KIL',
+      code: "KIL",
       name: "Killin",
       coords: {
         lat: 56.481,
@@ -1669,7 +2177,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-      code: 'MOR',
+      code: "MOR",
       name: "Moriston",
       coords: {
         lat: 57.1761093185331,
@@ -1930,6 +2438,177 @@ export const unitGroups: UnitGroup[] = [
     ],
   },
 
+  // Carnegie Road Battery E_CRSSB-1
+
+  {
+    details: {
+      code: "CRSS",
+      name: "Carnegie Road",
+      coords: {
+        lat: 55.955,
+        lng: -3.193,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_CRSSB-1",
+      },
+    ],
+  },
+
+  // Cupar battery E_CUPAB-1
+
+  {
+    details: {
+      code: "CUPA",
+      name: "Coupar",
+      coords: {
+        lat: 56.318,
+        lng: -3.009,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_CUPAB-1",
+      },
+    ],
+  },
+
+  // E_TOLLB-1 Tollgate battery
+
+  {
+    details: {
+      code: "TOLL",
+      name: "Tollgate",
+      coords: {
+        lat: 51.264,
+        lng: 1.136,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_TOLLB-1",
+      },
+    ],
+  },
+
+  // T_BUSTB-1 Bustleholme battery
+
+  {
+    details: {
+      code: "BUST",
+      name: "Bustleholme",
+      coords: {
+        lat: 52.531,
+        lng: -2.013,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "T_BUSTB-1",
+      },
+    ],
+  },
+
+  // Cowley battery T_COWB-1
+
+  {
+    details: {
+      code: "COWB",
+      name: "Cowley",
+      coords: {
+        lat: 51.747,
+        lng: -1.227,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "T_COWB-1",
+      },
+    ],
+  },
+
+  // T_PNYCB-1 Pen y Cymoedd battery
+
+  {
+    details: {
+      code: "PNYC",
+      name: "Pen y Cymoedd",
+      coords: {
+        lat: 51.747,
+        lng: -1.227,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "T_PNYCB-1",
+      },
+    ],
+  },
+
+  // Nursling battery T_NURSB-1
+
+  {
+    details: {
+      code: "NURS",
+      name: "Nursling",
+      coords: {
+        lat: 50.921,
+        lng: -1.479,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "T_NURSB-1",
+      },
+    ],
+  },
+
+  // Kemsley battery T_KEMB-1
+
+  {
+    details: {
+      code: "KEMB",
+      name: "Kemsley",
+      coords: {
+        lat: 51.358,
+        lng: 0.735,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "T_KEMB-1",
+      },
+    ],
+  },
+
+  // Greenfield Road battery E_GRFLB-1
+
+  {
+    details: {
+      code: "GRFL",
+      name: "Greenfield Road",
+      coords: {
+        lat: 53.252,
+        lng: -3.005,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_GRFLB-1",
+      },
+    ],
+  },
+
   //Carraig Gheal T_CRGHW-1 56.339, -5.2945
 
   {
@@ -2088,7 +2767,7 @@ export const unitGroups: UnitGroup[] = [
 
   {
     details: {
-       code: "DUNB",
+      code: "DUNB",
       name: "Dunbar",
       coords: {
         lat: 55.99467893827063,
@@ -2182,6 +2861,25 @@ export const unitGroups: UnitGroup[] = [
     ],
   },
 
+  // Burwell Weirs Drove Battery Storage E_BURWB-1
+
+  {
+    details: {
+      code: "BURWB",
+      name: "Burwell Weirs Drove",
+      coords: {
+        lat: 52.272,
+        lng: 0.337,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_BURWB-1",
+      },
+    ],
+  },
+
   // edinbane 57.40959498314662, -6.417996723851728 T_EDINW-1
 
   {
@@ -2238,6 +2936,118 @@ export const unitGroups: UnitGroup[] = [
       },
       {
         bmUnit: "T_FARR-2",
+      },
+    ],
+  },
+
+  // Goole Fields Wind Farm
+  // E_GFLDW-1 53.7167, -0.9333
+
+  {
+    details: {
+      code: "GFLDW",
+      name: "Goole Fields Wind Farm",
+      coords: {
+        lat: 53.7167,
+        lng: -0.9333,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "E_GFLDW-1",
+      },
+    ],
+  },
+
+  // Castner Kellner T_CASKD-1  53°19′45.9″N 2°45′14.7″W Biomass
+
+  {
+    details: {
+      code: "CASKD",
+      name: "Castner Kellner",
+      coords: {
+        lat: 53.329417,
+        lng: -2.754083,
+      },
+      fuelType: "biomass",
+    },
+    units: [
+      {
+        bmUnit: "T_CASKD-1",
+      },
+    ],
+  },
+
+  // latitude: 57° 20' 5.3" Longitude: -4° 6' 17.5" T_GLNKW-1 Glen Kyllachy
+
+  {
+    details: {
+      code: "GLNKW",
+      name: "Glen Kyllachy",
+      coords: {
+        lat: 57.334806,
+        lng: -4.104861,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "T_GLNKW-1",
+      },
+    ],
+  },
+
+  // E_DOLLB-1 Dollymans Storage battery essex
+
+  {
+    details: {
+      code: "DOLLB",
+      name: "Dollymans Storage battery",
+      coords: {
+        lat: 51.589,
+        lng: 0.564,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_DOLLB-1",
+      },
+    ],
+  },
+  // E_BETHW-1 BheBeinn Tharsuinn in  Latitude: 57° 48' 5.4" Longitude: -4° 19' 53.1"
+
+  {
+    details: {
+      code: "BETHW",
+      name: "BheBeinn Tharsuinn",
+      coords: {
+        lat: 57.8015,
+        lng: -4.3314,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "E_BETHW-1",
+      },
+    ],
+  },
+
+  {
+    details: {
+      code: "CASKD",
+      name: "Castner Kellner",
+      coords: {
+        lat: 53.3333,
+        lng: -2.8667,
+      },
+      fuelType: "gas",
+    },
+    units: [
+      {
+        bmUnit: "T_CASKD-1",
       },
     ],
   },
@@ -2364,6 +3174,92 @@ export const unitGroups: UnitGroup[] = [
       },
       {
         bmUnit: "T_GANW-24",
+      },
+    ],
+  },
+
+  // Dogger Bank Wind Farm T_DBAWO-1, T_DBAWO-2, T_DBAWO-3, T_DBAWO-4, T_DBAWO-5 54.1 2.5
+
+  {
+    details: {
+      code: "DBAWO",
+      name: "Dogger Bank Wind Farm",
+      coords: {
+        lat: 54.1,
+        lng: 2.5,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "T_DBAWO-1",
+      },
+      {
+        bmUnit: "T_DBAWO-2",
+      },
+      {
+        bmUnit: "T_DBAWO-3",
+      },
+      {
+        bmUnit: "T_DBAWO-4",
+      },
+      {
+        bmUnit: "T_DBAWO-5",
+      },
+    ],
+  },
+
+  // Cumberhead wind T_CUMHW-1
+
+  {
+    details: {
+      code: "CUMHW",
+      name: "Cumberhead wind",
+      coords: {
+        lat: 55.6,
+        lng: -3.9,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "T_CUMHW-1",
+      },
+    ],
+  },
+  // nursling battery T_NURSB-1
+
+  {
+    details: {
+      code: "NURSB",
+      name: "Nursling battery",
+      coords: {
+        lat: 50.92,
+        lng: -1.45,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "T_NURSB-1",
+      },
+    ],
+  },
+  // Assel Valley Wind Farm E_ASLVW-1 55° 13' 34.8" Longitude: -4° 46' 17.4"
+
+  {
+    details: {
+      code: "ASLVW",
+      name: "Assel Valley Wind Farm",
+      coords: {
+        lat: 55.226333,
+        lng: -4.7715,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "E_ASLVW-1",
       },
     ],
   },
@@ -2499,6 +3395,9 @@ export const unitGroups: UnitGroup[] = [
       },
       {
         bmUnit: "E_GNFSW-2",
+      },
+      {
+        bmUnit: "T_GNFSW-2",
       },
     ],
   },
@@ -2791,6 +3690,25 @@ export const unitGroups: UnitGroup[] = [
       },
     ],
   },
+
+  // Tesla Holes Bay Battery BHOLB-1
+
+  {
+    details: {
+      code: "HOLB",
+      name: "Holes Bay Battery",
+      coords: {
+        lat: 50.723,
+        lng: -2.016,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "BHOLB-1",
+      },
+    ],
+  },
   // Killingholme (PG)	T_KILLPG-1 T_KILLPG-2 T_KILNS-1 -2.53 53.27
 
   {
@@ -2884,6 +3802,9 @@ export const unitGroups: UnitGroup[] = [
     units: [
       {
         bmUnit: "T_KPMRW-1",
+      },
+      {
+        bmUnit: "T_KYPEW-1",
       },
     ],
   },
@@ -3810,10 +4731,10 @@ export const unitGroups: UnitGroup[] = [
   {
     details: {
       code: "PINF",
-      name: "Pinfold",
+      name: "Capenhurst",
       coords: {
-        lat: 53.26596802790049, 
-        lng: -2.941941529015923
+        lat: 53.26596802790049,
+        lng: -2.941941529015923,
       },
       fuelType: "battery",
     },
@@ -3835,6 +4756,180 @@ export const unitGroups: UnitGroup[] = [
       },
       {
         bmUnit: "T_PINFD-6",
+      },
+    ],
+  },
+
+  // Hutton Battery E_ARNKB-2
+
+  {
+    details: {
+      code: "ARNKB",
+      name: "Hutton Battery",
+      coords: {
+        lat: 55.884,
+        lng: -3.922,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_ARNKB-2",
+      },
+    ],
+  },
+
+  // Greengairs east wind farm
+
+  {
+    details: {
+      code: "GGRSW",
+      name: "Greengairs East",
+      coords: {
+        lat: 55.884,
+        lng: -3.922,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "E_GRGRW-1",
+      },
+    ],
+  },
+
+  // Blary hill wind farm E_BLARW-1
+
+  {
+    details: {
+      code: "BLARW",
+      name: "Blary Hill",
+      coords: {
+        lat: 55.884,
+        lng: -3.922,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "E_BLARW-1",
+      },
+    ],
+  },
+
+  // Dalquhandy wind farm T_DALQW-1
+
+  {
+    details: {
+      code: "DALQW",
+      name: "Dalquhandy",
+      coords: {
+        lat: 55.884,
+        lng: -3.922,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "T_DALQW-1",
+      },
+    ],
+  },
+
+  // Sandy Knowe Wind Farm T_SAKNW-1
+
+  {
+    details: {
+      code: "SAKNW",
+      name: "Sandy Knowe",
+      coords: {
+        lat: 55.884,
+        lng: -3.922,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "T_SAKNW-1",
+      },
+    ],
+  },
+
+  // Skelmersdale Battery E_SKELB-1
+
+  {
+    details: {
+      code: "SKELB",
+      name: "Skelmersdale",
+      coords: {
+        lat: 53.55,
+        lng: -2.8,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_SKELB-1",
+      },
+    ],
+  },
+
+  // Tesla Clay Tye Battery E_CLAYB-2, E_CLAYB-1
+
+  {
+    details: {
+      code: "CLAYB",
+      name: "Clay Tye",
+      coords: {
+        lat: 51.97,
+        lng: 0.74,
+      },
+      fuelType: "battery",
+    },
+    units: [
+      {
+        bmUnit: "E_CLAYB-2",
+      },
+      {
+        bmUnit: "E_CLAYB-1",
+      },
+    ],
+  },
+
+  // Douglas West Wind Farm T_DOUGW-1
+
+  {
+    details: {
+      code: "DOUGW",
+      name: "Douglas West",
+      coords: {
+        lat: 55.57481257534265,
+        lng: -3.8527474924568645,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "T_DOUGW-1",
+      },
+    ],
+  },
+
+  // hadyard hill wind farm T_HADHW-1
+
+  {
+    details: {
+      code: "HAADHW",
+      name: "Hadyard Hill",
+      coords: {
+        lat: 55.57481257534265,
+        lng: -3.8527474924568645,
+      },
+      fuelType: "wind",
+    },
+    units: [
+      {
+        bmUnit: "T_HADHW-1",
       },
     ],
   },
@@ -3865,23 +4960,23 @@ export const unitGroups: UnitGroup[] = [
 // convert to a dictionary with code as key
 export const unitGroupsDict: UnitGroupsDict = {};
 for (const ug of unitGroups) {
-  if(ug.details.code) unitGroupsDict[ug.details.code] = ug;
+  if (ug.details.code) unitGroupsDict[ug.details.code] = ug;
 }
 
-type FuelTypeUnitsDict = Record<string, string[]>
+type FuelTypeUnitsDict = Record<string, string[]>;
 
 export const fuelTypeUnitsDict: FuelTypeUnitsDict = {
-  'gas': [],
-  'wind': [],
-  'biomass': [],
-  'hydro': [],
-  'battery': [],
-  'unknown': [],
-  'coal': [],
-  'nuclear': [],
-  'oil': [],
-  'solar': [],
-  'interconnector': [],
+  gas: [],
+  wind: [],
+  biomass: [],
+  hydro: [],
+  battery: [],
+  unknown: [],
+  coal: [],
+  nuclear: [],
+  oil: [],
+  solar: [],
+  interconnector: [],
 };
 
 for (const ug of unitGroups) {
@@ -3896,6 +4991,6 @@ for (const ug of unitGroups) {
 
 for (const interconnector of interconnectors) {
   for (const bmUnit of interconnector.units) {
-    fuelTypeUnitsDict['interconnector'].push(bmUnit.bmUnit);
+    fuelTypeUnitsDict["interconnector"].push(bmUnit.bmUnit);
   }
 }

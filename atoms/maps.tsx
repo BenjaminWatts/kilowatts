@@ -1,12 +1,11 @@
 import React from "react";
 import MV, { MapViewProps, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { UnitGroupMapProps, UnitsGroupMapProps } from "../common/types";
-import log from "../services/log";
 import { Platform, StyleSheet } from "react-native";
 import formatters from "../common/formatters";
 import { FuelTypeIcon } from "./icons";
+import { getUnitGroupUrl } from "../services/nav";
 import { useRouter } from "expo-router";
-import { urls } from "../services/nav";
 
 const getMapProvider = () => {
   if (Platform.OS === "android") {
@@ -56,8 +55,8 @@ export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
 };
 
 export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
-  // console.log(markers[0]);
-  // const router = useRouter();
+  const router = useRouter();
+
   return (
     <MapView
       scrollEnabled={false}
@@ -76,7 +75,9 @@ export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
         .map((marker) => (
             <Marker
               onPress={() => {
-                // router.push(urls.unitGroup(ugs.details.code));
+                const url = getUnitGroupUrl(marker);
+                if (!url) return;
+                router.push(url as any)
               }}
               key={marker.code}
               coordinate={marker.coordinate}

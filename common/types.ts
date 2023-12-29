@@ -153,9 +153,9 @@ export const FUEL_TYPE_NAMES: FuelType[] = [
   "coal",
   "nuclear",
   "wind",
+  "solar",
   "hydro",
   "biomass",
-  "solar",
   "oil",
   "interconnector",
   "unknown",
@@ -168,17 +168,17 @@ type FuelTypeColor = {
 }
 
 export const FUEL_TYPE_COLORS: FuelTypeColor[] = [
-  { fuelType: "gas", color: "#F56C42" },        // Natural Gas (Moderate)
-  { fuelType: "coal", color: "#464646" },      // Coal (Least Friendly)
+  { fuelType: "gas", color: "brown" },     // Natural Gas (Bad Orange)
+  { fuelType: "coal", color: "black" },      // Coal (Least Friendly)
   { fuelType: "nuclear", color: "#3399CC" },   // Nuclear (Clean)
   { fuelType: "wind", color: "#8CD19D" },      // Wind (Clean)
+  { fuelType: "solar", color: "#FFD700" },     // Solar (Cleanest Yellow)
   { fuelType: "hydro", color: "#009688" },     // Hydro (Clean)
   { fuelType: "biomass", color: "#A2D872" },   // Biomass (Moderate Green)
-  { fuelType: "solar", color: "#FFD700" },     // Solar (Cleanest Yellow)
   { fuelType: "oil", color: "#CC0000" },       // Oil (Least Friendly)
   { fuelType: "interconnector", color: "#993333" },  // Interconnector (Moderate)
   { fuelType: "unknown", color: "#A9A9A9" },   // Unknown (Gray)
-  { fuelType: "battery", color: "#FF9933" },   // Battery (Moderate Orange)
+  { fuelType: "battery", color: "purple" },   // Battery (Orange)
 ]
 
 export const getFuelTypeColor = (fuelType: FuelType) => {
@@ -196,7 +196,7 @@ export type UnitGroupUnit = {
 };
 
 export type UnitGroupDetails = {
-  code?: string;
+  code: string;
   name: string; // Pembroke
   coords?: {
     lat: number;

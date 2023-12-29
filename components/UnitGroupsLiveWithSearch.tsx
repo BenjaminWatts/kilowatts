@@ -4,6 +4,7 @@ import { useNavigation } from "expo-router";
 import { useUnitGroupsLiveQuery } from "../services/state/unitGroupsLive";
 import { UnitGroupsLiveList } from "./UnitGroupsLiveList";
 import { FuelType, UnitGroupLevel } from "../common/types";
+import formatters from "../common/formatters";
 
 type FilterDataParams = {
   data: UnitGroupLevel[] | null;
@@ -34,9 +35,18 @@ type UnitGroupLiveWithSearchProps = {
 export const UnitGroupLiveWithSearch: React.FC<
   UnitGroupLiveWithSearchProps
 > = ({ search, fuelType }) => {
+  const nav = useNavigation();
   const query = useUnitGroupsLiveQuery();
 
   const { data, now, isLoading, refetch } = query;
+
+  React.useEffect(() => {
+    if (now) {
+      const timeString = londonTimeHHMMSS(now);
+      const title = fuelType ? `${formatters.fuelType(fuelType)} Live: ${timeString}` : `Generation Live: ${timeString}`;
+      nav.setOptions({ title });
+    }
+  }, [now]);
   const filteredData = useMemo(
     () => filterData({ data, search, fuelType }),
     [data, search, fuelType]

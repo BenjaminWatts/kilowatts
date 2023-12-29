@@ -7,23 +7,33 @@ import { Loader } from "../atoms/loaders";
 
 type FuelTypeRangeProps = {
   height: number;
+  orderedFuelTypes: string[] | null;
 };
 
-export const FuelTypeRange: React.FC<FuelTypeRangeProps> = ({ height }) => {
-  const { data, error, refetch } = useFuelTypeHistoryQuery();
+export const FuelTypeRange: React.FC<FuelTypeRangeProps> = ({
+  height,
+  orderedFuelTypes,
+}) => {
+  const { data, error, refetch, isLoading } = useFuelTypeHistoryQuery();
   const dims = useWindowDimensions();
-  const isLoading = true
-
   return (
-    <View style={{ height, width: dims.width - 5 }}>
+    <View
+      style={{
+        height,
+        width: dims.width - 5,
+      }}
+    >
       {data ? (
-        <UnitGroupUnitsStackedChart data={data} />
+        <UnitGroupUnitsStackedChart
+          data={data}
+          orderedFuelTypes={orderedFuelTypes}
+        />
       ) : (
         <>
-            {isLoading && <Loader/>}
-            {error && <ApiErrorCard refetch={refetch} />}
+          {isLoading && <Loader />}
+          {error && <ApiErrorCard refetch={refetch} />}
         </>
-       )} 
+      )}
     </View>
   );
 };

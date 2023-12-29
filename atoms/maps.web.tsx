@@ -1,25 +1,23 @@
 import React from "react";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
-import { FuelType, UnitGroupMapProps, UnitsGroupMapProps } from "../common/types";
+import {
+  FuelType,
+  UnitGroupMapProps,
+  UnitGroupMarker,
+  UnitsGroupMapProps,
+} from "../common/types";
 import log from "../services/log";
-import { urls } from "../services/nav";
-import { ALLOW_LINK_FUELTYPES } from "../common/utils";
+import { getUnitGroupUrl } from "../services/nav";
 
 const containerStyle = {
   width: "100%",
   height: "100%",
 };
 
-
 type Coords = {
   lat: number;
   lng: number;
 };
-
-type MarkerProps = {
-  coords: Coords;
-  href?: string;
-}
 
 type GetZoomParams = {
   coords: Coords;
@@ -39,6 +37,15 @@ const zoomLevels = {
   other: 10,
 };
 
+const createWebMarker = (
+  marker: UnitGroupMarker
+): { lat: number; lng: number } => {
+  return {
+    lat: marker.coordinate.latitude,
+    lng: marker.coordinate.longitude,
+  };
+};
+
 export const getZoom = (params: GetZoomParams): number => {
   return isNorthSeaWind(params) ? zoomLevels.northSeaWind : zoomLevels.other;
 };
@@ -46,7 +53,7 @@ export const getZoom = (params: GetZoomParams): number => {
 type GoogleMarkerMapProps = {
   center: Coords;
   delta: Coords;
-  markers: MarkerProps[];
+  markers: UnitGroupMarker[];
   zoom: number;
 };
 /*
@@ -56,7 +63,7 @@ export const GoogleMarkerMap: React.FC<GoogleMarkerMapProps> = ({
   markers,
   center,
   zoom,
-  delta
+  delta,
 }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -68,16 +75,15 @@ export const GoogleMarkerMap: React.FC<GoogleMarkerMapProps> = ({
     function callback(map: any) {
       const bounds = new window.google.maps.LatLngBounds(
         {
-          lat: center.lat - delta.lat/2,
-          lng: center.lng - delta.lng/2,
+          lat: center.lat - delta.lat / 2,
+          lng: center.lng - delta.lng / 2,
         },
         {
-          lat: center.lat + delta.lat/2,
-          lng: center.lng + delta.lng/2,
+          lat: center.lat + delta.lat / 2,
+          lng: center.lng + delta.lng / 2,
         }
       );
       map.fitBounds(bounds);
-      // map.setZoom(zoom);
       map.setMapTypeId("hybrid");
       log.debug(`Map loaded`);
     },
@@ -93,7 +99,6 @@ export const GoogleMarkerMap: React.FC<GoogleMarkerMapProps> = ({
 
   return (
     <GoogleMap
-      
       mapContainerStyle={containerStyle}
       center={center}
       options={{
@@ -107,13 +112,18 @@ export const GoogleMarkerMap: React.FC<GoogleMarkerMapProps> = ({
       onUnmount={onUnmount}
     >
       {markers.map((marker, index) => (
-          <Marker key={index} position={marker.coords}
-            onClick={() => {
-              const href = marker.href;
-              if(!href) return null
-              window.location.replace(href)
-            }}
-          />
+        <Marker
+          key={index}
+          position={{
+            lat: marker.coordinate.latitude,
+            lng: marker.coordinate.longitude,
+          }}
+          onClick={() => {
+            const href = getUnitGroupUrl(marker);
+            if (!href) return null;
+            window.location.replace(href);
+          }}
+        />
       ))}
     </GoogleMap>
   );
@@ -124,21 +134,33 @@ export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
   if (!coords || !name) return <></>;
   const zoom = getZoom({ coords, fuelType });
   const delta = { lat: 3, lng: 1.5 };
-  const markers = [{coords}];
-  return <GoogleMarkerMap center={coords} markers={markers} zoom={zoom} delta={delta}/>;
+  return (
+    <GoogleMarkerMap
+      center={coords}
+      markers={[
+        {
+          code: ug.details.code,
+          coordinate: { latitude: coords.lat, longitude: coords.lng },
+          title: name,
+          fuelType,
+        },
+      ]}
+      zoom={zoom}
+      delta={delta}
+    />
+  );
 };
 
-export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ugs}) => {
-  const center = { lat: 54.5, lng: -2 };
-  const delta = { lat: 5, lng: 6 };
+export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
+  const center = { lat: 53.5, lng: -2 };
+  const delta = { lat: 6, lng: 6 };
   const zoom = 6;
-  let markers: MarkerProps[] = [];
-  ugs.forEach((ug) => {
-    const { coords, code, fuelType } = ug.details;
-    if (coords && code) {
-      const href = ALLOW_LINK_FUELTYPES.includes(fuelType) ? urls.unitGroup(code) : undefined;
-      markers.push({coords, href});
-    }
-  });
-  return <GoogleMarkerMap delta={delta} center={center} markers={markers} zoom={zoom} />;
+  return (
+    <GoogleMarkerMap
+      delta={delta}
+      center={center}
+      markers={markers}
+      zoom={zoom}
+    />
+  );
 };

@@ -14,7 +14,6 @@ type UnitGroupLiveProps = {
 export const UnitGroupLive: React.FC<UnitGroupLiveProps> = ({ ug }) => {
   log.debug(`UnitGroupLive ${ug.details.name}`);
   const query = useUnitGroupLiveQuery(ug);
-  if (query.isError) return <ApiErrorCard refetch={query.refetch} />;
   return (
     <View style={styles.listHalf}>
       <FlashList
@@ -22,8 +21,11 @@ export const UnitGroupLive: React.FC<UnitGroupLiveProps> = ({ ug }) => {
         refreshControl={
           <RefreshControl refreshing={query.isLoading} onRefresh={() => {}} />
         }
+        ListEmptyComponent={
+          <>{query.isError && <ApiErrorCard refetch={query.refetch} />}</>
+        }
         ListHeaderComponent={() => <UnitListHeader now={query.now} />}
-        data={query.data}
+        data={query.data ? query.data : []}
         renderItem={({ item, index }) => <UnitLive index={index} {...item} />}
       />
     </View>

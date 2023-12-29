@@ -6,7 +6,7 @@ import {
   useRefetchOnAppOrNetworkResume,
 } from "../hooks";
 
-export const UPDATE_INTERVAL_SECS = 60;
+export const UPDATE_INTERVAL_SECS = 1;
 export const POLLING_ACCEPTANCE_INTERVAL_ACCS_SECS = 15;
 
 type UseUnitsLiveQueryParams = {
