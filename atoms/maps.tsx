@@ -1,6 +1,10 @@
 import React from "react";
 import MV, { MapViewProps, Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { UnitGroupMapProps, UnitGroupMarker, UnitsGroupMapProps } from "../common/types";
+import {
+  UnitGroupMapProps,
+  UnitGroupMarker,
+  UnitsGroupMapProps,
+} from "../common/types";
 import { Platform, StyleSheet } from "react-native";
 import formatters from "../common/formatters";
 import { FuelTypeIcon } from "./icons";
@@ -29,7 +33,7 @@ const MapView = (props: MapViewProps) => (
 
 export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
   console.log(`UnitGroupMap: ${ug.details.name}`);
-  const { coords, name } = ug.details;
+  const { coords, name, fuelType } = ug.details;
   if (!coords || !name) return <></>;
   const coordinate = {
     latitude: coords.lat,
@@ -49,15 +53,14 @@ export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
         coordinate={coordinate}
         title={ug.details.name}
         description={ug.details.fuelType}
-      />
+      >
+        <FuelTypeIcon fuelType={fuelType} size={20} />
+      </Marker>
     </MapView>
   );
 };
 
-
-export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({
-  markers,
-}) => {
+export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
   const router = useRouter();
 
   return (

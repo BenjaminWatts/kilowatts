@@ -1,20 +1,24 @@
-import {groupByFuelTypeAndInterconnectors, combineFuelTypesAndEmbedded} from "../../common/parsers";
+import {
+  groupByFuelTypeAndInterconnectors,
+  combineFuelTypesAndEmbedded,
+} from "../../common/parsers";
 import log from "../log";
 import { useEmbeddedWindAndSolarForecastQuery } from "./api/ng-eso-api";
 import { useUnitGroupsLiveQuery } from "./unitGroupsLive";
 import * as t from "../../common/types";
 
-export const UPDATE_INTERVAL_LIVE_GENERATION_SECS = 1;
-export const POLLING_INTERVAL_ACCS_SECS = 15;
 export const POLLING_INTERVAL_EMBEDDED_SECS = 60;
 
 export const MAX_RETRIES = 99999999;
 
-/*Get the latest data for output in each fuel type category*/
-export const useFuelTypeLiveQuery = (): t.FuelTypeLiveHookResult => {
+const UPDATE_INTERVAL_SECS = 1;
 
+/*Get the latest data for output in each fuel type category*/
+export const useFuelTypeLiveQuery = (
+  updateIntervalSecs = UPDATE_INTERVAL_SECS
+): t.FuelTypeLiveHookResult => {
   const queries = {
-    bm: useUnitGroupsLiveQuery(),
+    bm: useUnitGroupsLiveQuery(updateIntervalSecs),
     embedded: useEmbeddedWindAndSolarForecastQuery(
       {},
       { pollingInterval: POLLING_INTERVAL_EMBEDDED_SECS * 1000 }
@@ -48,45 +52,48 @@ export const useFuelTypeLiveQuery = (): t.FuelTypeLiveHookResult => {
       completeness,
       refetch,
       data: null,
+      orderedFuelTypes: null,
     } as t.FuelTypeLiveHookResultLoading;
   }
 
   try {
-  if (queries.embedded.data) {
-    log.debug(
-      `useFuelTypeLiveQuery: happy path: all data interpolating embedded wind and solar`
-    );
-    const data = combineFuelTypesAndEmbedded({
-      now: queries.bm.now,
-      data: {
-        bm: queries.bm.data,
-        embedded: queries.embedded.data,
-      },
-      includeEmbedded: false,
-    })
-    return {
-      completeness,
-      isLoading,
-      refetch,
-      now: queries.bm.now,
-      error: undefined,
-      data,
-    } as t.FuelTypeLiveHookResultSuccess;
-  } else {
-    log.debug(
-      `useFuelTypeLiveQuery: no embedded data but returning partial response`
-    );
-    return {
-      refetch,
-      completeness,
-      isLoading,
-      data: groupByFuelTypeAndInterconnectors({
+    if (queries.embedded.data) {
+      log.debug(
+        `useFuelTypeLiveQuery: happy path: all data interpolating embedded wind and solar`
+      );
+      const data = combineFuelTypesAndEmbedded({
+        now: queries.bm.now,
+        data: {
+          bm: queries.bm.data,
+          embedded: queries.embedded.data,
+        },
+        includeEmbedded: false,
+      });
+      return {
+        completeness,
+        isLoading,
+        refetch,
+        now: queries.bm.now,
+        error: undefined,
+        data,
+        orderedFuelTypes: data.map((d) => d.name),
+      } as t.FuelTypeLiveHookResultSuccess;
+    } else {
+      log.debug(
+        `useFuelTypeLiveQuery: no embedded data but returning partial response`
+      );
+      const data = groupByFuelTypeAndInterconnectors({
         x: queries.bm.data,
         includeEmbedded: true,
-      }),
-    } as t.FuelTypeLiveHookResultSuccess;
-  }
-
+      });
+      return {
+        refetch,
+        completeness,
+        isLoading,
+        data,
+        orderedFuelTypes: data.map((d) => d.name),
+      } as t.FuelTypeLiveHookResultSuccess;
+    }
   } catch (error: any) {
     log.error(error);
     return {
@@ -95,6 +102,7 @@ export const useFuelTypeLiveQuery = (): t.FuelTypeLiveHookResult => {
       refetch,
       error,
       data: null,
+      orderedFuelTypes: null,
     } as t.FuelTypeLiveHookResultError;
   }
 };

@@ -900,7 +900,7 @@ export const combineFuelTypesAndEmbedded = ({
   return output;
 };
 
-export const FUEL_LIVE_FREQUENCY_SECS = 60;
+export const REGULAR_TIMESERIES_FREQUENCY_SECS = 60;
 
 type CreateRegularTimeseriesParams = {
   from: Date;
@@ -931,7 +931,7 @@ export const createRegularTimeseries = ({
       output.push({ time, level: 0, delta: 0 });
     }
 
-    currentTime += FUEL_LIVE_FREQUENCY_SECS * 1000;
+    currentTime += REGULAR_TIMESERIES_FREQUENCY_SECS * 1000;
   }
 
   return output;
@@ -968,7 +968,7 @@ export const joinRegularTimeseries = ({
         outputDict[time][series.name] = level;
       }
     }
-    currentTime += FUEL_LIVE_FREQUENCY_SECS * 1000;
+    currentTime += REGULAR_TIMESERIES_FREQUENCY_SECS * 1000;
   }
   let outputList: TimeseriesList = [];
   for (const time of Object.keys(outputDict)) {
@@ -1076,7 +1076,7 @@ export const transformFuelTypeHistoryQuery = ({
       const row = { ...removeNegatives(timeDict), total, time };
       outputList.push(row);
     }
-    currentTime += FUEL_LIVE_FREQUENCY_SECS * 1000;
+    currentTime += REGULAR_TIMESERIES_FREQUENCY_SECS * 1000;
   }
   return outputList;
 };

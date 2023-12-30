@@ -254,7 +254,6 @@ export const FuelTypeCompletenessListHeader: React.FC<{completeness: FuelTypeLiv
 }
 
 export const MixScheduleCard: React.FC = () => {
-  log.debug(`cards/atoms/MixScheduleCard`)
   return (
     <Card containerStyle={styles.listHeaderCard}>
       <Text>Rolling Schedule</Text>

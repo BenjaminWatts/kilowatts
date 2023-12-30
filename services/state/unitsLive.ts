@@ -11,13 +11,15 @@ export const POLLING_ACCEPTANCE_INTERVAL_ACCS_SECS = 15;
 
 type UseUnitsLiveQueryParams = {
   bmUnits?: string[];
+  updateIntervalSecs?: number;
 };
 
 /* track PN and BOALF (acceptance) data for either all units (or a defined subset of units) */
-export const useUnitsLiveQuery = ({ bmUnits }: UseUnitsLiveQueryParams) => {
-  const { settlementPeriod, now } = useNowSettlementPeriod(
-    UPDATE_INTERVAL_SECS
-  );
+export const useUnitsLiveQuery = ({
+  bmUnits,
+  updateIntervalSecs = UPDATE_INTERVAL_SECS,
+}: UseUnitsLiveQueryParams) => {
+  const { settlementPeriod, now } = useNowSettlementPeriod(updateIntervalSecs);
   const queryParams = {
     ...settlementPeriod,
     bmUnits,

@@ -164,7 +164,7 @@ export const FUEL_TYPE_NAMES: FuelType[] = [
   "battery",
 ]
 
-type FuelTypeColor = {
+export type FuelTypeColor = {
   fuelType: FuelType;
   color: string;
 }
@@ -291,6 +291,7 @@ export type FuelTypeLiveHookResultLoading = {
   refetch: () => void;
   data: null;
   completeness: FuelTypeLiveCompleteness
+  orderedFuelTypes: null
 }
 
 export type FuelTypeLiveHookResultError = {
@@ -300,6 +301,7 @@ export type FuelTypeLiveHookResultError = {
   refetch: () => void;
   data: null;
   completeness: FuelTypeLiveCompleteness
+  orderedFuelTypes:  null
 }
 
 export type FuelTypeLiveHookResultSuccess = {
@@ -309,6 +311,7 @@ export type FuelTypeLiveHookResultSuccess = {
   refetch: () => void;
   completeness: FuelTypeLiveCompleteness
   data: FuelTypeLevel[]
+  orderedFuelTypes: FuelType[] | null
 }
 
 export type FuelTypeLiveHookResult = FuelTypeLiveHookResultSuccess | FuelTypeLiveHookResultError | FuelTypeLiveHookResultLoading;

@@ -7,6 +7,7 @@ const getGoogleMapsApiKey = () => {
 
 const expoConfig = {
   expo: {
+    jsEngine: "hermes",
     name: "kilowatts",
     slug: "kilowatts",
     version: "1.0.2",
@@ -26,7 +27,7 @@ const expoConfig = {
       config: {
         usesNonExemptEncryption: false,
       },
-      jsEngine: "jsc",
+      jsEngine: "hermes",
     },
     android: {
       adaptiveIcon: {

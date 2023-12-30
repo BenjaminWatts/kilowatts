@@ -2,10 +2,13 @@ import * as p from "../../common/parsers";
 import log from "../log";
 import { useUnitsLiveQuery } from "./unitsLive";
 
+const UPDATE_INTERVAL_SECS = 1
+
 /* get live output data for all unit groups - uses useBmUnitsLiveQuery for data */
-export const useUnitGroupsLiveQuery = () => {
+export const useUnitGroupsLiveQuery = (updateIntervalSecs = UPDATE_INTERVAL_SECS) => {
   const query = useUnitsLiveQuery({
     bmUnits: undefined,
+    updateIntervalSecs
   });
 
   if (!query.data) {

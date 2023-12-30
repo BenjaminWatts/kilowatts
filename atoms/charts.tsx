@@ -1,68 +1,74 @@
 import React from "react";
 import { StackedAreaChart, XAxis, YAxis } from "react-native-svg-charts";
 import { TransformedFuelTypeHistoryQuery } from "../common/parsers";
-import { FUEL_TYPE_COLORS } from "../common/types";
+import { FUEL_TYPE_COLORS, FuelType, FuelTypeColor } from "../common/types";
 import * as shape from "d3-shape";
 import formatters from "../common/formatters";
 import { londonTimeHHMM } from "../common/utils";
-import { View } from "react-native";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
 
 type UnitGroupUnitsStackedChartProps = {
-  orderedFuelTypes: string[] | null;
-  data: TransformedFuelTypeHistoryQuery[];
+  data?: {
+    colors: FuelTypeColor[];
+    values: TransformedFuelTypeHistoryQuery[];
+  }
 };
 
 const contentInset = { top: 5, bottom: 20 };
-
-/* given the fuel types (ordered from largest to smallest), get the series in the correct order for the chart */
-const getFuelTypeColors = (orderedFuelTypes: null | string[]) => {
-  if (!orderedFuelTypes) {
-    return FUEL_TYPE_COLORS;
-  } else {
-    let output = [];
-    for (let i = 0; i < orderedFuelTypes.length; i++) {
-      const fuelType = orderedFuelTypes[i];
-      const color = FUEL_TYPE_COLORS.find(
-        (c) => c.fuelType === fuelType
-      )?.color;
-      if (color) {
-        output.push({ fuelType, color });
-      }
-    }
-    // add others
-    const otherFuelTypes = FUEL_TYPE_COLORS.filter(
-      (c) => !orderedFuelTypes.includes(c.fuelType)
-    );
-    output.push(...otherFuelTypes);
-
-    output.reverse();
-    return output;
-  }
-};
 
 /* formats a number as a londontime HH:MM. returns blank unless MM:SS are 00:00 or 30:00*/
 const formatYLabel = (value: number, index: number) => {
   const londonTime = londonTimeHHMM(new Date(value));
   const minutes = londonTime.split(":")[1];
-  if (minutes === "00" || minutes === "30" || minutes === "15" || minutes === "45") {
+  if (
+    minutes === "00" ||
+    minutes === "30" ||
+    minutes === "15" ||
+    minutes === "45"
+  ) {
     return londonTime;
   } else {
-    return ""
+    return "";
   }
-}
+};
 
-const axisSvg = { fontSize: 15, fill: "grey" }
+/* calculate the height available on the screen dynamically for the chart so it takes up the remaining space */
+const calculateChartHeight = (
+  liveFuelTypeCount: number,
+  windowHeight: number
+) => {
+  const headerHeight = 25;
+  const subHeaderHeight = 50;
+  const tabIconHeight = 80;
+  const listItemsHeight = 30 * liveFuelTypeCount;
+  const availableHeight =
+    windowHeight -
+    headerHeight -
+    subHeaderHeight -
+    tabIconHeight -
+    listItemsHeight;
+  return availableHeight;
+};
+
+const axisSvg = { fontSize: 15, fill: "grey" };
 
 export const UnitGroupUnitsStackedChart: React.FC<
   UnitGroupUnitsStackedChartProps
-> = ({ data, orderedFuelTypes }) => {
-  const fuelTypeColors = getFuelTypeColors(orderedFuelTypes);
+> = ({ data }) => {
+  console.log(`UnitGroupUnitsStackedChart ${new Date()}`);
+  const dims = useWindowDimensions();
+  const height = calculateChartHeight(data?.colors.length || 0, dims.height)
+  
+  const keysColors = {
+    keys: data?.colors.map((c) => c.fuelType) || [],
+    colors: data?.colors.map((c) => c.color) || []
+  };
   return (
-    <View style={{ height: "100%" }}>
-      {data && (
-        <View style={{ flexDirection: "row", flex: 1 }}>
+    <View style={{...styles.chartView, height}}>
+      {data?.values && (
+        <>
           <YAxis
-            data={data}
+            data={data.values}
             contentInset={contentInset}
             min={0}
             svg={axisSvg}
@@ -70,32 +76,38 @@ export const UnitGroupUnitsStackedChart: React.FC<
             yAccessor={({ item }) => item.total}
             formatLabel={formatters.mwToGW}
           />
-          <View style={{display: 'flex', direction: 'column', flex: 1}}>
+          <View style={styles.right}>
             <StackedAreaChart
-              style={{  flex: 1, marginLeft: 5 }}
-              data={data}
-              key={'time'}
+              style={{ flex: 1, marginLeft: 5 }}
+              data={data.values}
+              key={"time"}
               contentInset={contentInset}
-              axisSvg={{ fill: "grey", fontSize: 10 }}
               curve={shape.curveNatural}
-              keys={fuelTypeColors.map((c) => c.fuelType) as any}
-              colors={fuelTypeColors.map((c) => c.color)}
-              svgs={fuelTypeColors.map((c) => ({
-                onPress: () => console.log("press", c),
-              }))}
+              colors={keysColors.colors}
+              keys={keysColors.keys}
+              // axisSvg={{ fill: "grey", fontSize: 10 }}
+              // svgs={fuelTypeColors.map((c) => ({
+              //   onPress: () => console.log("press", c),
+              // }))}
               gridMin={0}
             />
             <XAxis
-              style={{ height: 30, marginTop: 0, paddingTop: 0}}
-              data={data}
-              contentInset={{ left: 0, right: 0 }}
+              style={styles.x}
+              data={data.values}
+              contentInset={{ left: 15, right: 0 }}
               xAccessor={({ item }) => item.time}
               formatLabel={formatYLabel}
               svg={axisSvg}
-              />
+            />
           </View>
-        </View>
+        </>
       )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  chartView: { flexDirection: "row" },
+  right: { display: "flex", flexDirection: "column", flex: 1 },
+  x: { height: 30, marginTop: 0, paddingTop: 0 }
+});
