@@ -947,6 +947,7 @@ export const interconnectors: UnitGroup[] = [
 
   {
     details: {
+      code: "UNKINT",
       name: "Unknown",
       coords: {
         lat: 0,
@@ -957,4 +958,3 @@ export const interconnectors: UnitGroup[] = [
     units: [],
   },
 ];
-

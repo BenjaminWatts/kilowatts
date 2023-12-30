@@ -18,14 +18,18 @@ import { FuelTypeRange } from "./FuelTypeRange";
 import { ScaledSize, View, useWindowDimensions } from "react-native";
 import { FuelTypeLiveHookResult } from "../common/types";
 
+/* calculate the height available on the screen dynamically for the chart so it takes up the remaining space */
 const calculateChartHeight = (
   query: FuelTypeLiveHookResult,
   dims: ScaledSize
 ) => {
-  const chartHeight = query.data
-    ? dims.height - 180 - query.data.length * 30
-    : 0;
-  return chartHeight;
+  const headerHeight = 100
+  const subHeaderHeight = 50
+  const tabIconHeight = 80
+  const listItemsHeight = 30 * (query.data ? query.data.length : 0)
+  const windowHeight = dims.height
+  const availableHeight = windowHeight - headerHeight - subHeaderHeight - tabIconHeight  - listItemsHeight
+  return availableHeight
 };
 
 export const FuelTypeLive = () => {
@@ -55,7 +59,7 @@ export const FuelTypeLive = () => {
         <>{query.error && <ApiErrorCard refetch={query.refetch} />}</>
       }
       ListFooterComponent={
-        <View style={{height}}>
+        <View style={{flex: 1, height}}>
           <MixScheduleCard />
           <FuelTypeRange
             height={height}

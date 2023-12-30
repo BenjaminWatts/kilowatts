@@ -27,7 +27,7 @@ export const formatters = {
   },
   mwToGW: (x: number) => {
     const value = Math.round(x / 10) / 100;
-    return `${value.toLocaleString()}GW`;
+    return `${value.toLocaleString()} GW`;
   },
 };
 export default formatters;

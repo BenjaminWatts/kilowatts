@@ -14,6 +14,7 @@ type UnitGroupUnitsStackedChartProps = {
 
 const contentInset = { top: 5, bottom: 20 };
 
+/* given the fuel types (ordered from largest to smallest), get the series in the correct order for the chart */
 const getFuelTypeColors = (orderedFuelTypes: null | string[]) => {
   if (!orderedFuelTypes) {
     return FUEL_TYPE_COLORS;
@@ -65,7 +66,7 @@ export const UnitGroupUnitsStackedChart: React.FC<
             contentInset={contentInset}
             min={0}
             svg={axisSvg}
-            numberOfTicks={2}
+            numberOfTicks={3}
             yAccessor={({ item }) => item.total}
             formatLabel={formatters.mwToGW}
           />
@@ -73,11 +74,11 @@ export const UnitGroupUnitsStackedChart: React.FC<
             <StackedAreaChart
               style={{  flex: 1, marginLeft: 5 }}
               data={data}
-              xKey="time"
+              key={'time'}
               contentInset={contentInset}
               axisSvg={{ fill: "grey", fontSize: 10 }}
               curve={shape.curveNatural}
-              keys={fuelTypeColors.map((c) => c.fuelType)}
+              keys={fuelTypeColors.map((c) => c.fuelType) as any}
               colors={fuelTypeColors.map((c) => c.color)}
               svgs={fuelTypeColors.map((c) => ({
                 onPress: () => console.log("press", c),
@@ -87,7 +88,7 @@ export const UnitGroupUnitsStackedChart: React.FC<
             <XAxis
               style={{ height: 30, marginTop: 0, paddingTop: 0}}
               data={data}
-              contentInset={{ left: 10, right: 10 }}
+              contentInset={{ left: 0, right: 0 }}
               xAccessor={({ item }) => item.time}
               formatLabel={formatYLabel}
               svg={axisSvg}
