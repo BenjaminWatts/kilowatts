@@ -77,6 +77,7 @@ export const FuelTypeLive = () => {
         <ListItem
           name={item.name}
           level={item.level}
+          delta={item.delta}
           onPress={
             ALLOW_LINK_FUELTYPES.includes(item.name)
               ? () => router.push(urls.fuelType(item.name))

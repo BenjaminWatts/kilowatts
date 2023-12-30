@@ -37,14 +37,15 @@ export const useFuelTypeHistoryQuery = () => {
     };
   } else {
     try {
+      const data = p.transformFuelTypeHistoryQuery({
+        range: queries.bm.range,
+        bm: queries.bm.data,
+        embedded: queries.embedded.data,
+        startAt: queries.now
+      })
       return {
         ...baseParams,
-        data: p.transformFuelTypeHistoryQuery({
-          range: queries.bm.range,
-          bm: queries.bm.data,
-          embedded: queries.embedded.data,
-          startAt: queries.now
-        }),
+        data
       };
     } catch (e: any) {
       log.error(e);

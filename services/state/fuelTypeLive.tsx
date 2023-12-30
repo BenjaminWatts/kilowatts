@@ -56,20 +56,21 @@ export const useFuelTypeLiveQuery = (): t.FuelTypeLiveHookResult => {
     log.debug(
       `useFuelTypeLiveQuery: happy path: all data interpolating embedded wind and solar`
     );
+    const data = combineFuelTypesAndEmbedded({
+      now: queries.bm.now,
+      data: {
+        bm: queries.bm.data,
+        embedded: queries.embedded.data,
+      },
+      includeEmbedded: false,
+    })
     return {
       completeness,
       isLoading,
       refetch,
       now: queries.bm.now,
       error: undefined,
-      data: combineFuelTypesAndEmbedded({
-        now: queries.bm.now,
-        data: {
-          bm: queries.bm.data,
-          embedded: queries.embedded.data,
-        },
-        includeEmbedded: false,
-      }),
+      data,
     } as t.FuelTypeLiveHookResultSuccess;
   } else {
     log.debug(

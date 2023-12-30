@@ -15,8 +15,8 @@ type FuelTypeIconProps = {
 };
 
 export const getIconUrl = (fuelType: FuelType) => {
-  return `/icons/${fuelType.toString()}.svg`
-}
+  return `/icons/${fuelType.toString()}.svg`;
+};
 
 export const FuelTypeIcon: React.FC<FuelTypeIconProps> = ({
   fuelType,
@@ -26,7 +26,7 @@ export const FuelTypeIcon: React.FC<FuelTypeIconProps> = ({
   const props = { size, color: getFuelTypeColor(fuelType) };
   switch (fuelType) {
     case "gas":
-      return <Ionicons testID='fuel-type-gas-icon' name="flame" {...props} />;
+      return <Ionicons testID="fuel-type-gas-icon" name="flame" {...props} />;
     case "oil":
       return <MaterialCommunityIcons name="oil" {...props} />;
     case "coal":
@@ -66,11 +66,27 @@ type HeaderInfoIconProps = {
 export const HeaderInfoIcon: React.FC<HeaderInfoIconProps> = ({ onPress }) => {
   return (
     <Icon
-      testID='header-info-icon'
+      testID="header-info-icon"
       name="info-outline"
       size={20}
       style={{ marginRight: 15 }}
       onPress={onPress}
     />
   );
+};
+
+type UpOrDownIconProps = {
+  delta: number;
+};
+
+/* Given a delta (rate of change) number prop, render either an up icon, a down icon or a flat / no change icon if delta = 0 */
+export const UpOrDownIcon: React.FC<UpOrDownIconProps> = ({ delta }) => {
+  const props = {size: 15, paddingRight: 3}
+  if (delta > 0) {
+    return <MaterialCommunityIcons name="arrow-up" {...props} color="green" />;
+  } else if (delta < 0) {
+    return <MaterialCommunityIcons name="arrow-down" {...props}  color="red" />;
+  } else {
+    return <MaterialCommunityIcons name="minus" {...props}  color="grey" />;
+  }
 };

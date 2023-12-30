@@ -52,8 +52,6 @@ const readInitialItems = (items: any[]) =>
     return acc;
   }, []);
 
-
-
 export const UnitGroupsLiveList: React.FC<UnitGroupsLiveListProps> = ({
   hideMap,
   isLoading,
@@ -61,6 +59,9 @@ export const UnitGroupsLiveList: React.FC<UnitGroupsLiveListProps> = ({
   data,
 }) => {
   const router = useRouter();
+  const [highlighted, setHighlighted] = React.useState<UnitGroupMarker | null>(
+    null
+  );
   const [mapItems, setMapItems] = React.useState<UnitGroupMarker[]>(
     data ? readInitialItems(data.slice(0, 10)) : []
   );
@@ -75,7 +76,9 @@ export const UnitGroupsLiveList: React.FC<UnitGroupsLiveListProps> = ({
       <>
         {!hideMap && (
           <View style={{ height: mapHeight }}>
-            {data && <UnitsGroupMap markers={mapItems} />}
+            {data && (
+              <UnitsGroupMap markers={mapItems} highlighted={highlighted} />
+            )}
           </View>
         )}
       </>
@@ -92,6 +95,23 @@ export const UnitGroupsLiveList: React.FC<UnitGroupsLiveListProps> = ({
         renderItem={({ item, index }) => (
           <ListItem
             index={index}
+            onHoverIn={() => {
+              if (item.details.coords) {
+                setHighlighted({
+                  code: item.details.code,
+                  title: item.details.name,
+                  fuelType: item.details.fuelType,
+                  coordinate: {
+                    latitude: item.details.coords.lat,
+                    longitude: item.details.coords.lng,
+                  },
+                });
+              } else {
+                setHighlighted(null);
+              }
+            }}
+            onHoverOut={() => setHighlighted(null)}
+            delta={item.delta}
             fuelType={item.details.fuelType}
             name={item.details.name}
             level={item.level}

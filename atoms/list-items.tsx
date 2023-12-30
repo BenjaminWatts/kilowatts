@@ -2,15 +2,32 @@ import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { ListItem } from "@rneui/themed";
 import formatters from "../common/formatters";
-import { FuelTypeIcon } from "./icons";
+import { FuelTypeIcon, UpOrDownIcon } from "./icons";
 import { londonTimeHHMMSS } from "../common/utils";
-import { FuelType, LevelPair, UnitGroupUnit } from "../common/types";
+import { FuelType, LevelPairDelta, UnitGroupUnit } from "../common/types";
+import log from "../services/log";
+
+const LevelListItemSubtitle: React.FC<{ level: number; delta: number }> = ({
+  level,
+  delta,
+}) => {
+  log.debug("LevelListItemSubtitle", level, delta);
+  return (
+    <View style={styles.levelListItemSubtitle}>
+      <ListItem.Subtitle>{formatters.mw(level)}</ListItem.Subtitle>
+      <UpOrDownIcon delta={delta} />
+    </View>
+  );
+};
 
 type UnitGroupLive = {
+  onHoverIn: () => void;
+  onHoverOut: () => void;
   index: number;
   fuelType: FuelType;
   name: string;
   level: number;
+  delta: number;
   onPress?: () => void;
 };
 
@@ -19,9 +36,17 @@ export const UnitGroupLive: React.FC<UnitGroupLive> = ({
   fuelType,
   name,
   level,
+  delta,
   onPress,
+  onHoverIn,
+  onHoverOut,
 }) => (
-  <Pressable style={styles.listItemContainer} onPress={onPress}>
+  <Pressable
+    style={styles.listItemContainer}
+    onPress={onPress}
+    onHoverIn={onHoverIn}
+    onHoverOut={onHoverOut}
+  >
     <ListItem.Content
       style={styles.liveContainer}
       testID={`generator-live-${index}`}
@@ -31,7 +56,7 @@ export const UnitGroupLive: React.FC<UnitGroupLive> = ({
         <ListItem.Title>{name}</ListItem.Title>
       </View>
 
-      <ListItem.Subtitle>{formatters.mw(level)}</ListItem.Subtitle>
+      <LevelListItemSubtitle level={level} delta={delta} />
     </ListItem.Content>
   </Pressable>
 );
@@ -39,12 +64,14 @@ export const UnitGroupLive: React.FC<UnitGroupLive> = ({
 type FuelTypeLiveProps = {
   name: FuelType;
   level: number;
+  delta: number;
   onPress?: () => void;
 };
 
 export const FuelTypeLive: React.FC<FuelTypeLiveProps> = ({
   name,
   level,
+  delta,
   onPress,
 }) => (
   <Pressable
@@ -58,7 +85,7 @@ export const FuelTypeLive: React.FC<FuelTypeLiveProps> = ({
         <ListItem.Subtitle>{formatters.fuelType(name)}</ListItem.Subtitle>
       </View>
 
-      <ListItem.Subtitle>{formatters.mw(level)}</ListItem.Subtitle>
+      <LevelListItemSubtitle level={level} delta={delta} />
     </ListItem.Content>
   </Pressable>
 );
@@ -67,11 +94,13 @@ type UnitLiveProps = {
   index: number;
   details: UnitGroupUnit;
   level: number;
+  delta: number;
 };
 
 export const UnitLive: React.FC<UnitLiveProps> = ({
   details,
   level,
+  delta,
   index,
 }) => (
   <ListItem
@@ -81,15 +110,16 @@ export const UnitLive: React.FC<UnitLiveProps> = ({
   >
     <ListItem.Content style={styles.liveContainer}>
       <ListItem.Title>{details.bmUnit}</ListItem.Title>
-      <ListItem.Subtitle>{formatters.mw(level)}</ListItem.Subtitle>
+      <LevelListItemSubtitle level={level} delta={delta} />
     </ListItem.Content>
   </ListItem>
 );
 
-type UnitLevelProps = LevelPair;
+type UnitLevelProps = LevelPairDelta;
 
 export const UnitLevelListItem: React.FC<UnitLevelProps> = ({
   level,
+  delta,
   time,
 }) => {
   return (
@@ -98,7 +128,7 @@ export const UnitLevelListItem: React.FC<UnitLevelProps> = ({
         <ListItem.Title>
           {londonTimeHHMMSS(new Date(Date.parse(time)))}
         </ListItem.Title>
-        <ListItem.Subtitle>{formatters.mw(level)}</ListItem.Subtitle>
+        <LevelListItemSubtitle level={level} delta={delta} />
       </ListItem.Content>
     </ListItem>
   );
@@ -131,5 +161,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 10,
+  },
+  levelListItemSubtitle: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: 5,
   },
 });

@@ -1,7 +1,7 @@
 import * as p from "../../common/parsers";
 import log from "../log";
 import {
-  LevelPair,
+  LevelPairDelta,
   UnitGroup,
   UseCurrentRangeParams,
 } from "../../common/types";
@@ -34,7 +34,7 @@ export const useUnitGroupHistoryQuery = ({
 
     const { from, to } = query.range;
 
-    const timeseries: { name: string; levels: LevelPair[] }[] = units
+    const timeseries: { name: string; levels: LevelPairDelta[] }[] = units
       .filter((u) => u.data.levels.length !== 0)
       .map((u) => {
         return {

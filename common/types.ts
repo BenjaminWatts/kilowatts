@@ -54,10 +54,12 @@ export type ElexonInsightsPnResponseRange = ElexonInsightsPNDataRecord[];
 
 export type BmUnitId = string;
 export type DateString = string;
+export type LevelDelta = {level: number, delta: number};
 export type LevelDict = Record<DateString, number>;
 export type LevelPair = { time: string; level: number };
-export type BmUnitValues = Record<BmUnitId, number>;
-export type BmUnitLevelPairs = Record<BmUnitId, LevelPair[]>;
+export type LevelPairDelta = LevelPair & {  delta: number };
+export type BmUnitValues = Record<BmUnitId, LevelDelta>;
+export type BmUnitLevelPairs = Record<BmUnitId, LevelPairDelta[]>;
 
 export type ElexonInsightsPnResponseParsed = BmUnitLevelPairs;
 
@@ -127,7 +129,7 @@ export type ElexonInsightsAcceptancesParsedNoLevels = {
 
 export type ElexonInsightsAcceptancesParsed =
   ElexonInsightsAcceptancesParsedNoLevels & {
-    levels: LevelPair[];
+    levels: LevelPairDelta[];
   };
 
 export type ElexonInsightsAcceptancesResponseParsed = Record<
@@ -213,17 +215,20 @@ export type UnitGroup = {
 export type UnitGroupUnitLevel = {
   unit: UnitGroupUnit;
   level: number;
+  delta: number;
 };
 
 export type UnitGroupLevel = {
   details: UnitGroupDetails;
   units: UnitGroupUnitLevel[];
+  delta: number;
   level: number;
 };
 
 export type FuelTypeLevel = {
   name: FuelType;
   level: number;
+  delta: number;
   unitGroupLevels: UnitGroupLevel[];
 };
 
@@ -232,6 +237,7 @@ export type UnitGroupsDict = Record<string, UnitGroup>;
 export type BmUnitLevelValue = {
   id: string;
   level: number;
+  delta: number;
 };
 
 /// NG ESO API
@@ -321,6 +327,7 @@ export type UnitGroupMarker = {
 
 export type UnitsGroupMapProps = {
   markers: UnitGroupMarker[]
+  highlighted: UnitGroupMarker | null;
 };
 
 

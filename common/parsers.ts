@@ -50,9 +50,11 @@ levelDictToLevelPairs
 For use when converting a levelDict to a levelPairs
 Returns an array of levelPairs, sorted by time
 */
-export const levelDictToLevelPairs = (levelDict: t.LevelDict): t.LevelPair[] =>
+export const levelDictToLevelPairs = (
+  levelDict: t.LevelDict
+): t.LevelPairDelta[] =>
   Object.keys(levelDict)
-    .map((time) => ({ time, level: levelDict[time] }))
+    .map((time) => ({ time, level: levelDict[time], delta: levelDict[time] }))
     .sort((a, b) => a.time.localeCompare(b.time));
 
 export type IntervalRecord = {
@@ -81,7 +83,7 @@ Combines intervalRecordToLevelDict and levelDictToLevelPairs
 */
 export const intervalRecordToLevelPairs = (
   r: IntervalRecord[]
-): t.LevelPair[] => levelDictToLevelPairs(intervalRecordToLevelDict(r));
+): t.LevelPairDelta[] => levelDictToLevelPairs(intervalRecordToLevelDict(r));
 
 /*
 interpolateLevelPair
@@ -92,12 +94,13 @@ identifies the last before i.e the immediately preceding level pair
 identifies the first after i.e. the immediately following level pair
 uses time linear interpolation to calculate the level at the required output interpolation time
 if the required output interpolation time is exactly the same as one of the level pairs, it returns that level pair
+delta is the rate of change per minute (or 60 seconds)
 if there is no before or after, it throws an error
 */
 export const interpolateLevelPair = (
   time: string,
   levelPairs: t.LevelPair[]
-): number => {
+): t.LevelPairDelta => {
   let befores: t.LevelPair[] = [];
   let afters: t.LevelPair[] = [];
 
@@ -106,7 +109,7 @@ export const interpolateLevelPair = (
   for (const levelPair of levelPairs) {
     const isExactMatch = levelPair.time === time;
     if (isExactMatch) {
-      return rounder(levelPair.level);
+      return { time, level: levelPair.level, delta: 0 };
     } else {
       const isBefore = levelPair.time < time;
       if (isBefore) {
@@ -138,7 +141,16 @@ export const interpolateLevelPair = (
   const interpolatedLevel =
     previous.level * weightBefore + subsequent.level * weightAfter;
 
-  return rounder(interpolatedLevel);
+  // calculate delta as the rate of change per minute
+
+  const delta =
+    (subsequent.level - previous.level) / (totalSeconds / 1000 / 60);
+
+  return {
+    time,
+    level: rounder(interpolatedLevel),
+    delta,
+  };
 };
 
 type InterpolateBmUnitLevelPairsParams = {
@@ -161,10 +173,13 @@ export const interpolateBmUnitLevelPairs = ({
   let output: t.BmUnitValues = {};
 
   for (const bmUnit of Object.keys(bmUnitLevelPairs)) {
-    const level = interpolateLevelPair(time, bmUnitLevelPairs[bmUnit]);
+    const { level, delta } = interpolateLevelPair(
+      time,
+      bmUnitLevelPairs[bmUnit]
+    );
 
     if (!omitZero || Math.round(level) !== 0) {
-      output[bmUnit] = level;
+      output[bmUnit] = { level, delta };
     }
   }
 
@@ -183,9 +198,10 @@ For use when sorting a BmUnitValues object by level descending
 export const sortDescendingBmUnitValues = (
   v: t.BmUnitValues
 ): t.BmUnitLevelValue[] => {
-  let bmUnits: { id: string; level: number }[] = [];
+  let bmUnits: t.BmUnitLevelValue[] = [];
   for (const id of Object.keys(v)) {
-    bmUnits.push({ id, level: v[id] });
+    const x = v[id];
+    bmUnits.push({ id, level: x.level, delta: x.delta });
   }
   return bmUnits.sort((a, b) => b.level - a.level);
 };
@@ -252,7 +268,7 @@ export const combinePnsAndAccs = ({
       output[bmUnit] = pns[bmUnit];
     } else {
       log.debug(`combinePnsAndAccs: acceptances found for ${bmUnit}`);
-      let schedule: t.LevelPair[] = pns[bmUnit];
+      let schedule: t.LevelPairDelta[] = pns[bmUnit];
       for (const acc of accs[bmUnit]) {
         log.debug(
           `combinePnsAndAccs: ${bmUnit} combining acceptance ${acc.acceptanceNumber}`
@@ -285,10 +301,22 @@ export const groupByUnitGroup = (x: t.BmUnitValues): t.UnitGroupLevel[] => {
   for (const ug of unitGroups) {
     let units: t.UnitGroupUnitLevel[] = [];
     for (const unit of ug.units) {
-      units.push({
-        unit,
-        level: x[unit.bmUnit] || 0,
-      });
+      const values = x[unit.bmUnit];
+      if (values) {
+        units.push({
+          unit,
+          level: values.level,
+          delta: values.delta,
+        });
+        bmUnits.push(unit.bmUnit);
+      } else {
+        log.debug(`getUnitGroups: no values found for ${unit.bmUnit}`);
+        units.push({
+          unit,
+          level: 0,
+          delta: 0,
+        });
+      }
       bmUnits.push(unit.bmUnit);
     }
     const level = units.reduce((a, b) => a + b.level, 0);
@@ -297,6 +325,7 @@ export const groupByUnitGroup = (x: t.BmUnitValues): t.UnitGroupLevel[] => {
         details: ug.details,
         units,
         level,
+        delta: units.reduce((a, b) => a + b.delta, 0),
       });
     }
   }
@@ -305,17 +334,29 @@ export const groupByUnitGroup = (x: t.BmUnitValues): t.UnitGroupLevel[] => {
   for (const int of interconnectors) {
     let units: t.UnitGroupUnitLevel[] = [];
     for (const unit of int.units) {
-      const level = x[unit.bmUnit] || 0;
-      units.push({
-        unit,
-        level,
-      });
+      const values = x[unit.bmUnit];
+      if (values) {
+        units.push({
+          unit,
+          level: values.level,
+          delta: values.delta,
+        });
+      } else {
+        log.debug(`getUnitGroups: no values found for ${unit.bmUnit}`);
+        units.push({
+          unit,
+          level: 0,
+          delta: 0,
+        });
+      }
+
       bmUnits.push(unit.bmUnit);
     }
     output.push({
       details: int.details,
       units,
       level: units.reduce((a, b) => a + b.level, 0),
+      delta: units.reduce((a, b) => a + b.delta, 0),
     });
   }
   // debugger
@@ -338,10 +379,10 @@ export const groupByUnitGroup = (x: t.BmUnitValues): t.UnitGroupLevel[] => {
               unit: {
                 bmUnit: unit,
               },
-              level: x[unit],
+              ...x[unit],
             },
           ],
-          level: x[unit],
+          ...x[unit],
         });
       }
 
@@ -359,10 +400,10 @@ export const groupByUnitGroup = (x: t.BmUnitValues): t.UnitGroupLevel[] => {
               unit: {
                 bmUnit: unit,
               },
-              level: x[unit],
+              ...x[unit],
             },
           ],
-          level: x[unit],
+          ...x[unit],
         });
       }
     }
@@ -395,9 +436,7 @@ export const groupByFuelTypeAndInterconnectors = ({
   let fuelTypesAndInterconnectors: t.FuelType[] = [];
   log.debug(`groupByFuelType: getting fuel types for domestic generators`);
   for (const ug of x) {
-    if (
-      ug.details.fuelType === "unknown" 
-    ) {
+    if (ug.details.fuelType === "unknown") {
       continue;
     }
     if (!fuelTypesAndInterconnectors.includes(ug.details.fuelType)) {
@@ -407,12 +446,14 @@ export const groupByFuelTypeAndInterconnectors = ({
 
   for (const ft of fuelTypesAndInterconnectors) {
     let level: number = 0;
+    let delta: number = 0;
     let unitGroupLevels: t.UnitGroupLevel[] = [];
     for (const ug of x) {
       if (ug.details.fuelType === ft) {
         for (const u of ug.units) {
           if (includeEmbedded || !isEmbeddedUnit(u.unit.bmUnit)) {
             level += u.level;
+            delta += u.delta;
             unitGroupLevels.push(ug);
           }
         }
@@ -422,6 +463,7 @@ export const groupByFuelTypeAndInterconnectors = ({
       name: ft,
       unitGroupLevels,
       level,
+      delta
     });
   }
 
@@ -521,7 +563,7 @@ Iterate through each level pair, and add the level to a running total
 Interpolate to take account of the fact that the level pairs are not necessarily at regular intervals
 output the average level in MW
 */
-export const averageLevel = (pair: t.LevelPair[]): number => {
+export const averageLevel = (pair: t.LevelPairDelta[]): number => {
   let totalMwh = 0;
   let totalSeconds = 0;
   // iterate through the 2nd to the last level pair
@@ -600,11 +642,21 @@ export const transformUnitGroupLiveQuery = ({
   });
   log.debug(`transformUnitGroupLiveQuery: combine with ug.units `);
   const withUnits = units.map((u) => {
-    const level = interp[u.bmUnit] || 0;
-    return {
-      details: u,
-      level,
-    };
+    const values = interp[u.bmUnit];
+    if (values) {
+      log.debug(`transformUnitGroupLiveQuery: values found for ${u.bmUnit}`);
+      return {
+        details: u,
+        ...values,
+      };
+    } else {
+      log.debug(`transformUnitGroupLiveQuery: no values found for ${u.bmUnit}`);
+      return {
+        details: u,
+        level: 0,
+        delta: 0,
+      };
+    }
   });
   log.debug(`transformUnitGroupLiveQuery: sorting by level descending `);
   withUnits.sort((a, b) => b.level - a.level);
@@ -621,7 +673,7 @@ type TransformUnitHistoryQueryParams = {
 type TransformUnitHistoryDataOutput = {
   details: t.UnitGroupUnit;
   data: {
-    levels: t.LevelPair[];
+    levels: t.LevelPairDelta[];
     average: number;
   };
 };
@@ -667,8 +719,10 @@ For use when removing repeating levels
 This reduces visual clutter when rendering schedules in the UI
 It will always keep the first and last level pair
 */
-export const removeRepeatingLevels = (x: t.LevelPair[]): t.LevelPair[] => {
-  let levels: t.LevelPair[] = [];
+export const removeRepeatingLevels = (
+  x: t.LevelPairDelta[]
+): t.LevelPairDelta[] => {
+  let levels: t.LevelPairDelta[] = [];
 
   for (let i = 0; i < x.length; i++) {
     const isFirst = i === 0;
@@ -729,8 +783,8 @@ export const filterUnitGroupScheduleQuery = (
 };
 
 type InterpolateCurrentEmbeddedWindAndSolarResult = {
-  wind: number;
-  solar: number;
+  wind: t.LevelPairDelta
+  solar: t.LevelPairDelta
 };
 
 /*
@@ -747,12 +801,6 @@ export const interpolateCurrentEmbeddedWindAndSolar = (
     `interpolateWindAndSolar: interpolating for ${time}.. generate level pairs for wind and solar, add 15 minutes to each value to interpolate correctly to mid point of settlment period`
   );
 
-  // const add15Minutes = (time: string) => {
-  //   const d = new Date(time);
-  //   d.setMinutes(d.getMinutes() + 15);
-  //   return d.toISOString();
-  // };
-
   const levelPairs: Record<string, t.LevelPair[]> = {
     wind: x.map((y) => ({ time: y.time, level: y.wind.level })),
     solar: x.map((y) => ({ time: y.time, level: y.solar.level })),
@@ -762,11 +810,8 @@ export const interpolateCurrentEmbeddedWindAndSolar = (
     `interpolateWindAndSolar: interpolating for ${time}.. interpolate wind and solar`
   );
 
-  const interpolateLevel = (type: string) =>
-    interpolateLevelPair(time, levelPairs[type]);
-
-  const wind = interpolateLevel("wind");
-  const solar = interpolateLevel("solar");
+  const wind = interpolateLevelPair(time, levelPairs.wind);
+  const solar = interpolateLevelPair(time, levelPairs.solar);
 
   return { wind, solar };
 };
@@ -813,14 +858,16 @@ export const combineFuelTypesAndEmbedded = ({
     if (ft.name === "wind") {
       output.push({
         ...ft,
-        level: ft.level + embedded.wind,
+        level: ft.level + embedded.wind.level,
+        delta: ft.delta + embedded.wind.delta,
       });
       found.wind = true;
     } else {
       if (ft.name === "solar") {
         output.push({
           ...ft,
-          level: ft.level + embedded.solar,
+          level: ft.level + embedded.solar.level,
+          delta: ft.delta + embedded.solar.delta,
         });
         found.solar = true;
       } else {
@@ -832,15 +879,17 @@ export const combineFuelTypesAndEmbedded = ({
   if (!found.wind) {
     output.push({
       name: "wind",
-      level: embedded.wind,
+      level: embedded.wind.level,
+      delta: embedded.wind.delta,
       unitGroupLevels: [],
     });
   }
 
-  if (!found.solar && embedded.solar > 0) {
+  if (!found.solar && embedded.solar.level > 0) {
     output.push({
       name: "solar",
-      level: embedded.solar,
+      level: embedded.solar.level,
+      delta: embedded.solar.delta,
       unitGroupLevels: [],
     });
   }
@@ -856,7 +905,7 @@ export const FUEL_LIVE_FREQUENCY_SECS = 60;
 type CreateRegularTimeseriesParams = {
   from: Date;
   to: Date;
-  levels: t.LevelPair[];
+  levels: t.LevelPairDelta[];
 };
 
 /* create regular timeseries */
@@ -864,10 +913,10 @@ export const createRegularTimeseries = ({
   from,
   to,
   levels,
-}: CreateRegularTimeseriesParams): t.LevelPair[] => {
+}: CreateRegularTimeseriesParams): t.LevelPairDelta[] => {
   const lastLevel = levels[levels.length - 1];
 
-  const output: t.LevelPair[] = [];
+  const output: t.LevelPairDelta[] = [];
   const fromTime = new Date(from).getTime();
   const toTime = new Date(to).getTime();
   let currentTime = fromTime;
@@ -876,10 +925,10 @@ export const createRegularTimeseries = ({
     const time = new Date(currentTime).toISOString();
 
     if (time < lastLevel.time) {
-      const level = interpolateLevelPair(time, levels);
-      output.push({ time, level });
+      const { level, delta } = interpolateLevelPair(time, levels);
+      output.push({ time, level, delta });
     } else {
-      output.push({ time, level: 0 });
+      output.push({ time, level: 0, delta: 0 });
     }
 
     currentTime += FUEL_LIVE_FREQUENCY_SECS * 1000;
@@ -893,7 +942,7 @@ type JoinRegularTimeseriesParams = {
   to: Date;
   timeseries: {
     name: string;
-    levels: t.LevelPair[];
+    levels: t.LevelPairDelta[];
   }[];
 };
 
@@ -914,9 +963,9 @@ export const joinRegularTimeseries = ({
     const time = new Date(currentTime).toISOString();
     outputDict[time] = {};
     for (const series of timeseries) {
-      const interp = interpolateLevelPair(time, series.levels);
-      if (interp !== 0) {
-        outputDict[time][series.name] = interp;
+      const { level, delta } = interpolateLevelPair(time, series.levels);
+      if (level !== 0) {
+        outputDict[time][series.name] = level;
       }
     }
     currentTime += FUEL_LIVE_FREQUENCY_SECS * 1000;
@@ -952,17 +1001,17 @@ export type TransformedFuelTypeHistoryQuery = {
   unknown: number;
   interconnector: number;
   total: number;
-}
+};
 
 const removeNegatives = (x: TransformedFuelTypeHistoryQuery) => {
-  let output: any = {...x};
+  let output: any = { ...x };
   for (const key of Object.keys(output)) {
-    if(output[key] < 0) {
+    if (output[key] < 0) {
       output[key] = 0;
     }
   }
-  return output as TransformedFuelTypeHistoryQuery
-}
+  return output as TransformedFuelTypeHistoryQuery;
+};
 
 /* create a regular minute-by-minute timeseries which aggregates by fuelType*/
 export const transformFuelTypeHistoryQuery = ({
@@ -973,20 +1022,24 @@ export const transformFuelTypeHistoryQuery = ({
 }: TransformFuelTypeHistoryQueryParams): TransformedFuelTypeHistoryQuery[] => {
   let outputList: TransformedFuelTypeHistoryQuery[] = [];
 
-  const fromTime = startAt
+  const fromTime = startAt;
   const toTime = new Date(range.to);
 
   log.debug(`transformFuelTypeHistoryQuery: ${fromTime} to ${toTime}`);
 
   let currentTime = fromTime.getTime();
   while (currentTime <= toTime.getTime()) {
-    const time = new Date(currentTime)
+    const time = new Date(currentTime);
     const isoTime = time.toISOString();
     let hasBm = false;
     let total = 0;
 
+    const emb = interpolateCurrentEmbeddedWindAndSolar(isoTime, embedded)
+
     let timeDict = {
-      ...interpolateCurrentEmbeddedWindAndSolar(isoTime, embedded),
+      time,
+      solar: emb.solar.level,
+      wind: emb.wind.level,
       gas: 0,
       coal: 0,
       nuclear: 0,
@@ -996,31 +1049,34 @@ export const transformFuelTypeHistoryQuery = ({
       oil: 0,
       unknown: 0,
       interconnector: 0,
+      total: 0,
     } as TransformedFuelTypeHistoryQuery;
-    for (const fuelType in timeDict) {
+    for (const fuelType of t.FUEL_TYPE_NAMES) {
       const units = fuelTypeUnitsDict[fuelType];
-      for (const unit of units) {
-        if (!isEmbeddedUnit(unit)) {
-          const pairs = bm[unit];
-          if (pairs) {
-            try {
-              const level = interpolateLevelPair(isoTime, pairs);
-              if (level !== 0) {
-                hasBm = true;
-                (timeDict as any)[fuelType] += level;
-                total += level;
-              }
-            } catch (e) {}
+    
+      if(units) {
+        for (const unit of units) {
+          if (!isEmbeddedUnit(unit)) {
+            const pairs = bm[unit];
+            if (pairs) {
+              try {
+                const { level } = interpolateLevelPair(isoTime, pairs);
+                if (level !== 0) {
+                  hasBm = true;
+                  (timeDict as any)[fuelType] += level;
+                  total += level;
+                }
+              } catch (e) {}
+            }
           }
         }
       }
     }
     if (hasBm) {
-      const row = { ...removeNegatives(timeDict), total, time }
+      const row = { ...removeNegatives(timeDict), total, time };
       outputList.push(row);
     }
     currentTime += FUEL_LIVE_FREQUENCY_SECS * 1000;
   }
-  return outputList
-
+  return outputList;
 };

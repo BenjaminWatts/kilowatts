@@ -8,18 +8,7 @@ import {
 } from "../common/types";
 import log from "../services/log";
 import { getUnitGroupUrl } from "../services/nav";
-import {
-  MaterialCommunityIcons,
-  Ionicons,
-  Feather,
-  FontAwesome5,
-  FontAwesome,
-} from "@expo/vector-icons";
-import ReactDOMServer from 'react-dom/server';
 import { getIconUrl } from "./icons";
-
-// import {} from 'expo-font'
-// import { getIconUrl } from "./icons";
 
 const containerStyle = {
   width: "100%",
@@ -57,8 +46,17 @@ type GoogleMarkerMapProps = {
   center: Coords;
   delta: Coords;
   markers: UnitGroupMarker[];
+  highlighted: UnitGroupMarker | null;
   zoom: number;
 };
+
+const getMarkerSize = (highlighted: UnitGroupMarker | null, marker: UnitGroupMarker) => {
+  console.log(`getMarkerSize: ${marker.code}`)
+  const markerSizes = {normal: 20, highlighted: 30};
+  const size = highlighted && highlighted.code === marker.code ? markerSizes.highlighted : markerSizes.normal;
+  return size
+}
+
 /*
 GoogleMarkerMap
 */
@@ -67,6 +65,7 @@ export const GoogleMarkerMap: React.FC<GoogleMarkerMapProps> = ({
   center,
   zoom,
   delta,
+  highlighted
 }) => {
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
@@ -115,25 +114,26 @@ export const GoogleMarkerMap: React.FC<GoogleMarkerMapProps> = ({
       onLoad={onLoad}
       onUnmount={onUnmount}
     >
-      {markers.map((marker, index) => (
-        <Marker
+      {markers.map((marker, index) => {
+        const size = getMarkerSize(highlighted, marker);
+        return  <Marker
+        title={`${marker.title}`}
         icon={{
           url: getIconUrl(marker.fuelType),
-          scaledSize: new window.google.maps.Size(30, 30)
+          scaledSize: new window.google.maps.Size(size, size),
         }}
-          key={index}
-          position={{
-            lat: marker.coordinate.latitude,
-            lng: marker.coordinate.longitude,
-          }}
-          onClick={() => {
-            const href = getUnitGroupUrl(marker);
-            if (!href) return null;
-            window.location.replace(href);
-          }}
-        />
-
-      ))}
+        key={index}
+        position={{
+          lat: marker.coordinate.latitude,
+          lng: marker.coordinate.longitude,
+        }}
+        onClick={() => {
+          const href = getUnitGroupUrl(marker);
+          if (!href) return null;
+          window.location.replace(href);
+        }}
+      />
+      })}
     </GoogleMap>
   );
 };
@@ -154,13 +154,14 @@ export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
           fuelType,
         },
       ]}
+      highlighted={null}
       zoom={zoom}
       delta={delta}
     />
   );
 };
 
-export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
+export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers, highlighted }) => {
   const center = { lat: 53.5, lng: -2 };
   const delta = { lat: 6, lng: 6 };
   const zoom = 6;
@@ -169,6 +170,7 @@ export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
       delta={delta}
       center={center}
       markers={markers}
+      highlighted={highlighted}
       zoom={zoom}
     />
   );

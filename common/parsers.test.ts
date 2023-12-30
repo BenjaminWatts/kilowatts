@@ -6,7 +6,7 @@ import {
   ElexonInsightsAcceptancesParsed,
   ElexonInsightsAcceptancesParsedNoLevels,
   FuelTypeLevel,
-  LevelPair,
+  LevelPairDelta,
 } from "./types";
 
 describe("parsers/shouldIncludeUnit", () => {
@@ -732,7 +732,7 @@ describe("parsers/parseAcceptancesWithLevels", () => {
 
 describe("parsers/removeRepeatingLevels", () => {
   test("can remove repeating levels", () => {
-    const input: LevelPair[] = [
+    const input: LevelPairDelta[] = [
       {
         time: "2021-01-01T00:00",
         level: 1,
@@ -754,7 +754,7 @@ describe("parsers/removeRepeatingLevels", () => {
         level: 5,
       },
     ];
-    const output: LevelPair[] = [
+    const output: LevelPairDelta[] = [
       {
         time: "2021-01-01T00:00",
         level: 1,
@@ -773,7 +773,7 @@ describe("parsers/removeRepeatingLevels", () => {
   });
 
   test("will keep the last pair even if it has the same value as previous ones", () => {
-    const input: LevelPair[] = [
+    const input: LevelPairDelta[] = [
       {
         time: "2021-01-01T00:00",
         level: 1,
@@ -795,7 +795,7 @@ describe("parsers/removeRepeatingLevels", () => {
         level: 2,
       },
     ];
-    const output: LevelPair[] = [
+    const output: LevelPairDelta[] = [
       {
         time: "2021-01-01T00:00",
         level: 1,

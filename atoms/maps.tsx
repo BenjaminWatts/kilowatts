@@ -1,6 +1,6 @@
 import React from "react";
 import MV, { MapViewProps, Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { UnitGroupMapProps, UnitsGroupMapProps } from "../common/types";
+import { UnitGroupMapProps, UnitGroupMarker, UnitsGroupMapProps } from "../common/types";
 import { Platform, StyleSheet } from "react-native";
 import formatters from "../common/formatters";
 import { FuelTypeIcon } from "./icons";
@@ -54,7 +54,10 @@ export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
   );
 };
 
-export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
+
+export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({
+  markers,
+}) => {
   const router = useRouter();
 
   return (
@@ -71,23 +74,20 @@ export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
         longitudeDelta: 12,
       }}
     >
-      {markers
-        .map((marker) => (
-            <Marker
-              onPress={() => {
-                const url = getUnitGroupUrl(marker);
-                if (!url) return;
-                router.push(url as any)
-              }}
-              key={marker.code}
-              coordinate={marker.coordinate}
-              title={marker.title}
-              description={`${formatters.fuelType(marker.fuelType)}`}
-            >
-              <FuelTypeIcon fuelType={marker.fuelType} size={20} />
-            </Marker>
-          )
-        )}
+      {markers.map((marker) => (
+        <Marker
+          key={marker.code}
+          onPress={() => {
+            const url = getUnitGroupUrl(marker);
+            if (!url) return;
+            router.push(url as any);
+          }}
+          {...marker}
+          description={`${formatters.fuelType(marker.fuelType)}`}
+        >
+          <FuelTypeIcon fuelType={marker.fuelType} size={20} />
+        </Marker>
+      ))}
     </MapView>
   );
 };
