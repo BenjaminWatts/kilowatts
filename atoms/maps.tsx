@@ -5,7 +5,7 @@ import {
   UnitGroupMarker,
   UnitsGroupMapProps,
 } from "../common/types";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, useWindowDimensions } from "react-native";
 import formatters from "../common/formatters";
 import { FuelTypeIcon } from "./icons";
 import { getUnitGroupUrl } from "../services/nav";
@@ -19,18 +19,19 @@ const getMapProvider = () => {
   return undefined;
 };
 
-const MapView = (props: MapViewProps) => (
-  <MV
-    provider={getMapProvider()}
-    {...props}
-    // cacheEnabled={true}
-    liteMode={true}
-    mapType={Platform.select({
-      ios: "mutedStandard",
-      android: "satellite",
-    })}
-  />
-);
+const MapView = (props: MapViewProps) => {
+  return (
+    <MV
+      provider={getMapProvider()}
+      {...props}
+      // liteMode={true}
+      mapType={Platform.select({
+        ios: "mutedStandard",
+        android: "hybrid",
+      })}
+    />
+  );
+};
 
 export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
   log.info(`UnitGroupMap: ${ug.details.name}`);
@@ -62,30 +63,39 @@ export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
 };
 
 export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
-  log.debug(`UnitsGroupMap: ${markers.length}`)
+  log.debug(`UnitsGroupMap: ${markers.length}`);
   const router = useRouter();
+  const { width, height } = useWindowDimensions();
 
-  const onPress = React.useCallback((marker: UnitGroupMarker) => {
-    () => {
-      const url = getUnitGroupUrl(marker);
-      if (!url) return;
-      router.push(url as any);
-    }
-  }, [router]);
+  const LATITUDE_DELTA = 9;
+  const LONGITUDE_DELTA = LATITUDE_DELTA * (width / (height * 0.5));
 
-  const renderMarker = React.useCallback((marker: UnitGroupMarker) => {
-    return (
-      <Marker
-        key={marker.code}
-        onPress={()=> onPress(marker)}
-        {...marker}
-        description={`${formatters.fuelType(marker.fuelType)}`}
-      >
-        <FuelTypeIcon fuelType={marker.fuelType} size={20} />
-      </Marker>
-    );
-  }, [router]);
-    
+  const onPress = React.useCallback(
+    (marker: UnitGroupMarker) => {
+      () => {
+        const url = getUnitGroupUrl(marker);
+        if (!url) return;
+        router.push(url as any);
+      };
+    },
+    [router]
+  );
+
+  const renderMarker = React.useCallback(
+    (marker: UnitGroupMarker) => {
+      return (
+        <Marker
+          key={marker.code}
+          onPress={() => onPress(marker)}
+          {...marker}
+          description={`${formatters.fuelType(marker.fuelType)}`}
+        >
+          <FuelTypeIcon fuelType={marker.fuelType} size={20} />
+        </Marker>
+      );
+    },
+    [router]
+  );
 
   return (
     <MapView
@@ -95,15 +105,13 @@ export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
       zoomTapEnabled={false}
       style={styles.mapCardContainer}
       initialRegion={{
-        latitude: 54.5,
+        latitude: 54.25,
         longitude: -2,
-        latitudeDelta: 9,
-        longitudeDelta: 12,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
       }}
     >
-      {markers.map((marker) => (
-        renderMarker(marker)
-      ))}
+      {markers.map((marker) => renderMarker(marker))}
     </MapView>
   );
 };

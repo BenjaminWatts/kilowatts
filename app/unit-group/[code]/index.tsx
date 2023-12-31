@@ -8,6 +8,7 @@ import { MixScheduleCard, UnknownUnitGroupCode } from '../../../atoms/cards';
 import { UnitGroupChart } from '../../../components/UnitGroupChart';
 
 export const UnitGroupScreen = React.memo(() => {
+
   log.info('UnitGroupScreen');
   const params = useLocalSearchParams<{ code: string }>();
   const [code, setCode] = useState<string | undefined>(undefined);
