@@ -29,5 +29,9 @@ export const formatters = {
     const value = Math.round(x / 10) / 100;
     return `${value.toLocaleString()} GW`;
   },
+  mwRounded: (x: number) => {
+    const value = Math.round(x);
+    return `${value.toLocaleString()} MW`;
+  }
 };
 export default formatters;

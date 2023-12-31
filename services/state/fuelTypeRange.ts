@@ -1,18 +1,15 @@
-import React from "react";
-import * as p from "../../common/parsers";
-import log from "../log";
-import {
-  FUEL_TYPE_COLORS,
-  FuelType,
-  FuelTypeColor,
-  UseCurrentRangeParams,
-} from "../../common/types";
-import { useUnitHistoryQuery } from "./unitsHistory";
-import { useEmbeddedWindAndSolarForecastQuery } from "./api/ng-eso-api";
-import { useNowTime } from "../hooks";
-import { useFuelTypeLiveQuery } from "./fuelTypeLive";
+import { useState, useEffect, useCallback } from 'react';
+import * as p from '../../common/parsers';
+import log from '../log';
+import { FUEL_TYPE_COLORS, FuelType, UseCurrentRangeParams } from '../../common/types';
+import { useUnitHistoryQuery } from './unitsHistory';
+import { useEmbeddedWindAndSolarForecastQuery } from './api/ng-eso-api';
+import { useNowTime, useRefetchOnAppOrNetworkResume } from '../hooks';
+import { useFuelTypeLiveQuery } from './fuelTypeLive';
 
-const UPDATE_INTERVAL_SECS = 5;
+const POLLING_INTERVAL_SECS = 5;
+const EMBEDDED_POLLING_INTERVAL_SECS = 60
+const RERENDER_INTERVAL_SECS = 5;
 
 const range: UseCurrentRangeParams = {
   hoursInPast: 0.5,
@@ -20,116 +17,115 @@ const range: UseCurrentRangeParams = {
   updateIntervalSecs: 15,
 };
 
-const orderChartColors = (orderedFuelTypes: FuelType[]) => {
-  const colors: FuelTypeColor[] = [];
+const orderChartColors = (orderedFuelTypes: FuelType[]) => 
+  FUEL_TYPE_COLORS.filter(color => 
+    orderedFuelTypes.includes(color.fuelType)
+  );
 
-  const copiedFuelTypes = [...orderedFuelTypes];
-  copiedFuelTypes.reverse();
-
-  for (const fuelType of orderedFuelTypes) {
-    colors.push(FUEL_TYPE_COLORS.find((c) => c.fuelType === fuelType)!);
-  }
-
-  for (const color of FUEL_TYPE_COLORS) {
-    if (!colors.includes(color)) {
-      colors.push(color);
-    }
-  }
-
-  return colors;
-};
-
-const computeResult = (queries: any, refetch: any) => {
-  console.log(`computeResult`)
-  const baseParams = {
-    isLoading:
-      queries.bm.isLoading ||
-      queries.embedded.isLoading ||
-      queries.live.isLoading,
-    error: null,
-    refetch
-  };
-  if (
-    !queries.bm.data ||
-    !queries.embedded.data ||
-    !queries.live.data ||
-    !queries.live.orderedFuelTypes
-  ) {
-    log.info(`computeResult/!queries.bm.data`)
-    return {
-      ...baseParams,
-      data: null,
-    };
-  } else {
-    try {
-      const data = {
-        values: p.transformFuelTypeHistoryQuery({
-          range: queries.bm.range,
-          bm: queries.bm.data,
-          embedded: queries.embedded.data,
-          startAt: queries.now,
-        }),
-        colors: orderChartColors(queries.live.orderedFuelTypes),
-      }
-      log.info(`computeResult/queries.bm.data`)
-      return {
-        ...baseParams,
-        data
-      };
-    } catch (e: any) {
-      log.error(e);
-      return {
-        ...baseParams,
-        data: null,
-        error: e,
-      };
-    }
-  }
-};
-
-/* Get the data for a single unit group over the required interval */
-export const useFuelTypeHistoryQuery = (
-  updateIntervalSecs = UPDATE_INTERVAL_SECS
-) => {
-  log.debug(`useFuelTypeHistoryQuery`)
-  const [result, setResult] = React.useState<any>({
-    data: null,
-    isLoading: true,
-    refetch: () => {},
-    error: null
+export const useFuelTypeHistoryQuery = () => {
+  const [result, setResult] = useState<any>({
+    data: null, isLoading: true, error: null,
   });
 
   const queries = {
-    bm: useUnitHistoryQuery({
-      range,
-    }),
-    embedded: useEmbeddedWindAndSolarForecastQuery(
-      {},
-      { pollingInterval: UPDATE_INTERVAL_SECS * 1000 }
-    ),
-    now: useNowTime(updateIntervalSecs),
-    live: useFuelTypeLiveQuery(updateIntervalSecs),
+    bm: useUnitHistoryQuery({ range }),
+    embedded: useEmbeddedWindAndSolarForecastQuery({}, { pollingInterval: EMBEDDED_POLLING_INTERVAL_SECS * 1000 }),
+    now: useNowTime(POLLING_INTERVAL_SECS),
+    live: useFuelTypeLiveQuery(POLLING_INTERVAL_SECS),
   };
 
-  const refetch = React.useCallback(() => {
-    log.info(`useFuelTypeHistoryQuery/refetch`)
+  const refetch = useCallback(() => {
+    log.debug('Refetching fuel type history queries');
     queries.bm.refetch();
     queries.embedded.refetch();
     queries.live.refetch();
   }, []);
 
-  React.useEffect(() => {
-    log.debug(`useFuelTypeHistoryQuery/useEffect`)
-    const update = () => {
-      const newResult = computeResult(queries, refetch);
-      setResult(newResult);
+  useRefetchOnAppOrNetworkResume({refetch, isLoading: false})
+
+  const update = useCallback(() => {
+    {
+      log.debug('Updating fuel type history queries');
+
+      if (!queries.bm.data ) {
+        log.debug('Waiting for bm data');
+        return;
+      }
+
+      if (!queries.embedded.data) {
+        log.debug('Waiting for embedded data');
+        return;
+      }
+
+      if (!queries.now) {
+        log.debug('Waiting for now time');
+        return;
+      }
+
+      if (!queries.live.data) {
+        log.debug('Waiting for live data');
+        return;
+      }
+
+      if (!queries.live.orderedFuelTypes) {
+        log.debug('Waiting for live ordered fuel types');
+        return;
+      }
+  
+      try {
+        const data = {
+          values: p.transformFuelTypeHistoryQuery({
+            range: queries.bm.range,
+            bm: queries.bm.data,
+            embedded: queries.embedded.data,
+            startAt: queries.now,
+          }),
+          colors: orderChartColors(queries.live.orderedFuelTypes),
+        };
+        log.info('useFuelTypeHistoryQuery/ setResult');
+
+        setResult({ data, isLoading: false, error: null });
+      } catch (e) {
+        log.error(e);
+        setResult({ data: null, isLoading: false, error: e });
+      }
     };
+  }, [queries]);
+
+  useEffect(() => {
+    log.debug('Starting fuel type history queries');
+
     refetch();
     update();
-    const interval = setInterval(update, UPDATE_INTERVAL_SECS * 1000);
+
+    const interval = setInterval(update, RERENDER_INTERVAL_SECS * 1000);
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    log.debug(`Received new bm data`);
+    if(!result.data) update();
+  }, [queries.bm.data])
 
+  useEffect(() => {
+    log.debug(`Received new embedded data`);
+    if(!result.data) update();
+  }, [queries.embedded.data])
+
+  useEffect(() => {
+    log.debug(`Received new now time`);
+    if(!result.data) update();
+  }, [queries.now])
+
+  useEffect(() => {
+    log.debug(`Received new live data`);
+    if(!result.data) update();
+  }, [queries.live.data])
+
+  useEffect(() => {
+    log.debug(`Received new live ordered fuel types`);
+    if(!result.data) update();
+  }, [queries.live.orderedFuelTypes])
+ 
   return result;
 };

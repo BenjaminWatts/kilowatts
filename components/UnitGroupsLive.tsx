@@ -9,7 +9,7 @@ type UnitGroupsLiveProps = {
 };
 
 export const UnitGroupsLive: React.FC<UnitGroupsLiveProps> = ({ fuelType }) => {
-  log.debug(`UnitGroupsLive`);
+  log.info(`UnitGroupsLive`);
   const [search, setSearch] = React.useState("");
 
   return (

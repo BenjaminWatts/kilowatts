@@ -3,15 +3,18 @@ import { StackedAreaChart, XAxis, YAxis } from "react-native-svg-charts";
 import { TransformedFuelTypeHistoryQuery } from "../common/parsers";
 import { FUEL_TYPE_COLORS, FuelType, FuelTypeColor } from "../common/types";
 import * as shape from "d3-shape";
+import log from "../services/log";
 import formatters from "../common/formatters";
 import { londonTimeHHMM } from "../common/utils";
-import { StyleSheet, View, useWindowDimensions } from "react-native";
+import { StyleSheet, View, useWindowDimensions, Text } from "react-native";
+import ErrorBoundary from "react-native-error-boundary";
+import { ChartRenderErrorCard } from "./cards";
 
 type UnitGroupUnitsStackedChartProps = {
   data?: {
     colors: FuelTypeColor[];
     values: TransformedFuelTypeHistoryQuery[];
-  }
+  };
 };
 
 const contentInset = { top: 5, bottom: 20 };
@@ -22,9 +25,9 @@ const formatYLabel = (value: number, index: number) => {
   const minutes = londonTime.split(":")[1];
   if (
     minutes === "00" ||
-    minutes === "30" ||
-    minutes === "15" ||
-    minutes === "45"
+    minutes === "30"
+    // minutes === "15" ||
+    // minutes === "45"
   ) {
     return londonTime;
   } else {
@@ -37,7 +40,7 @@ const calculateChartHeight = (
   liveFuelTypeCount: number,
   windowHeight: number
 ) => {
-  const headerHeight = 25;
+  const headerHeight = 125;
   const subHeaderHeight = 50;
   const tabIconHeight = 80;
   const listItemsHeight = 30 * liveFuelTypeCount;
@@ -52,19 +55,92 @@ const calculateChartHeight = (
 
 const axisSvg = { fontSize: 15, fill: "grey" };
 
+type UnitGroupStackedChartProps = {
+  data: { time: Date; total: number }[];
+  bmUnits: string[];
+};
+
+const generateColors = (count: number): string[] => {
+  const colors = [];
+  for (let i = 0; i < count; i++) {
+    colors.push(FUEL_TYPE_COLORS[i % FUEL_TYPE_COLORS.length].color);
+  }
+  return colors;
+};
+
 export const UnitGroupUnitsStackedChart: React.FC<
+  UnitGroupStackedChartProps
+> = ({ data, bmUnits }) => {
+  log.debug(`UnitGroupUnitsStackedChart`);
+  const dims = useWindowDimensions();
+
+  if (!bmUnits) {
+    return <Text>Error</Text>;
+  }
+
+  return (
+    <View
+      style={{
+        ...styles.chartView,
+        height: calculateChartHeight(bmUnits.length + 1, dims.height),
+        width: dims.width - 5,
+      }}
+    >
+      {data && (
+        <>
+          <YAxis
+            data={data}
+            contentInset={contentInset}
+            min={0}
+            svg={axisSvg}
+            numberOfTicks={3}
+            yAccessor={({ item }) => item.total}
+            formatLabel={formatters.mwRounded}
+          />
+          <View style={styles.right}>
+            <StackedAreaChart
+              style={{ flex: 1, marginLeft: 5 }}
+              data={data}
+              key={"time"}
+              contentInset={contentInset}
+              curve={shape.curveNatural}
+              keys={bmUnits as any}
+              colors={generateColors(bmUnits.length)}
+              // axisSvg={{ fill: "grey", fontSize: 10 }}
+              // svgs={fuelTypeColors.map((c) => ({
+              //   onPress: () => console.log("press", c),
+              // }))}
+              gridMin={0}
+            />
+            <XAxis
+              style={styles.x}
+              data={data}
+              // numberOfTicks={3}
+              contentInset={{ left: 25, right: 25 }}
+              xAccessor={({ item }) => item.time}
+              formatLabel={formatYLabel}
+              svg={axisSvg}
+            />
+          </View>
+        </>
+      )}
+    </View>
+  );
+};
+
+export const FuelTypeStackedChart: React.FC<
   UnitGroupUnitsStackedChartProps
 > = ({ data }) => {
-  console.log(`UnitGroupUnitsStackedChart ${new Date()}`);
+  log.debug(`UnitGroupUnitsStackedChart`);
   const dims = useWindowDimensions();
-  const height = calculateChartHeight(data?.colors.length || 0, dims.height)
-  
+  const height = calculateChartHeight(data?.colors.length || 0, dims.height);
+
   const keysColors = {
     keys: data?.colors.map((c) => c.fuelType) || [],
-    colors: data?.colors.map((c) => c.color) || []
+    colors: data?.colors.map((c) => c.color) || [],
   };
   return (
-    <View style={{...styles.chartView, height}}>
+    <View style={{ ...styles.chartView, height }}>
       {data?.values && (
         <>
           <YAxis
@@ -106,8 +182,19 @@ export const UnitGroupUnitsStackedChart: React.FC<
   );
 };
 
+type ChartErrorBoundaryProps = { children: JSX.Element };
+export const ChartErrorBoundary: React.FC<ChartErrorBoundaryProps> = ({
+  children,
+}) => {
+  return (
+    <ErrorBoundary FallbackComponent={ChartRenderErrorCard}>
+      {children}
+    </ErrorBoundary>
+  );
+};
+
 const styles = StyleSheet.create({
   chartView: { flexDirection: "row" },
   right: { display: "flex", flexDirection: "column", flex: 1 },
-  x: { height: 30, marginTop: 0, paddingTop: 0 }
+  x: { height: 30, marginTop: 0, paddingTop: 0 },
 });

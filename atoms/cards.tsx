@@ -126,7 +126,7 @@ export const UnitListHeader: React.FC<UnitListHeaderProps> = ({ now }) => {
     <Card containerStyle={styles.listHeaderCard}>
       {now ? (
         <Text {...props} testID="unit-list-header-text">
-         Live Output: {londonTimeHHMMSS(now)}
+         Unit-by-unit Output: {londonTimeHHMMSS(now)}
         </Text>
       ) : (
         <Text {...props}>Loading individual unit data</Text>
@@ -256,7 +256,7 @@ export const FuelTypeCompletenessListHeader: React.FC<{completeness: FuelTypeLiv
 export const MixScheduleCard: React.FC = () => {
   return (
     <Card containerStyle={styles.listHeaderCard}>
-      <Text>Rolling Schedule</Text>
+      <Text>Forthcoming Schedule</Text>
     </Card>
   );
 }
@@ -266,6 +266,21 @@ export const LiveMixHeaderCard: React.FC = () => {
   return (
     <Card containerStyle={styles.listHeaderCard}>
       <Text>Live Mix</Text>
+    </Card>
+  );
+}
+
+export const ChartRenderErrorCard: React.FC = () => {
+  log.debug(`cards/atoms/ChartRenderErrorCard`)
+  return (
+    <Card>
+      <Card.Title>
+        <Text>Error</Text>
+      </Card.Title>
+      <Card.Divider />
+      <Text>
+        There was an error rendering the chart. Please try again later.
+      </Text>
     </Card>
   );
 }

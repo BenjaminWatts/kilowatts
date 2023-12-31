@@ -1,25 +1,24 @@
-import * as p from "../../common/parsers";
 import log from "../log";
 import {
-  LevelPairDelta,
   UnitGroup,
   UseCurrentRangeParams,
 } from "../../common/types";
 import { useUnitHistoryQuery } from "./unitsHistory";
+import { interpolateLevelPair } from "../../common/parsers";
 
 type UnitGroupHistoryQueryParams = {
   range: UseCurrentRangeParams;
-  ug: UnitGroup;
+  bmUnits: string[];
 };
 
 /* Get the data for a single unit group over the required interval */
 export const useUnitGroupHistoryQuery = ({
-  ug,
+  bmUnits,
   range,
 }: UnitGroupHistoryQueryParams) => {
   const query = useUnitHistoryQuery({
     range,
-    bmUnits: ug.units.map((u) => u.bmUnit),
+    bmUnits
   });
 
   if (!query.data) {
@@ -27,35 +26,51 @@ export const useUnitGroupHistoryQuery = ({
   }
 
   try {
-    const units = p.transformUnitHistoryQuery({
-      data: query.data,
-      units: ug.units,
+    const units = query.data;
+    const times = new Set<string>();
+
+    // get all times
+    Object.values(units).forEach((us) => {
+      for (const u of us) {
+        times.add(u.time);
+      }
     });
 
-    const { from, to } = query.range;
+    const firstTime = new Date(Array.from(times).sort()[0])
+    const lastTime = new Date(Array.from(times).sort().reverse()[0])
 
-    const timeseries: { name: string; levels: LevelPairDelta[] }[] = units
-      .filter((u) => u.data.levels.length !== 0)
-      .map((u) => {
-        return {
-          levels: p.createRegularTimeseries({
-            from,
-            to,
-            levels: u.data.levels,
-          }),
-          name: u.details.bmUnit,
-        };
-      });
+    const bmUnits = Object.keys(units);
 
-    const joined = p.joinRegularTimeseries({
-      from,
-      to,
-      timeseries,
-    });
+    let output: any[] = [];
+
+    // iterate through each minute from firstTime to lastTime
+    let time = firstTime;
+    while (time <= lastTime) {
+      const iso = time.toISOString();
+
+      let timeDict: any = { time: Number(time), total: 0 };
+
+      for (const bmUnit of bmUnits) {
+        const match = units[bmUnit].find((u) => u.time === iso);
+        if (match) {
+          timeDict[bmUnit] = match.level;
+          timeDict.total += match.level;
+        } else {
+          const {level} = interpolateLevelPair(iso, units[bmUnit]);
+          timeDict[bmUnit] = level;
+          timeDict.total += level;
+        }
+      }
+
+      output.push(timeDict);
+      time = new Date(time.getTime() + 60000);
+    }
+
+    
 
     return {
       ...query,
-      data: joined,
+      data: output,
     };
   } catch (e: any) {
     log.error(e);

@@ -10,6 +10,7 @@ import formatters from "../common/formatters";
 import { FuelTypeIcon } from "./icons";
 import { getUnitGroupUrl } from "../services/nav";
 import { useRouter } from "expo-router";
+import log from "../services/log";
 
 const getMapProvider = () => {
   if (Platform.OS === "android") {
@@ -32,7 +33,7 @@ const MapView = (props: MapViewProps) => (
 );
 
 export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
-  console.log(`UnitGroupMap: ${ug.details.name}`);
+  log.info(`UnitGroupMap: ${ug.details.name}`);
   const { coords, name, fuelType } = ug.details;
   if (!coords || !name) return <></>;
   const coordinate = {
@@ -61,7 +62,30 @@ export const UnitGroupMap: React.FC<UnitGroupMapProps> = ({ ug }) => {
 };
 
 export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
+  log.debug(`UnitsGroupMap: ${markers.length}`)
   const router = useRouter();
+
+  const onPress = React.useCallback((marker: UnitGroupMarker) => {
+    () => {
+      const url = getUnitGroupUrl(marker);
+      if (!url) return;
+      router.push(url as any);
+    }
+  }, [router]);
+
+  const renderMarker = React.useCallback((marker: UnitGroupMarker) => {
+    return (
+      <Marker
+        key={marker.code}
+        onPress={()=> onPress(marker)}
+        {...marker}
+        description={`${formatters.fuelType(marker.fuelType)}`}
+      >
+        <FuelTypeIcon fuelType={marker.fuelType} size={20} />
+      </Marker>
+    );
+  }, [router]);
+    
 
   return (
     <MapView
@@ -78,18 +102,7 @@ export const UnitsGroupMap: React.FC<UnitsGroupMapProps> = ({ markers }) => {
       }}
     >
       {markers.map((marker) => (
-        <Marker
-          key={marker.code}
-          onPress={() => {
-            const url = getUnitGroupUrl(marker);
-            if (!url) return;
-            router.push(url as any);
-          }}
-          {...marker}
-          description={`${formatters.fuelType(marker.fuelType)}`}
-        >
-          <FuelTypeIcon fuelType={marker.fuelType} size={20} />
-        </Marker>
+        renderMarker(marker)
       ))}
     </MapView>
   );

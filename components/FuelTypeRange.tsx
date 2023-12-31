@@ -1,6 +1,9 @@
 import React from "react";
 import { useFuelTypeHistoryQuery } from "../services/state/fuelTypeRange";
-import { UnitGroupUnitsStackedChart } from "../atoms/charts";
+import {
+  ChartErrorBoundary,
+  FuelTypeStackedChart,
+} from "../atoms/charts";
 import { ApiErrorCard } from "../atoms/cards";
 import { Loader } from "../atoms/loaders";
 
@@ -12,7 +15,9 @@ export const FuelTypeRange: React.FC<FuelTypeRangeProps> = ({}) => {
   return (
     <>
       {data ? (
-        <UnitGroupUnitsStackedChart data={data} />
+        <ChartErrorBoundary>
+          <FuelTypeStackedChart data={data} />
+        </ChartErrorBoundary>
       ) : (
         <>
           {isLoading && <Loader />}

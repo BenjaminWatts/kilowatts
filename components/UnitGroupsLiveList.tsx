@@ -7,7 +7,7 @@ import { NoLiveUnits } from "../atoms/cards";
 import { Refresh } from "../atoms/controls";
 import { UnitGroupLive as ListItem } from "../atoms/list-items";
 import { UnitGroupLevel, UnitGroupMarker } from "../common/types";
-import { View, StyleSheet, useWindowDimensions } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Alert } from "react-native";
 import { UnitsGroupMap } from "../atoms/maps";
 import * as t from "../common/types";
 
@@ -67,7 +67,7 @@ export const UnitGroupsLiveList: React.FC<UnitGroupsLiveListProps> = ({
   );
   const mapHeight = useWindowDimensions().height / 2;
   const onViewableItemsChanged = React.useCallback((info: any) => {
-    console.log("onViewableItemsChanged");
+    log.debug("onViewableItemsChanged");
     setMapItems(readViewableItems(info.viewableItems));
   }, []);
 
@@ -119,6 +119,8 @@ export const UnitGroupsLiveList: React.FC<UnitGroupsLiveListProps> = ({
               const url = getUnitGroupUrl(item.details);
               if (url) {
                 router.push(url as any);
+              } else {
+                Alert.alert('Sorry!', "We are working on providing a more detailed view for this in the future. ")
               }
             }}
           />

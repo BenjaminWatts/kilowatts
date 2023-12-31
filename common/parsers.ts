@@ -120,11 +120,11 @@ export const interpolateLevelPair = (
     }
   }
 
-  if (befores.length === 0)
-    throw new Error(`interpolateLevelPair: no levels found before ${time}`);
-  if (afters.length === 0)
-    throw new Error(`interpolateLevelPair: no levels found after ${time}`);
-
+  // zero result - for a brand new unit
+  const isZeroResult = befores.length === 0 || afters.length === 0;
+  if (isZeroResult) {
+    return { time, level: 0, delta: 0 };
+  }
   const previous = befores[befores.length - 1];
   const subsequent = afters[0];
 
@@ -614,6 +614,7 @@ export const transformUnitGroupsLiveQuery = ({
 
 type UnitGroupLiveQueryData = {
   level: number;
+  delta: number
   details: t.UnitGroupUnit;
 }[];
 

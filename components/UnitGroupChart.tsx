@@ -1,28 +1,35 @@
 import React from "react";
-import { UnitGroup } from "../common/types";
+// import { UnitGroup } from "../common/types";
 import { StyleSheet, View } from "react-native";
 import { useUnitGroupHistoryQuery } from "../services/state/unitGroupHistory";
+import {
+  ChartErrorBoundary,
+  UnitGroupUnitsStackedChart,
+} from "../atoms/charts";
 
 type UnitGroupChartProps = {
-  ug: UnitGroup;
+  bmUnits: string[];
 };
 
-export const UnitGroupChart: React.FC<UnitGroupChartProps> = ({ ug }) => {
+export const UnitGroupChart: React.FC<UnitGroupChartProps> = ({ bmUnits }) => {
   const query = useUnitGroupHistoryQuery({
-    ug,
+    bmUnits,
     range: {
       hoursInAdvance: 2,
-      hoursInPast: 24,
+      hoursInPast: 0.5,
       updateIntervalSecs: 60,
     },
   });
-  console.log(query.data);
   return (
     <View style={styles.half}>
-      </View>
-  )
+      {query.data && (
+        <ChartErrorBoundary>
+          <UnitGroupUnitsStackedChart data={query.data} bmUnits={bmUnits} />
+        </ChartErrorBoundary>
+      )}
+    </View>
+  );
 };
-
 
 const styles = StyleSheet.create({
   half: {

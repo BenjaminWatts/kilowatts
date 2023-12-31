@@ -12,6 +12,7 @@ export const Loader = () => {
 
 const styles = StyleSheet.create({
   loader: {
+    minHeight: 30,
     height: "100%",
     width: "100%",
     alignItems: "center",

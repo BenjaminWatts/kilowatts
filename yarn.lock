@@ -9277,6 +9277,11 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-error-boundary@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/react-native-error-boundary/-/react-native-error-boundary-1.2.4.tgz#d700d1c23cdc18a17f6f14bd7d9f751a1f698c65"
+  integrity sha512-PF5xn+3mGKk8uzf9GpOQa1kvxsG3Bs3XMwJZNqqUG//jC1FDp+WRGxg4r2sPG70MveSOQmQNuHnAycCPYQNg6g==
+
 react-native-flipper@^0.164.0:
   version "0.164.0"
   resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.164.0.tgz#64f6269a86a13a72e30f53ba9f5281d2073a7697"

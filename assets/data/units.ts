@@ -963,15 +963,6 @@ export const unitGroups: UnitGroup[] = [
       {
         bmUnit: "T_WBUGT-4",
       },
-      {
-        bmUnit: "T_WBURB-1",
-      },
-      {
-        bmUnit: "T_WBURB-2",
-      },
-      {
-        bmUnit: "T_WBURB-3",
-      },
     ],
   },
 
@@ -3035,23 +3026,6 @@ export const unitGroups: UnitGroup[] = [
     ],
   },
 
-  {
-    details: {
-      code: "CASKD",
-      name: "Castner Kellner",
-      coords: {
-        lat: 53.3333,
-        lng: -2.8667,
-      },
-      fuelType: "gas",
-    },
-    units: [
-      {
-        bmUnit: "T_CASKD-1",
-      },
-    ],
-  },
-
   // Fallago 55.82489777951005, -2.66409699462629 T_FALGW-1
 
   {
@@ -3661,7 +3635,7 @@ export const unitGroups: UnitGroup[] = [
       name: "JG Pears Power Limited",
       coords: {
         lat: 51.74,
-        lng: 3.07,
+        lng: -3.07,
       },
       fuelType: "biomass",
     },

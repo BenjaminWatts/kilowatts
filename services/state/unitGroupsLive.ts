@@ -16,12 +16,13 @@ export const useUnitGroupsLiveQuery = (updateIntervalSecs = UPDATE_INTERVAL_SECS
   }
 
   try {
+    const data = p.transformUnitGroupsLiveQuery({
+      ...query.data,
+      now: query.now,
+    })
     return {
       ...query,
-      data: p.transformUnitGroupsLiveQuery({
-        ...query.data,
-        now: query.now,
-      }),
+      data,
       isError: false,
     };
   } catch (e: any) {

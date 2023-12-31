@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View, Alert } from "react-native";
 import { ListItem } from "@rneui/themed";
 import formatters from "../common/formatters";
 import { FuelTypeIcon, UpOrDownIcon } from "./icons";
@@ -103,16 +103,19 @@ export const UnitLive: React.FC<UnitLiveProps> = ({
   delta,
   index,
 }) => (
-  <ListItem
+  <Pressable
     style={styles.listItemContainer}
     key={index}
     testID={`unit-type-live-list-item-${index}`}
+    onPress={() => {
+      Alert.alert('Coming soon', 'Further in-depth information on this unit will be available soon.')
+    }}
   >
     <ListItem.Content style={styles.liveContainer}>
       <ListItem.Title>{details.bmUnit}</ListItem.Title>
       <LevelListItemSubtitle level={level} delta={delta} />
     </ListItem.Content>
-  </ListItem>
+  </Pressable>
 );
 
 type UnitLevelProps = LevelPairDelta;

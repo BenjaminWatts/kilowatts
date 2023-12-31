@@ -5,7 +5,7 @@ import { ApiErrorCard, FuelTypeCompletenessListHeader } from "../atoms/cards";
 import { FuelTypeLive as ListItem } from "../atoms/list-items";
 import { ALLOW_LINK_FUELTYPES, londonTimeHHMMSS } from "../common/utils";
 import { urls } from "../services/nav";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import { FuelType } from "../common/types";
 
 export const FuelTypeLive = () => {
@@ -27,9 +27,11 @@ export const FuelTypeLive = () => {
 
   const onPress = React.useCallback(
     (name: FuelType) => {
-      ALLOW_LINK_FUELTYPES.includes(name)
-        ? () => router.push(urls.fuelType(name))
-        : undefined;
+      if(ALLOW_LINK_FUELTYPES.includes(name)) {
+        router.push(urls.fuelType(name))
+      } else {
+        Alert.alert("Sorry", "This is not yet supported")
+      }
     },
     [router]
   );

@@ -18,6 +18,7 @@ export const urls: Urls = {
 
 export const lookups = {
   unitGroup: (code: string): UnitGroup | undefined => {
+    if(!code) return undefined
     log.debug(`Looking up unit group for code: ${code}`)
     const ug = unitGroupsDict[code.toUpperCase()];
     log.debug(`Found unit group: ${ug}`)

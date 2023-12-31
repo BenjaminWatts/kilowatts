@@ -14,13 +14,15 @@ export const useUnitGroupLiveQuery = (ug: UnitGroup) => {
   }
 
   try {
+    const data = p.transformUnitGroupLiveQuery({
+      ...query.data,
+      now: query.now,
+      units: ug.units,
+    })
+  
     return {
       ...query,
-      data: p.transformUnitGroupLiveQuery({
-        ...query.data,
-        now: query.now,
-        units: ug.units,
-      }),
+      data
     };
   } catch (e) {
     return {
