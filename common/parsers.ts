@@ -2,6 +2,7 @@ import * as t from "./types";
 import log from "../services/log";
 import { fuelTypeUnitsDict, unitGroups } from "../assets/data/units";
 import { interconnectors } from "../assets/data/interconnectors";
+import { FUEL_TYPE_COLORS } from "./types";
 
 /*
 shouldIncludeUnit
@@ -850,53 +851,30 @@ export const combineFuelTypesAndEmbedded = ({
     data.embedded
   );
 
-  const output: t.FuelTypeLevel[] = [];
-  const found = {
-    wind: false,
-    solar: false,
-  };
-  for (const ft of fuelTypes) {
-    if (ft.name === "wind") {
-      output.push({
-        ...ft,
-        level: ft.level + embedded.wind.level,
-        delta: ft.delta + embedded.wind.delta,
-      });
-      found.wind = true;
-    } else {
-      if (ft.name === "solar") {
-        output.push({
-          ...ft,
-          level: ft.level + embedded.solar.level,
-          delta: ft.delta + embedded.solar.delta,
-        });
-        found.solar = true;
-      } else {
-        output.push(ft);
-      }
+  const output = FUEL_TYPE_COLORS.map((ftc => {
+
+    const bm = fuelTypes.find((x) => x.name === ftc.fuelType);
+
+    const ft = {
+      ...ftc,
+      name: ftc.fuelType,
+      unitGroupLevels: bm ? bm.unitGroupLevels : [],
+      level: bm ? bm.level : 0,
+      delta: bm ? bm.delta : 0,
     }
-  }
 
-  if (!found.wind) {
-    output.push({
-      name: "wind",
-      level: embedded.wind.level,
-      delta: embedded.wind.delta,
-      unitGroupLevels: [],
-    });
-  }
+    if(ft.fuelType === 'wind') {
+      ft.level += embedded.wind.level
+      ft.delta += embedded.wind.delta
+    }
 
-  if (!found.solar && embedded.solar.level > 0) {
-    output.push({
-      name: "solar",
-      level: embedded.solar.level,
-      delta: embedded.solar.delta,
-      unitGroupLevels: [],
-    });
-  }
+    if(ft.fuelType === 'solar') {
+      ft.level += embedded.solar.level
+      ft.delta += embedded.solar.delta
+    }
 
-  // resort
-  output.sort((a, b) => b.level - a.level);
+    return ft
+  }))
 
   return output;
 };

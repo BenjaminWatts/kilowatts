@@ -170,18 +170,33 @@ export type FuelTypeColor = {
 }
 
 export const FUEL_TYPE_COLORS: FuelTypeColor[] = [
-  { fuelType: "gas", color: "brown" },     // Natural Gas (Bad Orange)
-  { fuelType: "coal", color: "black" },      // Coal (Least Friendly)
-  { fuelType: "nuclear", color: "#3399CC" },   // Nuclear (Clean)
-  { fuelType: "wind", color: "#8CD19D" },      // Wind (Clean)
-  { fuelType: "solar", color: "#FFD700" },     // Solar (Cleanest Yellow)
-  { fuelType: "hydro", color: "#009688" },     // Hydro (Clean)
-  { fuelType: "biomass", color: "#A2D872" },   // Biomass (Moderate Green)
   { fuelType: "oil", color: "#CC0000" },       // Oil (Least Friendly)
-  { fuelType: "interconnector", color: "#993333" },  // Interconnector (Moderate)
-  { fuelType: "unknown", color: "#A9A9A9" },   // Unknown (Gray)
+  { fuelType: "hydro", color: "#009688" },     // Hydro (Clean)
   { fuelType: "battery", color: "#800080" },   // Battery (Orange)
+  { fuelType: "coal", color: "black" },      // Coal (Least Friendly)
+  { fuelType: "solar", color: "#FFD700" },     // Solar (Cleanest Yellow)
+  { fuelType: "unknown", color: "#A9A9A9" },   // Unknown (Gray)
+  { fuelType: "biomass", color: "#A2D872" },   // Biomass (Moderate Green)
+  { fuelType: "interconnector", color: "blue" },  // Interconnector (Moderate)
+  { fuelType: "gas", color: "brown" },     // Natural Gas (Bad Orange)
+  { fuelType: "wind", color: "#8CD19D" },      // Wind (Clean)
+  { fuelType: "nuclear", color: "#3399CC" },   // Nuclear (Clean)
 ]
+
+export const COUNT_FUEL_TYPES = FUEL_TYPE_NAMES.length;
+
+export const getChartColors = (): {keys: string[], colors: string[]} => {
+  const keys: string[] = [];
+  const colors: string[] = [];
+  const copied = [...FUEL_TYPE_COLORS];
+  copied.reverse()
+  copied.forEach(ftc => {
+    keys.push(ftc.fuelType);
+    colors.push(ftc.color);
+  })
+  return {keys, colors};
+
+}
 
 export const getFuelTypeColor = (fuelType: FuelType) => {
   const color = FUEL_TYPE_COLORS.find(ftc => ftc.fuelType === fuelType)?.color;

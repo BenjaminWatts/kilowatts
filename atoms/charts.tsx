@@ -1,7 +1,7 @@
 import React from "react";
 import { StackedAreaChart, XAxis, YAxis } from "react-native-svg-charts";
 import { TransformedFuelTypeHistoryQuery } from "../common/parsers";
-import { FUEL_TYPE_COLORS, FuelType, FuelTypeColor } from "../common/types";
+import { COUNT_FUEL_TYPES, FUEL_TYPE_COLORS, FuelTypeColor, getChartColors } from "../common/types";
 import * as shape from "d3-shape";
 import log from "../services/log";
 import formatters from "../common/formatters";
@@ -26,8 +26,6 @@ const formatYLabel = (value: number, index: number) => {
   if (
     minutes === "00" ||
     minutes === "30"
-    // minutes === "15" ||
-    // minutes === "45"
   ) {
     return londonTime;
   } else {
@@ -40,7 +38,7 @@ const calculateChartHeight = (
   liveFuelTypeCount: number,
   windowHeight: number
 ) => {
-  const headerHeight = 125;
+  const headerHeight = 75;
   const subHeaderHeight = 50;
   const tabIconHeight = 80;
   const listItemsHeight = 30 * liveFuelTypeCount;
@@ -103,7 +101,6 @@ export const UnitGroupUnitsStackedChart: React.FC<
               data={data}
               key={"time"}
               contentInset={contentInset}
-              curve={shape.curveNatural}
               keys={bmUnits as any}
               colors={generateColors(bmUnits.length)}
               // axisSvg={{ fill: "grey", fontSize: 10 }}
@@ -133,12 +130,7 @@ export const FuelTypeStackedChart: React.FC<
 > = ({ data }) => {
   log.debug(`UnitGroupUnitsStackedChart`);
   const dims = useWindowDimensions();
-  const height = calculateChartHeight(data?.colors.length || 0, dims.height);
-
-  const keysColors = {
-    keys: data?.colors.map((c) => c.fuelType) || [],
-    colors: data?.colors.map((c) => c.color) || [],
-  };
+  const height = calculateChartHeight(COUNT_FUEL_TYPES, dims.height);
   return (
     <View style={{ ...styles.chartView, height }}>
       {data?.values && (
@@ -159,12 +151,7 @@ export const FuelTypeStackedChart: React.FC<
               key={"time"}
               contentInset={contentInset}
               curve={shape.curveNatural}
-              colors={keysColors.colors}
-              keys={keysColors.keys}
-              // axisSvg={{ fill: "grey", fontSize: 10 }}
-              // svgs={fuelTypeColors.map((c) => ({
-              //   onPress: () => console.log("press", c),
-              // }))}
+              {...getChartColors()}
               gridMin={0}
             />
             <XAxis

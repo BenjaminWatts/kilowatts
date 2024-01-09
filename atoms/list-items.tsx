@@ -73,22 +73,25 @@ export const FuelTypeLive: React.FC<FuelTypeLiveProps> = ({
   level,
   delta,
   onPress,
-}) => (
-  <Pressable
-    style={styles.listItemContainer}
-    testID={`fuel-type-live-list-item-${name}`}
-    onPress={onPress}
-  >
-    <ListItem.Content style={styles.liveContainer}>
-      <View style={styles.titleSubtitleWrapper}>
-        <FuelTypeIcon fuelType={name} size={20} />
-        <ListItem.Subtitle>{formatters.fuelType(name)}</ListItem.Subtitle>
-      </View>
-
-      <LevelListItemSubtitle level={level} delta={delta} />
-    </ListItem.Content>
-  </Pressable>
-);
+}) => {
+  // if(level === 0 && delta === 0) return null
+  return (
+    <Pressable
+      style={styles.listItemContainer}
+      testID={`fuel-type-live-list-item-${name}`}
+      onPress={onPress}
+    >
+      <ListItem.Content style={styles.liveContainer}>
+        <View style={styles.titleSubtitleWrapper}>
+          <FuelTypeIcon fuelType={name} size={20} />
+          <ListItem.Subtitle>{formatters.fuelType(name)}</ListItem.Subtitle>
+        </View>
+  
+        <LevelListItemSubtitle level={level} delta={delta} />
+      </ListItem.Content>
+    </Pressable>
+  )
+};
 
 type UnitLiveProps = {
   index: number;
